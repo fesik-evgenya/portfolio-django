@@ -1,0 +1,13 @@
+<!-- Уведомления и сообщения -->
+{% if messages %}
+<div class="flash-messages-container">
+  {% for message in messages %}
+  <div class="flash-message flash-{{ message.tags }}">
+    <span class="flash-text">{{ message }}</span>
+    <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Закрыть уведомление">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

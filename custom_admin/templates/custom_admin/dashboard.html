@@ -1,0 +1,43 @@
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
+
+{% block admin_content %}
+{% include "custom_admin/includes/admin_header.html" with title="Административная панель" action_button='{"text": "+ Добавить", "onclick": "openModal()"}' %}
+
+<section class="admin-stats">
+  <div class="stat-card">
+    <h3>Заказы</h3>
+    <p>24</p>
+  </div>
+  <div class="stat-card">
+    <h3>Пользователи</h3>
+    <p>128</p>
+  </div>
+  <div class="stat-card">
+    <h3>Доход</h3>
+    <p>84,200 ₽</p>
+  </div>
+</section>
+
+<section class="admin-table">
+  <h2>Последние заказы</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Клиент</th>
+      <th>Сумма</th>
+      <th>Статус</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>#1025</td>
+      <td>Иван Петров</td>
+      <td>12,400 ₽</td>
+      <td><span class="status completed">Завершен</span></td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+{% endblock %}

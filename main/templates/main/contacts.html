@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contacts.css' %}">
+{% endblock %}
+
+{% block seo_extra %}
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+{% endblock %}
+
+{% block content %}
+<section class="contacts-section">
+    <div class="container">
+        <h1 class="page-title">Давайте создадим ваш проект вместе</h1>
+
+        <div class="contacts-grid">
+            <div class="contacts-card">
+                <h2 class="section-title">Способы связи</h2>
+                <div class="contact-methods">
+                    <div class="contact-item">
+                        <i class="fab fa-telegram contact-icon"></i>
+                        <div>
+                            <h3>Telegram</h3>
+                            {% if contact_info and contact_info.telegram %}
+                            <a href="{{ contact_info.telegram }}" target="_blank" rel="noopener" class="contact-link">
+                                Telegram
+                            </a>
+                            {% else %}
+                            <a href="https://t.me/Fesik_Evgeniya" target="_blank" rel="noopener" class="contact-link">
+                                @Fesik_Evgeniya
+                            </a>
+                            {% endif %}
+                            <p class="contact-note">Основной канал связи</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <div>
+                            <h3>Email</h3>
+                            {% if contact_info and contact_info.email %}
+                            <a href="mailto:{{ contact_info.email }}" class="contact-link">
+                                {{ contact_info.email }}
+                            </a>
+                            {% else %}
+                            <a href="mailto:ganef85@mail.ru" class="contact-link">
+                                ganef85@mail.ru
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="fas fa-phone contact-icon"></i>
+                        <div>
+                            <h3>Телефон</h3>
+                            {% if contact_info and contact_info.phone %}
+                            <a href="tel:{{ contact_info.phone }}" class="contact-link">
+                                {{ contact_info.phone }}
+                            </a>
+                            <p class="contact-note">Только для личных встреч</p>
+                            {% else %}
+                            <a href="tel:+79500124011" class="contact-link">
+                                +7 (950) 012-40-11
+                            </a>
+                            <p class="contact-note">Только для личных встреч</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if contact_info and contact_info.address %}
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt contact-icon"></i>
+                        <div>
+                            <h3>Адрес</h3>
+                            <span class="contact-link">{{ contact_info.address }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if contact_info and contact_info.github %}
+                    <div class="contact-item">
+                        <i class="fab fa-github contact-icon"></i>
+                        <div>
+                            <h3>GitHub</h3>
+                            <a href="{{ contact_info.github }}" target="_blank" rel="noopener" class="contact-link">
+                                GitHub
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="meeting-note">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Личные встречи только после онлайн-согласования ТЗ</p>
+                </div>
+            </div>
+
+            <div class="contacts-card">
+                <h2 class="section-title">Обсудим ваш проект?</h2>
+                <form class="contact-form" id="contact-form" method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <label for="id_name" class="form-group-label-dark">Имя</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                        <div class="error">{{ form.name.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_contact" class="form-group-label-dark">Телеграм или email</label>
+                        {{ form.contact }}
+                        {% if form.contact.errors %}
+                        <div class="error">{{ form.contact.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_project_type" class="form-group-label-dark">Тип проекта</label>
+                        {{ form.project_type }}
+                        {% if form.project_type.errors %}
+                        <div class="error">{{ form.project_type.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn--primary">Отправить</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="map-schedule">
+            <div class="map-container">
+                <h2 class="section-title">Возможны встречи в этих районах</h2>
+                <div id="map" class="map"></div>
+                {% if contact_info and contact_info.address %}
+                <p class="map-note">Район: {{ contact_info.address }}</p>
+                {% else %}
+                <p class="map-note">Район: Санкт-Петербург</p>
+                {% endif %}
+            </div>
+
+            <div class="schedule-container">
+                <h2 class="section-title">График</h2>
+                <div class="schedule-card">
+                    <div class="schedule-card-info">
+                        <div class="schedule-card-hours">
+                            <i class="far fa-clock schedule-icon"></i>
+                            <p class="schedule-hours">Пн-Пт</p>
+                            <p class="schedule-hours">10:00-18:00</p>
+                        </div>
+                        <p class="schedule-note">
+                            <i class="fab fa-telegram-plane"></i>
+                            Ответ в Telegram в течение 1 часа в рабочее время
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="custom-modal" id="successModal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div class="modal-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Сообщение отправлено!</h3>
+        <span>Ваш запрос успешно отправлен.</span>
+        <span>Я свяжусь с вами в ближайшее время через указанные контакты.</span>
+        <button class="btn btn--primary modal-confirm">Хорошо</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://api-maps.yandex.ru/2.1/?apikey=cd75c453-5925-4862-8f2e-acd46e2b692a&lang=ru_RU" type="text/javascript"></script>
+<script src="{% static 'js/contacts.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,30 @@
+<!-- Модальное окно Cookies -->
+<div id="cookiesModal" class="cookies-modal">
+  <div class="cookies-modal__content">
+    <div class="cookies-modal__header">
+      <i class="fas fa-cookie-bite cookies-modal__icon"></i>
+      <h3 class="cookies-modal__title">Мы используем cookie</h3>
+    </div>
+
+    <div class="cookies-modal__body">
+      <p class="cookies-modal__text">
+        Мы используем cookie и рекомендательные технологии для персонализации сервисов
+        и удобства пользователей.<br>Вы можете запретить сохранение cookie в настройках своего браузера.
+      </p>
+
+      <div class="cookies-modal__links">
+        <a href="{% url 'main:privacy' %}" class="cookies-modal__link" target="_blank">
+          <i class="fas fa-shield-alt"></i>
+          Политика конфиденциальности
+        </a>
+      </div>
+    </div>
+
+    <div class="cookies-modal__footer">
+      <button id="acceptCookies" class="btn btn--primary cookies-modal__btn">
+        <i class="fas fa-check"></i>
+        Хорошо
+      </button>
+    </div>
+  </div>
+</div>

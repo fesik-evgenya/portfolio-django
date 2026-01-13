@@ -1,0 +1,37 @@
+<div class="admin-tabs">
+    <nav class="tabs-nav">
+        <a href="#meta" class="tab-link active">Meta-информация</a>
+        <a href="#biography" class="tab-link">Биография</a>
+        <a href="#philosophy" class="tab-link">Философия работы</a>
+        <a href="#tools" class="tab-link">Инструменты</a>
+    </nav>
+
+    <form method="POST" enctype="multipart/form-data" class="admin-form" id="adminForm" novalidate>
+        {% csrf_token %}
+
+        <!-- Вкладка Meta-информация -->
+        <div id="meta" class="tab-content active">
+            {% include "custom_admin/includes/about_meta_form.html" %}
+        </div>
+
+        <!-- Вкладка Биография -->
+        <div id="biography" class="tab-content">
+            {% include "custom_admin/includes/about_biography_form.html" %}
+        </div>
+
+        <!-- Вкладка Философия работы -->
+        <div id="philosophy" class="tab-content">
+            {% include "custom_admin/includes/about_philosophy_form.html" %}
+        </div>
+
+        <!-- Вкладка Инструменты -->
+        <div id="tools" class="tab-content">
+            {% include "custom_admin/includes/about_tools_form.html" %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <button type="button" class="btn btn-outline" onclick="history.back()">Отменить</button>
+        </div>
+    </form>
+</div>

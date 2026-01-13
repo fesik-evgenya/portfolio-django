@@ -1,0 +1,15 @@
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
+
+{% set active_admin = 'about' %}
+{% block admin_content %}
+<header class="admin-header">
+  <h1>Редактирование "Обо мне"</h1>
+</header>
+
+{% include "custom_admin/includes/about_tabs.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/admin/about.js' %}"></script>
+{% endblock %}

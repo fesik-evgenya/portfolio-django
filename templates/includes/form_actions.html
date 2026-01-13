@@ -1,0 +1,11 @@
+<div class="form-actions">
+  <button type="submit" class="btn btn-primary">
+    {% if save_icon %}<i class="{{ save_icon }}"></i>{% endif %}
+    {{ save_text|default:"Сохранить изменения" }}
+  </button>
+  {% if cancel_url %}
+  <a href="{{ cancel_url }}" class="btn btn-secondary">Отмена</a>
+  {% else %}
+  <button type="button" class="btn btn-secondary" onclick="history.back()">Отмена</button>
+  {% endif %}
+</div>

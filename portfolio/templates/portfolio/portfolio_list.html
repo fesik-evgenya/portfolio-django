@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_extra %}
+<!-- Дополнительные SEO-теги для страницы портфолио -->
+<meta name="robots" content="index, follow">
+<link rel="alternate" hreflang="ru" href="{{ request.build_absolute_uri }}"/>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="portfolio-hero">
+    <div class="container">
+        <h1 class="page-title">Успешные проекты для бизнеса:<br> от идеи до реализации</h1>
+        <p class="hero__text">Реальные кейсы пакетных сайтов, запущенных за 14 дней.<br> Каждый проект адаптирован под
+            специфику бизнеса клиента.</p>
+
+        <div class="portfolio-filters">
+            <button class="btn btn--outline active" data-filter="all">Все проекты</button>
+            <button class="btn btn--outline" data-filter="startap">Стартап-Лаунч</button>
+            <button class="btn btn--outline" data-filter="profi">Профи-Портфолио</button>
+            <button class="btn btn--outline" data-filter="magazin">Магазин-Мини</button>
+            <button class="btn btn--outline" data-filter="kofeynya">Кофейня-Кафе</button>
+            <button class="btn btn--outline" data-filter="uslugi">Услуги-Мастер</button>
+            <button class="btn btn--outline" data-filter="salon">Салон-Клиника</button>
+            <button class="btn btn--outline" data-filter="agentstvo">Агентство-Студия</button>
+            <button class="btn btn--outline" data-filter="other">Индивидуальный проект</button>
+        </div>
+    </div>
+</section>
+
+<section class="portfolio-grid-section">
+    <div class="container">
+        <div class="portfolio-grid">
+            {% if portfolio_items %}
+            {% for item in portfolio_items %}
+            <div class="portfolio-card"
+                 data-package="{{ item.package|lower }}"
+                 data-title="{{ item.title|lower }}"
+                 data-id="{{ item.id }}">
+                <div class="portfolio-card__image">
+                    {% if item.main_image %}
+                    <img src="{{ item.main_image.image.url }}"
+                         alt="{{ item.title }}"
+                         loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/placeholder.jpg' %}"
+                         alt="{{ item.title }}"
+                         loading="lazy">
+                    {% endif %}
+                    <div class="portfolio-card__overlay">
+                        <a href="{% url 'portfolio:portfolio_detail' slug=item.slug %}" class="btn btn--primary">Подробнее</a>
+                    </div>
+                </div>
+                <div class="portfolio-card__content">
+                    <span class="portfolio-card__category">{{ item.category.name }}</span>
+                    <h3 class="portfolio-card__title">{{ item.title }}</h3>
+                    <p class="portfolio-card__desc">{{ item.features.0|default:"Профессиональный сайт" }}</p>
+                    <div class="portfolio-card__meta">
+                        <span>Срок: {{ item.duration }}</span>
+                        <span>|</span>
+                        <span>Пакет: {{ item.get_package_display }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state__icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/>
+                    </svg>
+                </div>
+                <h3>Обновление портфолио</h3>
+                <p>уже скоро</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if portfolio_items and portfolio_items|length > 6 %}
+        <div class="portfolio-pagination">
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn--outline">Показать ещё</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="portfolio-seo">
+    <div class="container">
+        <h2>Создание сайтов для бизнеса в Санкт-Петербурге</h2>
+        <p>Специализируюсь на разработке готовых решений для малого бизнеса СПб:
+            <span class="seo-keywords">
+                сайты для кофеен и ресурсы для салонов красоты, интернет-магазины для ИП,
+                сайты-визитки для самозанятых, промо-сайты для стартапов, лендинги для презентаций идей инвесторам
+            </span>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/portfolio.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
+
+{% set active_admin = 'contacts' %}
+{% block admin_content %}
+<header class="admin-header">
+  <h1>Редактирование контактов</h1>
+</header>
+
+<section class="admin-form-section">
+  <form method="POST" class="admin-form" id="contacts-form">
+    {% csrf_token %}
+
+    {% include "custom_admin/includes/contact_form_fields.html" %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Сохранить контакты</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/admin/contacts.js' %}"></script>
+{% endblock %}

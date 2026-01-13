@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static 'images/logo/favicon.svg' %}" type="image/svg+xml">
+
+    <!-- SEO-блоки -->
+    <title>{{ meta_title|default:"Готовые сайты для бизнеса в СПб | Создание сайтов под ключ | Евгения Фесик" }}</title>
+    <meta name="description"
+          content="{{ meta_description|default:'Купить готовый сайт для бизнеса в СПб недорого. Шаблоны сайтов для кофеен, салонов красоты, ИП с быстрым запуском.' }}">
+    <meta name="keywords"
+          content="{{ meta_keywords|default:'готовый сайт СПб, купить сайт Санкт-Петербург, сайт под ключ недорого СПб, шаблон сайта для бизнеса, создание сайтов быстро СПб, сайт для кофейни Санкт-Петербург, сайт для салона красоты СПб, сайт за 3 дня СПб, лендинг пейдж СПб, сайт-визитка СПб, сайт для ИП СПб, готовый шаблон сайта, быстрый запуск сайта, кастомизация сайта' }}">
+
+    <!-- Open Graph -->
+    <meta property="og:title"
+          content="{{ meta_title|default:'Готовые сайты для бизнеса в СПб | Создание сайтов под ключ' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo/og_image.jpg' %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri|safe }}">
+    <meta property="og:description" content="{{ meta_description }}">
+    <meta property="og:site_name" content="Евгения Фесик - веб-разработчик">
+    <meta property="og:locale" content="ru_RU">
+
+    <!-- Гео-метки -->
+    <meta name="geo.region" content="RU-SPE">
+    <meta name="geo.placename" content="Saint Petersburg">
+    <meta name="author" content="Fesik Evgeniya">
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="{{ request.build_absolute_uri|safe }}">
+
+    <!-- Шрифты и стили -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    <!-- Блок для дополнительных SEO-тегов -->
+    {% block seo_extra %}{% endblock %}
+
+    <!-- Блок для страничных стилей -->
+    {% block styles %}{% endblock %}
+
+    <!-- Блок для дополнительных CSS -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<canvas class="background-canvas" id="background-canvas"></canvas>
+<div class="page-wrapper">
+
+    {% include 'includes/header.html' %}
+
+    <main>
+        <!-- Контейнер для сообщений Django -->
+        {% if messages %}
+        <div class="flash-messages-container">
+            {% for message in messages %}
+            <div class="flash-message flash-{{ message.tags }}">
+                <span class="flash-text">{{ message }}</span>
+                <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Закрыть уведомление">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Основной контент страницы -->
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+{% include 'includes/footer.html' %}
+
+<!-- Основные скрипты -->
+<script src="{% static 'js/base.js' %}"></script>
+<script src="{% static 'js/index.js' %}"></script>
+
+<!-- Блок для дополнительных скриптов -->
+{% block scripts %}{% endblock %}
+
+<!-- Блок для дополнительных JS -->
+{% block extra_js %}{% endblock %}
+
+<!-- Микроразметка в футере -->
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Евгения Фесик",
+        "jobTitle": "Full-stack разработчик",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Санкт-Петербург",
+            "addressCountry": "RU",
+            "postalCode": "190000"
+        },
+        "description": "Фрилансер full-stack разработчик (Python/JS) в Санкт-Петербурге. Создаю сайты под ключ и MVP для бизнеса.",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/photo.jpg' %}",
+        "sameAs": [
+            "https://github.com/fesik-evgenya",
+            "https://t.me/Fesik_Evgeniya"
+        ]
+    }
+</script>
+
+<!-- Модальное окно Cookies -->
+<div id="cookiesModal" class="cookies-modal">
+    <div class="cookies-modal__content">
+        <div class="cookies-modal__header">
+            <i class="fas fa-cookie-bite cookies-modal__icon"></i>
+            <h3 class="cookies-modal__title">Мы используем cookie</h3>
+        </div>
+
+        <div class="cookies-modal__body">
+            <p class="cookies-modal__text">
+                Мы используем cookie и рекомендательные технологии для персонализации сервисов
+                и удобства пользователей.<br>Вы можете запретить сохранение cookie в настройках своего браузера.
+            </p>
+
+            <div class="cookies-modal__links">
+                <a href="{% url 'main:privacy' %}" class="cookies-modal__link" target="_blank">
+                    <i class="fas fa-shield-alt"></i>
+                    Политика конфиденциальности
+                </a>
+            </div>
+        </div>
+
+        <div class="cookies-modal__footer">
+            <button id="acceptCookies" class="btn btn--primary cookies-modal__btn">
+                <i class="fas fa-check"></i>
+                Хорошо
+            </button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

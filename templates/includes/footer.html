@@ -1,0 +1,86 @@
+{% load static %}
+<footer class="footer">
+    <div class="container">
+        <div class="footer__content">
+            <div class="footer__info">
+                <div class="footer__logo">
+                    <span class="logo__icon">&#x3c;&#x2f;&#x3e;</span>
+                    <span class="footer__logo-text">Евгения Фесик</span>
+                </div>
+                <p class="footer__tagline">Создаю цифровые решения, которые впечатляют. Санкт-Петербург</p>
+            </div>
+
+            <div class="footer__nav">
+                <h3 class="footer__heading">Навигация</h3>
+                <ul class="footer__links">
+                    <li><a href="{% url 'main:index' %}" class="footer__link">Главная</a></li>
+                    <li><a href="{% url 'solutions:solution_list' %}" class="footer__link">Магазин решений</a></li>
+                    <li><a href="{% url 'portfolio:portfolio_list' %}" class="footer__link">Портфолио</a></li>
+                    <li><a href="{% url 'main:about' %}" class="footer__link">Обо мне</a></li>
+                    <li><a href="{% url 'main:contacts' %}" class="footer__link">Контакты</a></li>
+                </ul>
+            </div>
+
+            <div class="footer__contact">
+                <h3 class="footer__heading">Контакты</h3>
+                <ul class="footer__links">
+                    {# Простая реализация без сложных фильтров #}
+                    {% if contact_info %}
+                    <li>
+                        <a href="mailto:{{ contact_info.email|default:'ganef85@mail.ru' }}"
+                           class="footer__link">
+                            <i class="fas fa-envelope footer__icon"></i>
+                            {{ contact_info.email|default:'ganef85@mail.ru' }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ contact_info.telegram|default:'https://t.me/Fesik_Evgeniya' }}"
+                           class="footer__link" rel="noopener">
+                            <i class="fab fa-telegram-plane footer__icon"></i>
+                            Telegram
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ contact_info.github|default:'https://github.com/fesik-evgenya' }}"
+                           class="footer__link" rel="noopener" aria-label="GitHub">
+                            <i class="fab fa-github footer__icon"></i>
+                            GitHub
+                        </a>
+                    </li>
+                    {% else %}
+                    {# Fallback если контактная информация не передана #}
+                    <li>
+                        <a href="mailto:ganef85@mail.ru" class="footer__link">
+                            <i class="fas fa-envelope footer__icon"></i>
+                            ganef85@mail.ru
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://t.me/Fesik_Evgeniya" class="footer__link" rel="noopener">
+                            <i class="fab fa-telegram-plane footer__icon"></i>
+                            @Fesik_Evgeniya
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/fesik-evgenya" class="footer__link" rel="noopener">
+                            <i class="fab fa-github footer__icon"></i>
+                            GitHub
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer__bottom">
+            <div class="footer__copyright">
+                &copy;2025 Евгения Фесик, Санкт-Петербург.<br>Все права защищены.
+            </div>
+            <div class="footer__seo-links">
+                <a href="{% url 'main:sitemap' %}">Карта сайта</a>
+                <span class="separator">|</span>
+                <a href="{% url 'main:privacy' %}">Политика конфиденциальности</a>
+            </div>
+        </div>
+    </div>
+</footer>

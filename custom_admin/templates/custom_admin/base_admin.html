@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_extra %}
+<!-- Запрет индексации -->
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="googlebot" content="noindex, nofollow, noarchive">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/admin/base_admin.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/admin_logout.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Боковое меню -->
+    {% include "custom_admin/includes/sidebar.html" %}
+
+    <!-- Основной контент -->
+    <main class="admin-main">
+        {% block admin_content %}{% endblock %}
+    </main>
+</div>
+
+<!-- Модальное окно подтверждения выхода -->
+{% include "custom_admin/includes/logout_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/admin/base_admin.js' %}"></script>
+{% include "custom_admin/includes/logout_script.html" %}
+{% endblock %}

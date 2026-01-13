@@ -1,0 +1,43 @@
+{% load static %}
+<header class="header">
+    <div class="container">
+        <div class="header__content">
+            <a href="{% url 'main:index' %}" class="logo" aria-label="Логотип Евгения Фесик">
+                <span class="logo__icon">&#x3c;&#x2f;&#x3e;</span>
+                <span class="logo__text">Евгения Фесик</span>
+            </a>
+            <div class="header__menu">
+                <div class="header__actions">
+                    <a href="https://t.me/Fesik_Evgeniya" class="header__telegram" target="_blank" rel="noopener"
+                       aria-label="Telegram">
+                        <img src="{% static 'images/icon/telegram_logo.svg' %}"
+                             alt="Связь через Telegram" class="telegram-icon">
+                    </a>
+                    <button class="menu-toggle" id="menuToggle" aria-label="Меню">
+                        <span class="menu-toggle__line"></span>
+                        <span class="menu-toggle__line"></span>
+                        <span class="menu-toggle__line"></span>
+                    </button>
+                </div>
+
+                <ul class="nav" id="navLinks">
+                    <li class="nav__item {% if request.resolver_match.url_name == 'index' %}nav__item--active{% endif %}">
+                        <a href="{% url 'main:index' %}" class="nav__link">Главная</a>
+                    </li>
+                    <li class="nav__item {% if 'solutions' in request.resolver_match.url_name %}nav__item--active{% endif %}">
+                        <a href="{% url 'solutions:solution_list' %}" class="nav__link">Магазин решений</a>
+                    </li>
+                    <li class="nav__item {% if 'portfolio' in request.resolver_match.url_name %}nav__item--active{% endif %}">
+                        <a href="{% url 'portfolio:portfolio_list' %}" class="nav__link">Портфолио</a>
+                    </li>
+                    <li class="nav__item {% if request.resolver_match.url_name == 'about' %}nav__item--active{% endif %}">
+                        <a href="{% url 'main:about' %}" class="nav__link">Обо мне</a>
+                    </li>
+                    <li class="nav__item {% if request.resolver_match.url_name == 'contacts' %}nav__item--active{% endif %}">
+                        <a href="{% url 'main:contacts' %}" class="nav__link">Контакты</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
