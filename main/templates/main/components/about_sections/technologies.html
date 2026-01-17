@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<div class="about__text">
+    <h2>{{ technology_tools_title|default:"Инструменты и технологии" }}</h2>
 
-</body>
-</html>
+    {% if technology_tools_content %}
+    {{ technology_tools_content|safe }}
+    {% endif %}
+
+    <!-- Инструменты из БД -->
+    {% if technology_tools %}
+    <div class="workflow">
+        <img src="{% static 'images/workstation.webp' %}"
+             alt="Рабочее место веб-разработчика в Санкт-Петербурге с Python кодом">
+
+        <div class="tools-grid">
+            {% for tool in technology_tools %}
+            <div class="tool-item">
+                <img src="{{ tool.icon.url }}" alt="{{ tool.name }}" width="40" height="40">
+                <span>{{ tool.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="workflow">
+        <img src="{% static 'images/workstation.webp' %}"
+             alt="Рабочее место веб-разработчика в Санкт-Петербурге с Python кодом">
+
+        <div class="tools-grid">
+            <div class="tool-item">
+                <img src="{% static 'images/icon/python.svg' %}" alt="Python">
+                <span>Python</span>
+            </div>
+            <div class="tool-item">
+                <img src="{% static 'images/icon/flask.svg' %}" alt="Flask">
+                <span>Flask</span>
+            </div>
+            <div class="tool-item">
+                <img src="{% static 'images/icon/JavaScript.svg' %}" alt="JavaScript">
+                <span>JavaScript</span>
+            </div>
+            <div class="tool-item">
+                <img src="{% static 'images/icon/html5.svg' %}" alt="HTML5">
+                <span>HTML5</span>
+            </div>
+            <div class="tool-item">
+                <img src="{% static 'images/icon/css3.svg' %}" alt="CSS3">
+                <span>CSS3</span>
+            </div>
+            <div class="tool-item">
+                <img src="{% static 'images/icon/figma.svg' %}" alt="Figma">
+                <span>Figma</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>

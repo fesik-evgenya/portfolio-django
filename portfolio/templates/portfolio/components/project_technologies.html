@@ -1,10 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% load static %}
+<div class="project-technologies">
+    <h2>Использованные технологии:</h2>
+    <div class="technologies-grid">
+        {% for technology in project.technologies %}
+        <div class="technology-item">
+            <div class="technology-icon">
+                {% if technology == 'HTML/CSS' %}
+                <i class="fab fa-html5 html-icon"></i>
+                {% elif technology == 'JavaScript' %}
+                <i class="fab fa-js-square js-icon"></i>
+                {% elif technology == 'Python' or technology == 'Django' %}
+                <i class="fab fa-python python-icon"></i>
+                {% elif technology == 'Bootstrap' %}
+                <i class="fab fa-bootstrap bootstrap-icon"></i>
+                {% elif technology == 'Git' %}
+                <i class="fab fa-git-alt git-icon"></i>
+                {% elif technology == 'PostgreSQL' %}
+                <i class="fas fa-database db-icon"></i>
+                {% else %}
+                <i class="fas fa-code code-icon"></i>
+                {% endif %}
+            </div>
+            <span class="technology-name">{{ technology }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>

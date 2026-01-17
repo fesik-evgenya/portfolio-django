@@ -1,0 +1,76 @@
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
+
+{% block title %}
+{% if solution %}Редактирование: {{ solution.name }}{% else %}Добавление решения{% endif %} | Админ-панель
+{% endblock %}
+
+{% block content %}
+<header class="admin-form-header">
+    <h1>{% if solution %}Редактирование решения: {{ solution.name }}{% else %}Добавление решения{% endif %}</h1>
+    <a href="{% url 'custom_admin:solution_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Назад к решениям
+    </a>
+</header>
+
+<section class="admin-form-section">
+    <form method="POST" enctype="multipart/form-data" id="solutionForm">
+        {% include "solutions/admin/includes/solution_form_fields.html" %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Сохранить
+            </button>
+            <a href="{% url 'custom_admin:solution_list' %}" class="btn btn-secondary">Отмена</a>
+
+            {% if solution %}
+            <button type="button" class="btn btn-danger" id="deleteSolutionBtn"
+                    data-url="{% url 'custom_admin:solution_delete' solution.id %}">
+                <i class="fas fa-trash"></i> Удалить
+            </button>
+            {% endif %}
+        </div>
+    </form>
+</section>
+
+<script src="{% static 'js/admin/solution-form.js' %}"></script>
+<script>
+    document.getElementById('deleteSolutionBtn')?.addEventListener('click', function() {
+        if (confirm('Вы уверены, что хотите удалить это решение? Это действие нельзя отменить.')) {
+            fetch(this.dataset.url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "{% url 'custom_admin:solution_list' %}";
+                } else {
+                    alert('Ошибка при удалении решения');
+                }
+            });
+        }
+    });
+
+    // Генерация slug из названия
+    document.getElementById('id_name')?.addEventListener('blur', function() {
+        if (!document.getElementById('id_slug').value) {
+            fetch("{% url 'custom_admin:generate_slug' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: this.value })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.slug) {
+                        document.getElementById('id_slug').value = data.slug;
+                    }
+                });
+        }
+    });
+</script>
+{% endblock %}

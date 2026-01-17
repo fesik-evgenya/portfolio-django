@@ -1,10 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block seo_extra %}
+<meta name="robots" content="noindex, follow">
+<meta name="description" content="Карта сайта Евгения Фесик - полный список страниц и разделов для удобной навигации.">
+{% endblock %}
+
+{% block content %}
+<div class="container sitemap-page">
+    <h1 class="page-title">Карта сайта</h1>
+
+    <div class="sitemap-content">
+        <section class="sitemap-section">
+            <h2>Основные страницы</h2>
+            <ul class="sitemap-list">
+                <li><a href="{% url 'main:index' %}">Главная страница</a></li>
+                <li><a href="{% url 'main:about' %}">Обо мне</a></li>
+                <li><a href="{% url 'main:contacts' %}">Контакты</a></li>
+            </ul>
+        </section>
+
+        <section class="sitemap-section">
+            <h2>Услуги и решения</h2>
+            <ul class="sitemap-list">
+                <li><a href="{% url 'solutions:list' %}">Магазин решений</a></li>
+                <li><a href="{% url 'portfolio:list' %}">Портфолио</a></li>
+                {% for solution in solutions %}
+                <li><a href="{% url 'solutions:detail' solution.slug %}">{{ solution.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="sitemap-section">
+            <h2>Проекты портфолио</h2>
+            <ul class="sitemap-list">
+                {% for item in portfolio_items %}
+                <li><a href="{% url 'portfolio:detail' item.slug %}">{{ item.title }} ({{ item.category }})</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="sitemap-section">
+            <h2>Правовая информация</h2>
+            <ul class="sitemap-list">
+                <li><a href="{% url 'main:privacy' %}">Политика конфиденциальности</a></li>
+                <li><a href="{% url 'main:terms' %}">Пользовательское соглашение</a></li>
+            </ul>
+        </section>
+
+        <section class="sitemap-section">
+            <h2>Категории решений</h2>
+            <ul class="sitemap-list">
+                {% for category in solution_categories %}
+                <li><a href="{% url 'solutions:category' category.slug %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="sitemap-section">
+            <h2>Категории портфолио</h2>
+            <ul class="sitemap-list">
+                {% for category in portfolio_categories %}
+                <li><a href="{% url 'portfolio:category' category.slug %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+    <div class="sitemap-info">
+        <p><strong>Всего страниц:</strong> {{ total_pages }}</p>
+        <p><strong>Последнее обновление:</strong> {% now "d.m.Y H:i" %}</p>
+    </div>
+
+    <div class="sitemap-footer">
+        <p>Карта сайта обновляется автоматически при добавлении новых страниц.</p>
+        <a href="{% url 'main:index' %}" class="btn btn--primary">На главную</a>
+    </div>
+</div>
+{% endblock %}

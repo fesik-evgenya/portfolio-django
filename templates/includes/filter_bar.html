@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<div class="filter-bar">
+    <div class="container">
+        <div class="filter-bar__content">
+            <div class="filter-bar__search">
+                <i class="fas fa-search"></i>
+                <input type="text"
+                       class="filter-search"
+                       placeholder="{{ placeholder|default:'Поиск...' }}"
+                       id="{{ search_id|default:'searchInput' }}">
+            </div>
 
-</body>
-</html>
+            <div class="filter-bar__controls">
+                {% if categories %}
+                <div class="filter-group">
+                    <label for="categoryFilter">Категория:</label>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">{{ all_categories_text|default:'Все категории' }}</option>
+                        {% for category in categories %}
+                        <option value="{{ category.slug|default:category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                {% if sort_options %}
+                <div class="filter-group">
+                    <label for="sortFilter">Сортировка:</label>
+                    <select id="sortFilter" class="filter-select">
+                        {% for option in sort_options %}
+                        <option value="{{ option.value }}" {% if option.selected %}selected{% endif %}>
+                            {{ option.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="filter-bar__actions">
+                <button type="button" class="btn btn--outline" id="resetFilters">
+                    <i class="fas fa-redo"></i> Сбросить
+                </button>
+                <button type="button" class="btn btn--primary" id="applyFilters">
+                    <i class="fas fa-filter"></i> Применить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

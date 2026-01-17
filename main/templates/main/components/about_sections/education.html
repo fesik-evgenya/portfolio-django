@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="about__list-section">
+    <h3>Образование и квалификация</h3>
 
-</body>
-</html>
+    {% if education_items %}
+    <ul class="about__list">
+        {% for item in education_items %}
+        <li>{{ item.text|safe }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <ul class="about__list">
+        <li><strong>СПБ Колледж Радиоэлектронного Приборостроения</strong> (2005) - "Программное обеспечение
+            вычислительной техники и автоматизированных систем"
+        </li>
+        <li><strong>СПб Государственный Политехнический Университет</strong> (2008) - Экономики и
+            менеджмента / Менеджмент организаций
+        </li>
+        <li><strong>Аналитик данных</strong> (2024) - "С нуля до разработки прикладных решений для бизнеса",
+            Томский Государственный Университет (256 ак.ч.)
+        </li>
+        <li><strong>Повышение квалификации</strong> (2025) - "Программирование и создание IT-продуктов на
+            языке Python", ИПАП, Санкт-Петербург (200 ак.ч.)
+        </li>
+    </ul>
+    {% endif %}
+</div>

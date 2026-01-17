@@ -1,46 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block extra_css %}
+{% block styles %}
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="container">
-    <div class="hero__content">
-      <h1 class="hero__title">Ваш готовый сайт за 2 недели!</h1>
-      <p class="hero__text">Создаю современные сайты и MVP для бизнеса — быстро, качественно, с фиксированной стоимостью</p>
-      <div class="hero__cta">
-        <p class="hero__cta-text">Превращаю ваши идеи в рабочие сайты</p>
-        <div class="hero__buttons">
-          <a href="{% url 'solutions:solution_list' %}" class="btn btn--primary">Выбрать шаблон</a>
-          <a href="{% url 'portfolio:portfolio_list' %}" class="btn btn--outline">Вдохновиться примерами</a>
-        </div>
-      </div>
+<!-- Герой секция - компонент -->
+{% include "main/components/hero_section.html" %}
 
-      <div class="hero__usp">
-        <div class="usp-item">
-          <i class="fas fa-rocket usp-icon"></i>
-          <span>Стартапы и малый бизнес СПб</span>
-        </div>
-        <div class="usp-item">
-          <i class="fas fa-sync-alt usp-icon"></i>
-          <span>Обновляйте контент сами</span>
-        </div>
-        <div class="usp-item">
-          <i class="fas fa-ruble-sign usp-icon"></i>
-          <span>Фиксированная стоимость</span>
-        </div>
-        <div class="usp-item">
-          <i class="fas fa-handshake usp-icon"></i>
-          <span>Личные встречи в Санкт-Петербурге</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
+<!-- Секция для кого -->
 <section class="audience">
   <div class="container">
     <h2 class="section-title">Для кого подойдут сайты</h2>
@@ -69,6 +38,7 @@
   </div>
 </section>
 
+<!-- Секция как это работает -->
 <section class="process">
   <div class="container">
     <h2 class="section-title">Как это работает</h2>
@@ -97,6 +67,7 @@
   </div>
 </section>
 
+<!-- Секция гарантий -->
 <section class="guarantees">
   <div class="container">
     <h2 class="section-title">Мои гарантии</h2>
@@ -125,6 +96,7 @@
   </div>
 </section>
 
+<!-- Секция CTA -->
 <section class="cta">
   <div class="container">
     <div class="cta-content">

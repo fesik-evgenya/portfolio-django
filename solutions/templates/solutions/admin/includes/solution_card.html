@@ -1,10 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<div class="solution-card" data-category="{{ solution.category.slug }}" data-title="{{ solution.name|lower }}">
+    <div class="solution-card-image">
+        {% if solution.main_image %}
+        <img src="{{ solution.main_image.image.url }}" alt="{{ solution.name }}" class="solution-image">
+        {% else %}
+        <div class="solution-image-placeholder">
+            <i class="fas fa-image"></i>
+        </div>
+        {% endif %}
 
-</body>
-</html>
+        <div class="solution-card-actions">
+            <a href="{% url 'custom_admin:solution_edit' solution.id %}" class="btn-icon" title="Редактировать">
+                <i class="fas fa-edit"></i>
+            </a>
+            <form method="post" action="{% url 'custom_admin:solution_delete' solution.id %}" class="delete-form">
+                {% csrf_token %}
+                <button type="submit" class="btn-icon danger" title="Удалить"
+                        onclick="return confirm('Вы уверены, что хотите удалить это решение?')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="solution-card-info">
+        <h3 class="solution-card-title">{{ solution.name }}</h3>
+
+        <div class="solution-card-meta">
+            <span class="solution-category">
+                {{ solution.category.name }}
+            </span>
+            <span class="solution-price">от {{ solution.price }} ₽</span>
+        </div>
+
+        <div class="solution-card-description">
+            {{ solution.description|truncatechars:100 }}
+        </div>
+
+        <div class="solution-card-badges">
+            {% if solution.is_new %}
+            <span class="badge badge-new">Новинка</span>
+            {% endif %}
+            {% if solution.is_popular %}
+            <span class="badge badge-popular">Популярное</span>
+            {% endif %}
+            {% if not solution.is_active %}
+            <span class="badge badge-inactive">Неактивно</span>
+            {% endif %}
+        </div>
+
+        <div class="solution-card-footer">
+            <div class="solution-stats">
+                <span class="stat">
+                    <i class="fas fa-clock"></i> {{ solution.delivery_days }} дн.
+                </span>
+                <span class="stat">
+                    <i class="fas fa-shopping-cart"></i> {{ solution.orders.count }} заказов
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

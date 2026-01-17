@@ -1,10 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="map-schedule">
+    <div class="map-container">
+        <h2 class="section-title">Возможны встречи в этих районах</h2>
+        <div id="map" class="map"></div>
+        {% if contact_info and contact_info.address %}
+        <p class="map-note">Район: {{ contact_info.address }}</p>
+        {% else %}
+        <p class="map-note">Район: Санкт-Петербург</p>
+        {% endif %}
+    </div>
 
-</body>
-</html>
+    <div class="schedule-container">
+        <h2 class="section-title">График</h2>
+        <div class="schedule-card">
+            <div class="schedule-card-info">
+                <div class="schedule-card-hours">
+                    <i class="far fa-clock schedule-icon"></i>
+                    <p class="schedule-hours">Пн-Пт</p>
+                    <p class="schedule-hours">10:00-18:00</p>
+                </div>
+                <p class="schedule-note">
+                    <i class="fab fa-telegram-plane"></i>
+                    Ответ в Telegram в течение 1 часа в рабочее время
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

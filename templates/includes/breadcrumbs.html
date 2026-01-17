@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% load static %}
+<nav class="breadcrumb" aria-label="Хлебные крошки">
+    <div class="container">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="{% url 'main:index' %}">Главная</a>
+            </li>
+            {% if breadcrumbs %}
+            {% for crumb in breadcrumbs %}
+            {% if forloop.last %}
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ crumb.name }}
+            </li>
+            {% else %}
+            <li class="breadcrumb-item">
+                <a href="{{ crumb.url }}">{{ crumb.name }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            {% elif current_page %}
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ current_page }}
+            </li>
+            {% endif %}
+        </ol>
+    </div>
+</nav>

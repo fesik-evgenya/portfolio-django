@@ -1,10 +1,446 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}Заказы решений | Админ-панель{% endblock %}
+
+{% block content %}
+<header class="admin-header">
+    <h1>Заказы решений</h1>
+    <div class="header-stats">
+        <div class="stat">
+            <span class="stat-value">{{ total_orders }}</span>
+            <span class="stat-label">Всего заказов</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value">{{ pending_orders }}</span>
+            <span class="stat-label">Ожидают</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value">{{ completed_orders }}</span>
+            <span class="stat-label">Завершены</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value">{{ total_revenue|default:0 }} ₽</span>
+            <span class="stat-label">Выручка</span>
+        </div>
+    </div>
+</header>
+
+<!-- Фильтры и поиск -->
+<div class="orders-filters">
+    <form method="GET" class="filter-form">
+        <div class="filter-controls">
+            <div class="filter-group">
+                <label>Статус:</label>
+                <select name="status" class="form-control">
+                    <option value="">Все статусы</option>
+                    {% for status in status_choices %}
+                    <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}selected{% endif %}>
+                        {{ status.1 }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Решение:</label>
+                <select name="solution" class="form-control">
+                    <option value="">Все решения</option>
+                    {% for sol in all_solutions %}
+                    <option value="{{ sol.id }}" {% if request.GET.solution == sol.id|stringformat:"i" %}selected{% endif %}>
+                    {{ sol.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Дата от:</label>
+                <input type="date" name="date_from" class="form-control"
+                       value="{{ request.GET.date_from|default:'' }}">
+            </div>
+
+            <div class="filter-group">
+                <label>Дата до:</label>
+                <input type="date" name="date_to" class="form-control"
+                       value="{{ request.GET.date_to|default:'' }}">
+            </div>
+
+            <div class="filter-group">
+                <label>Поиск:</label>
+                <input type="text" name="search" class="form-control"
+                       placeholder="Клиент, email, телефон..."
+                       value="{{ request.GET.search|default:'' }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-filter"></i> Применить
+                </button>
+                <a href="{% url 'custom_admin:solution_orders' %}" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Сбросить
+                </a>
+
+                {% if request.GET %}
+                <a href="{% url 'custom_admin:export_orders' %}?{{ request.GET.urlencode }}"
+                   class="btn btn-success">
+                    <i class="fas fa-file-export"></i> Экспорт
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Таблица заказов -->
+<div class="table-responsive">
+    <table class="table table-hover admin-table">
+        <thead class="thead-dark">
+        <tr>
+            <th width="80">ID</th>
+            <th>Клиент / Контакты</th>
+            <th>Решение</th>
+            <th width="120">Сумма</th>
+            <th width="120">Статус</th>
+            <th width="150">Дата создания</th>
+            <th width="120">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+        <tr class="order-row status-{{ order.status }}">
+            <td>
+                <strong>#{{ order.id }}</strong>
+                <br>
+                <small class="text-muted">{{ order.uuid|slice:":8" }}...</small>
+            </td>
+            <td>
+                <div class="customer-info">
+                    <strong>{{ order.customer_name }}</strong>
+                    <div class="customer-contacts">
+                        <small><i class="fas fa-envelope"></i> {{ order.customer_email }}</small>
+                        {% if order.customer_phone %}
+                        <br>
+                        <small><i class="fas fa-phone"></i> {{ order.customer_phone }}</small>
+                        {% endif %}
+                    </div>
+                    {% if order.customer_message %}
+                    <div class="message-preview" title="{{ order.customer_message }}">
+                        <i class="fas fa-comment"></i> {{ order.customer_message|truncatechars:60 }}
+                    </div>
+                    {% endif %}
+                </div>
+            </td>
+            <td>
+                <div class="solution-info">
+                    <a href="{% url 'custom_admin:solution_detail' order.solution.id %}"
+                       class="solution-link">
+                        {{ order.solution.name }}
+                    </a>
+                    <br>
+                    <small class="text-muted">
+                        {{ order.solution.category.name }}
+                        {% if order.solution.package_type %}
+                        • {{ order.solution.get_package_type_display }}
+                        {% endif %}
+                    </small>
+                </div>
+            </td>
+            <td>
+                <strong class="price">{{ order.total_amount }} ₽</strong>
+            </td>
+            <td>
+                <div class="status-container">
+                        <span class="status-badge status-{{ order.status }}">
+                            {{ order.get_status_display }}
+                        </span>
+                    <div class="status-actions">
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                    data-toggle="dropdown">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                {% for status in status_choices %}
+                                {% if status.0 != order.status %}
+                                <a class="dropdown-item" href="#"
+                                   onclick="updateOrderStatus({{ order.id }}, '{{ status.0 }}')">
+                                    → {{ status.1 }}
+                                </a>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                {{ order.created_at|date:"d.m.Y" }}
+                <br>
+                <small class="text-muted">{{ order.created_at|date:"H:i" }}</small>
+            </td>
+            <td>
+                <div class="table-actions">
+                    <a href="{% url 'custom_admin:solution_order_detail' order.id %}"
+                       class="btn btn-sm btn-info" title="Просмотр">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{% url 'custom_admin:solution_order_edit' order.id %}"
+                       class="btn btn-sm btn-warning" title="Редактировать">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="mailto:{{ order.customer_email }}?subject=Заказ%20#{{ order.id }}"
+                       class="btn btn-sm btn-success" title="Написать клиенту">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" class="text-center py-5">
+                <div class="empty-state">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h4>Заказы не найдены</h4>
+                    <p class="text-muted">{% if request.GET %}Измените параметры фильтрации{% else %}Заказов еще нет{% endif %}</p>
+                    {% if not request.GET %}
+                    <a href="{% url 'solutions:list' %}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt"></i> Перейти в магазин решений
+                    </a>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Пагинация -->
+{% if is_paginated %}
+<nav aria-label="Навигация по страницам">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ query_string }}">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link">{{ num }}</span>
+        </li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ num }}{{ query_string }}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ query_string }}">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+
+    <div class="text-center text-muted mt-2">
+        Показано {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ paginator.count }} заказов
+    </div>
+</nav>
+{% endif %}
+
+<!-- Статистика -->
+<div class="orders-summary mt-5">
+    <h4><i class="fas fa-chart-pie"></i> Статистика</h4>
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="summary-icon bg-primary">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="summary-content">
+                <h5>Общая выручка</h5>
+                <p class="summary-value">{{ total_revenue|default:0 }} ₽</p>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon bg-success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="summary-content">
+                <h5>Завершено заказов</h5>
+                <p class="summary-value">{{ completed_orders }}</p>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon bg-warning">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="summary-content">
+                <h5>Средний чек</h5>
+                <p class="summary-value">{{ average_order|default:0 }} ₽</p>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon bg-info">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="summary-content">
+                <h5>Заказов за месяц</h5>
+                <p class="summary-value">{{ monthly_orders }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/admin/solution-orders.js' %}"></script>
+<script>
+    // Быстрое обновление статуса заказа
+    function updateOrderStatus(orderId, newStatus) {
+        if (confirm('Изменить статус заказа?')) {
+            fetch(`/admin/solution-orders/${orderId}/update-status/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({status: newStatus})
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Ошибка: ' + data.error);
+                    }
+                });
+        }
+    }
+
+    // Экспорт заказов
+    document.getElementById('exportBtn')?.addEventListener('click', function() {
+        const params = new URLSearchParams(window.location.search);
+        window.open(`/admin/export/orders/?${params.toString()}`, '_blank');
+    });
+
+    // Быстрый просмотр деталей заказа
+    document.querySelectorAll('.order-row').forEach(row => {
+        row.addEventListener('dblclick', function() {
+            const orderId = this.querySelector('td:first-child strong').textContent.slice(1);
+            window.location.href = `/admin/solution-orders/${orderId}/`;
+        });
+    });
+</script>
+
+<style>
+    .orders-filters {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        border: 1px solid #e9ecef;
+    }
+    .filter-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        align-items: end;
+    }
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+    .filter-group label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #495057;
+    }
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        align-items: end;
+    }
+    .order-row:hover {
+        background-color: #f8f9fa;
+    }
+    .customer-info {
+        max-width: 300px;
+    }
+    .customer-contacts {
+        margin-top: 5px;
+    }
+    .message-preview {
+        margin-top: 8px;
+        padding: 8px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #6c757d;
+        cursor: help;
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .solution-link {
+        font-weight: 600;
+        color: #4a6cf7;
+    }
+    .status-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-processing { background: #d1ecf1; color: #0c5460; }
+    .status-completed { background: #d4edda; color: #155724; }
+    .status-cancelled { background: #f8d7da; color: #721c24; }
+    .table-actions {
+        display: flex;
+        gap: 5px;
+    }
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .summary-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        border: 1px solid #e9ecef;
+    }
+    .summary-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+    }
+    .summary-value {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 5px 0;
+        color: #343a40;
+    }
+</style>
+{% endblock %}

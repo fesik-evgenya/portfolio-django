@@ -1,0 +1,12 @@
+{% load static %}
+<section class="solutions-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>{{ title|default:"Не нашли подходящее решение?" }}</h2>
+            <p>{{ description|default:"Расскажите о вашем проекте, и я разработаю индивидуальное решение специально для вас" }}</p>
+            <a href="{% url button_url|default:'main:contacts' %}" class="btn btn--primary btn--large">
+                {{ button_text|default:"Обсудить индивидуальный проект" }}
+            </a>
+        </div>
+    </div>
+</section>

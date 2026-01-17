@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<div class="social-links">
+    {% if title %}
+    <h4 class="social-title">{{ title }}</h4>
+    {% endif %}
 
-</body>
-</html>
+    <div class="social-icons">
+        {% if telegram %}
+        <a href="{{ telegram }}" class="social-link" target="_blank" rel="noopener" aria-label="Telegram">
+            <i class="fab fa-telegram-plane"></i>
+        </a>
+        {% endif %}
+
+        {% if github %}
+        <a href="{{ github }}" class="social-link" target="_blank" rel="noopener" aria-label="GitHub">
+            <i class="fab fa-github"></i>
+        </a>
+        {% endif %}
+
+        {% if email %}
+        <a href="mailto:{{ email }}" class="social-link" aria-label="Email">
+            <i class="fas fa-envelope"></i>
+        </a>
+        {% endif %}
+
+        {% if linkedin %}
+        <a href="{{ linkedin }}" class="social-link" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <i class="fab fa-linkedin"></i>
+        </a>
+        {% endif %}
+
+        {% if instagram %}
+        <a href="{{ instagram }}" class="social-link" target="_blank" rel="noopener" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+        {% endif %}
+
+        {% if vk %}
+        <a href="{{ vk }}" class="social-link" target="_blank" rel="noopener" aria-label="ВКонтакте">
+            <i class="fab fa-vk"></i>
+        </a>
+        {% endif %}
+
+        {% if youtube %}
+        <a href="{{ youtube }}" class="social-link" target="_blank" rel="noopener" aria-label="YouTube">
+            <i class="fab fa-youtube"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>

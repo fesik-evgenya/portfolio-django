@@ -1,16 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block meta_title %}404 - Страница не найдена | Full-stack разработчик{% endblock %}
-{% block meta_description %}Запрашиваемая страница не найдена. Вернитесь на главную или ознакомьтесь с моими услугами по разработке сайтов под ключ.{% endblock %}
-
 {% block seo_extra %}
 <!-- Запрет индексации для страницы 404 -->
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="googlebot" content="noindex, nofollow, noarchive">
 {% endblock %}
 
-{% block extra_css %}
+{% block styles %}
 <link rel="stylesheet" href="{% static 'css/404.css' %}">
 {% endblock %}
 
@@ -25,35 +22,8 @@
                 Я помогу вам найти нужную информацию или создать новый цифровой продукт для вашего бизнеса.
             </p>
 
-            <div class="error__actions">
-                <a href="{% url 'main:index' %}" class="btn btn--primary">
-                    <i class="fas fa-home"></i>
-                    На главную
-                </a>
-                <a href="{% url 'solutions:solution_list' %}" class="btn btn--outline">
-                    <i class="fas fa-store"></i>
-                    Магазин решений
-                </a>
-                <a href="{% url 'portfolio:portfolio_list' %}" class="btn btn--outline">
-                    <i class="fas fa-briefcase"></i>
-                    Портфолио
-                </a>
-            </div>
-
-            <div class="error__links">
-                <a href="{% url 'main:about' %}" class="error__link">
-                    <i class="fas fa-user"></i>
-                    Обо мне
-                </a>
-                <a href="{% url 'main:contacts' %}" class="error__link">
-                    <i class="fas fa-envelope"></i>
-                    Контакты
-                </a>
-                <a href="{% url 'main:sitemap' %}" class="error__link">
-                    <i class="fas fa-sitemap"></i>
-                    Карта сайта
-                </a>
-            </div>
+            <!-- Компонент: Действия и ссылки при ошибке -->
+            {% include "main/components/error_details.html" %}
         </div>
     </div>
 </section>

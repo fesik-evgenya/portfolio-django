@@ -21,21 +21,30 @@
                 </div>
 
                 <ul class="nav" id="navLinks">
-                    <li class="nav__item {% if request.resolver_match.url_name == 'index' %}nav__item--active{% endif %}">
+                    <li class="nav__item {% if active_page == 'index' %}nav__item--active{% endif %}">
                         <a href="{% url 'main:index' %}" class="nav__link">Главная</a>
                     </li>
-                    <li class="nav__item {% if 'solutions' in request.resolver_match.url_name %}nav__item--active{% endif %}">
-                        <a href="{% url 'solutions:solution_list' %}" class="nav__link">Магазин решений</a>
+                    <li class="nav__item {% if active_page == 'solutions' %}nav__item--active{% endif %}">
+                        <a href="{% url 'solutions:list' %}" class="nav__link">Магазин решений</a>
                     </li>
-                    <li class="nav__item {% if 'portfolio' in request.resolver_match.url_name %}nav__item--active{% endif %}">
-                        <a href="{% url 'portfolio:portfolio_list' %}" class="nav__link">Портфолио</a>
+                    <li class="nav__item {% if active_page == 'portfolio' %}nav__item--active{% endif %}">
+                        <a href="{% url 'portfolio:list' %}" class="nav__link">Портфолио</a>
                     </li>
-                    <li class="nav__item {% if request.resolver_match.url_name == 'about' %}nav__item--active{% endif %}">
+                    <li class="nav__item {% if active_page == 'about' %}nav__item--active{% endif %}">
                         <a href="{% url 'main:about' %}" class="nav__link">Обо мне</a>
                     </li>
-                    <li class="nav__item {% if request.resolver_match.url_name == 'contacts' %}nav__item--active{% endif %}">
+                    <li class="nav__item {% if active_page == 'contacts' %}nav__item--active{% endif %}">
                         <a href="{% url 'main:contacts' %}" class="nav__link">Контакты</a>
                     </li>
+
+                    <!-- Админская ссылка для авторизованных пользователей -->
+                    {% if user.is_authenticated and user.is_staff %}
+                    <li class="nav__item {% if active_page == 'admin' %}nav__item--active{% endif %}">
+                        <a href="{% url 'custom_admin:dashboard' %}" class="nav__link">
+                            <i class="fas fa-cog"></i> Админка
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

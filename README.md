@@ -34,30 +34,41 @@ portfolio-django/                 # Проект Django 5.2
 │   ├── migrations/               # Миграции базы данных
 │   │   └── __init__.py 
 │   ├── templates/                # Статические файлы
-│   │   │   └── custom_admin/
-│   │   │       ├── about_biography_form.html    # (пустой)       
-│   │   │       ├── about_meta_form.html         # (пустой)  
-│   │   │       ├── about_philosophy_form.html   # (пустой)  
-│   │   │       ├── about_tabs.html              # Вкладка <Обо мне>
-│   │   │       ├── admin_header.html            # (пустой) 
-│   │   │       ├── contact_form_fields.html     # Форма редактирования контактов  
-│   │   │       ├── empty_state.html             # (пустой)  
-│   │   │       ├── logout_modal.html            # Модальное окно выхода 
-│   │   │       ├── logout_script.html           # Скрипт для модального окна выхода (перенести в компонеты js)
-│   │   │       └── sidebar.html                 # Сайдбар переклчения между разделами  
 │   │   └── custom_admin/
-│   │       ├── about.html        # Редактирование страницы <Обо мне>       
-│   │       ├── base_admin.html   # Базовый шаблон кастомной Админ-Панели  
-│   │       ├── contacts.html     # Редактирование страницы <Контакты>  
-│   │       ├── dashboard.html    # Даш-борт (Аналитика посешаемости)  
-│   │       └── login.html        # Страница входа   
+│   │       │   └── includes/
+│   │       │       ├── about_biography_form.html    # (пустой)        
+│   │       │       ├── about_meta_form.html         # (пустой)  
+│   │       │       ├── about_philosophy_form.html   # (пустой)  
+│   │       │       ├── about_tabs.html              # Вкладка <Обо мне>
+│   │       │       ├── about_tools_form.html        # Форма для инструментов (пустой)
+│   │       │       ├── admin_header.html            # (пустой) 
+│   │       │       ├── contact_form_fields.html     # Форма редактирования контактов  
+│   │       │       ├── empty_state.html             # (пустой)  
+│   │       │       ├── logout_modal.html            # Модальное окно выхода 
+│   │       │       ├── logout_script.html           # Скрипт для модального окна выхода (перенести в компонеты js)
+│   │       │       └── sidebar.html                 # Сайдбар переключения между разделами  
+│   │       │
+│   │       ├── about.html                    # Редактирование страницы <Обо мне>       
+│   │       ├── base_admin.html               # Базовый шаблон кастомной Админ-Панели  
+│   │       ├── contacts.html                 # Редактирование страницы <Контакты>  
+│   │       ├── dashboard.html                # Даш-борт (Аналитика посешаемости)
+│   │       ├── login.html                    # Страница входа
+│   │       ├── portfolio_create.html         # Добавление проекта 
+│   │       ├── portfolio_detail_admin.html   # Детальная страница просмотра проекта      
+│   │       ├── portfolio_edit.html           # Внесение нового проекта
+│   │       ├── portfolio_list.html           # Главная страница управления проектами
+│   │       ├── solution_detail.html          # Детальная страница просмотра решения  
+│   │       ├── solution_form.html            # Форма создания/редактирования решения     
+│   │       ├── solution_list.html            # Главная страница управления решениями
+│   │       ├── solution_order_detail.html    # Детализация конкретного заказа + управление статусом
+│   │       └── solution_orders.html          # Таблица заказов решений с фильтрами по статусам   
 │   ├── __init__.py               # Инициализация приложения       
 │   ├── admin.py                  # Регистрация моделей в админ-панели
 │   ├── apps.py                   # Конфигурация приложения
 │   ├── models.py                 # Модели данных приложения
 │   ├── tests.py                  # Тесты (пока пусто)
 │   └── views.py                  # Основные представления
-├── main/                         # Главное приложение
+├── main/                         # Главное приложение для сборки всего проекта
 │   ├── migrations/               # Миграции базы данных
 │   │   └── __init__.py 
 │   ├── templates/                # Статические файлы
@@ -73,98 +84,90 @@ portfolio-django/                 # Проект Django 5.2
 │   │       │   ├── sitemap.html      # Карта сайта (HTML версия) 
 │   │       │   └── terms.html        # Пользовательское соглашени
 │   │       └── components/
-│   │           ├── hero_section.html  # Герой-секция для главной (пустой)       
+│   │           ├── cookie_consent.html  # Модальное окно согласия с Cooki 
+│   │           ├── error_details.html   # Навигация окна страницы ошибки доступа
+│   │           ├── hero_section.html    # Герой-секция для главной   
+│   │           ├── hero_section.html    # Контент страницы на тех обслуживании         
 │   │           ├── about_sections/         # Секции страницы <Обо мне>       
-│   │           │   ├── biography.html      # Секция <Биография> (пустой)    
-│   │           │   ├── philosophy.html     # Секция <Философия работы> (пустой)    
-│   │           │   ├── education.html      # Секция <Образование> (пустой)    
-│   │           │   └── technologies.html   # Секция <Технологии> (пустой)    
+│   │           │   ├── biography.html      # Секция <Биография>     
+│   │           │   ├── philosophy.html     # Секция <Философия работы>   
+│   │           │   ├── education.html      # Секция <Образование>    
+│   │           │   └── technologies.html   # Секция <Технологии>     
 │   │           └── contact_sections/       # Секции страницы <Контакты> 
-│   │               ├── contact_info.html   # Контактная информация (пустой) 
-│   │               ├── contact_form.html   # Форма обратной связи (специфичная для main) (пустое)  
-│   │               └── map.html            # Карта/локация (пустое)        
+│   │               ├── contact_info.html   # Контактная информация  
+│   │               ├── contact_form.html   # Форма обратной связи (специфичная для main)
+│   │               └── map.html            # Карта/локация        
 │   ├── __init__.py               # Инициализация приложения       
 │   ├── admin.py                  # Регистрация моделей в админ-панели
 │   ├── apps.py                   # Конфигурация приложения
 │   ├── models.py                 # Модели данных приложения (пока всего проекта)
 │   ├── tests.py                  # Тесты (пока пусто)
 │   └── views.py                  # Основные представления                 
-├── portfolio/                    # Работа с разделом <Портфолио> в кастомной админ-панели
+├── portfolio/                    # Приложение для части с портфолио уже сделанных проектов
 │   ├── migrations/               # Миграции базы данных
 │   │   └── __init__.py 
 │   ├── templates/                # Статические файлы
 │   │   ├── portfolio/
 │   │   │   └── admin/        # Админ-шаблоны для решений (наследуются от custom_admin)
-│   │   │       │   ├── portfolio_list.html          # Список проектов (админка) (пустой)
-│   │   │       │   ├── portfolio_create.html        # Создание нового проекта (пустой)
-│   │   │       │   ├── portfolio_edit.html          # Редактирование проекта (пустой)
-│   │   │       │   ├── portfolio_detail_admin.html  # Просмотр проекта в админке (пустой)
-│   │   │       │   └── portfolio_orders.html        # Список заказов решений (пустой)
+│   │   │       │   ├── portfolio_create.html        # Форма создания нового проекта портфолио
+│   │   │       │   ├── portfolio_edit.html          # Форма редактирования существующего проекта
+│   │   │       │   └── portfolio_detail_admin.html  # Детальный просмотр проекта в админке
 │   │   │       └── includes/
-│   │   │           ├── portfolio_filters.html        # Фильтры для списка проектов (пустой)
-│   │   │           ├── portfolio_card.html           # Карточка проекта в админке (пустой)
-│   │   │           ├── portfolio_form_fields.html    # Поля формы проекта (пустой)
-│   │   │           ├── portfolio_image_manager.html  # Менеджер изображений проекта (пустой)
-│   │   │           └── portfolio_modal.html          # Модальное окно редактирования проекта (пустой)
-│   │   ├── portfolio_detail.html      # Публичная детализация проекта  
-│   │   ├── portfolio_list.html        # Публичный каталог проекта     
-│   │   ├── portfolio_categories.html  # Проекты по категориям (пустой)   
-│   │   ├── portfolio_filter.html      # Фильтрация решений (публичная) (пустой)       
+│   │   │           ├── portfolio_filters.html        # Панель фильтров для списка проектов
+│   │   │           ├── portfolio_card.html           # Карточка проекта для админ-сетки
+│   │   │           ├── portfolio_form_fields.html    # Поля формы проекта (интегрируется)
+│   │   │           └── portfolio_image_manager.html  # Менеджер изображений проекта
+│   │   ├── portfolio_detail.html      # Публичная детальная страница проекта  
+│   │   ├── portfolio_list.html        # Публичный каталог проектов         
 │   │   └── components/                     # Компоненты проектов 
-│   │       ├── project_card.html           # Карточка проекта (публичная) (пустой)   
-│   │       ├── project_gallery.html        # Галерея проекта (пустой)   
-│   │       ├── project_technologies.html   # Стек технологий проекта (пустой)   
-│   │       ├── project_testimonial.html    # Отзыв клиента (пустой)   
-│   │       ├── project_requirements.html   # Форма заказа проекта(пустой)   
-│   │       ├── project_meta.html           # Мета-информация проекта (пустой)   
-│   │       ├── category_nav.html           # Навигация по категориям (пустой)   
-│   │       └── related_project.html        # Похожие проекты (пустой)      
+│   │       ├── project_card.html           # Карточка проекта (публичная)   
+│   │       ├── project_gallery.html        # Галерея изображений проекта   
+│   │       ├── project_technologies.html   # Стек технологий проекта   
+│   │       └── project_testimonial.html    # Отзыв клиента       
 │   ├── __init__.py               # Инициализация приложения       
 │   ├── admin.py                  # Регистрация моделей в админ-панели
 │   ├── apps.py                   # Конфигурация приложения
 │   ├── models.py                 # Модели данных приложения (пока пусто)
 │   ├── tests.py                  # Тесты (пока пусто)
 │   └── views.py                  # Основные представления 
-├── portfolio_core/               # 
+├── portfolio_core/               # Основной проект Django
 │   ├── __init__.py               # Инициализация приложения       
-│   ├── asgi.py                   # 
-│   ├── settings.py               # 
-│   ├── urls.py                   # 
-│   └── wsgi.py                   # 
-├── solutions/                    # Работа с разделом <Решения> в кастомной админ-панели
+│   ├── asgi.py                   # ASGI-конфигурация для асинхронных серверов
+│   ├── settings.py               # Основные настройки проекта
+│   ├── urls.py                   # Корневые URL-маршруты проекта
+│   └── wsgi.py                   # WSGI-конфигурация для развертывания
+├── solutions/                    # Приложение для части с магазином решений
 │   ├── migrations/               # Миграции базы данных
 │   │   └── __init__.py 
 │   ├── templates/                # Статические файлы
 │   │   └── solutions/
 │   │       │   └── admin/        # Админ-шаблоны для решений (наследуются от custom_admin)
-│   │       │       │   ├── solution_list.html          # Список решений (админка) (пустой)
-│   │       │       │   ├── solution_create.html        # Создание нового решения (пустой)
-│   │       │       │   ├── solution_edit.html          # Редактирование решения (пустой)
-│   │       │       │   ├── solution_detail_admin.html  # Просмотр решения в админке (пустой)
-│   │       │       │   └── solution_orders.html        # Список заказов решений (пустой)
+│   │       │       │   ├── solution_create.html        # Форма создания нового решения с выбором типа (пакет/модуль)
+│   │       │       │   ├── solution_edit.html          # Форма редактирования существующего решения + управление изображениям
+│   │       │       │   ├── solution_detail_admin.html  # Детальный просмотр решения в админке со всей статистикой
+│   │       │       │   └── solution_orders.html        # Полный список заказов с фильтрами и аналитикой продаж
 │   │       │       └── includes/
-│   │       │           ├── solution_filters.html        # Фильтры для списка решений (пустой)
-│   │       │           ├── solution_card.html           # Карточка решения в админке (пустой)
-│   │       │           ├── solution_form_fields.html    # Поля формы решения (пустой)
-│   │       │           ├── solution_image_manager.html  # Менеджер изображений решений (пустой)
-│   │       │           ├── solution_list.html           # Редактирование списка кейсов решения (пустой)
-│   │       │           └── solution_modal.html          # Модальное окно редактирования решения (пустой)
+│   │       │           ├── solution_filters.html        # Панель фильтров (категории, статусы, поиск)
+│   │       │           ├── solution_card.html           # Карточка решения для админ-сетки
+│   │       │           ├── solution_form_fields.html    # Компонент полей формы (интегрируется в solution_form.html)
+│   │       │           └── solution_image_manager.html  # Управление галереей изображений решения
 │   │       ├── package_detail.html       # Детализация пакетного решения
 │   │       ├── solution_detail.html      # Публичная детализация решения  
-│   │       ├── solution_list.html        # Публичный каталог решений     
-│   │       ├── solution_categories.html  # Категории решений  (пустой)   
-│   │       ├── solution_filter.html      # Фильтрация решений (публичная) (пустой)    
-│   │       ├── order_form.html           # Форма заказа решения (пустой)   
-│   │       ├── order_success.html        # Страница успешного заказа (пустой)    
-│   │       └── components/                     # Компоненты решений 
-│   │           ├── solution_card.html          # Карточка решения (публичная) (пустой)   
-│   │           ├── order_form.html             # Форма заказа решения (пустой)   
-│   │           ├── solution_features.html      # Особенности решения (пустой)   
-│   │           ├── solution_pricing.html       # Блок с ценой и сроками (пустой)   
-│   │           ├── solution_requirements.html  # Форма заказа решения (пустой)   
-│   │           ├── category_filter.html        # Фильтр по категориям (пустой)   
-│   │           ├── package_comparison.html     # Сравнение пакетов решений (пустой)   
-│   │           └── related_solutions.html      # Похожие решения (пустой)     
+│   │       ├── solution_list.html        # Публичный каталог решений        
+│   │       └── components/                      # Компоненты решений 
+│   │           ├── cta.html                     # Призыв к действию (публичная)
+│   │           ├── faq.html                     # FAQ по решениям (публичная) 
+│   │           ├── hero_with_search.html        # Поиск по решениям (публичная) 
+│   │           ├── package_comparison.html      # Сравнение пакетов (публичная)    
+│   │           ├── related_solutions.html       # Похожие решения   
+│   │           ├── solution_actions.html        # Действия с решением     
+│   │           ├── solution_card.html           # Карточка решения   
+│   │           ├── solution_description.html    # Описание решения  
+│   │           ├── solution_features.html       # Особенности решения  
+│   │           ├── solution_hero.html           # Hero - заголовок решения
+│   │           ├── solution_image_gallery.html  # Галерея изображений решения
+│   │           ├── solution_pricing.html        # Прайс решения   
+│   │           └── solution_requirements.html   # Технологии решения    
 │   ├── __init__.py               # Инициализация приложения       
 │   ├── admin.py                  # Регистрация моделей в админ-панели
 │   ├── apps.py                   # Конфигурация приложения
@@ -190,28 +193,28 @@ portfolio-django/                 # Проект Django 5.2
 │       ├── components/          # Скрипты компонентов
 │       └── pages/               # Скрипты пользовательских страниц
 ├── templates/                   # Глобальные шаблоны проекта
-│   ├── admin/                   # Шаблоны кастомной админ-панели
-│   ├── base.html                # Базовый шаблон проекта (наследуется всеми остальными)
-│   └── includes/                # Шаблоны - компоненты
-│       ├── breadcrumbs.html      # Навигационная цепочка (хлебные крошки) (пустой)
-│       ├── contact_form.html     # Форма обратной связи (глобальная) (пустой)
-│       ├── empty_state.html      # Состояние пустого списка (ничего не найдено) (пустой)
-│       ├── filter_bar.html       # Панель фильтров для списков (пустой)
-│       ├── footer.html           # Главный футер сайта
-│       ├── form_actions.html     # Кнопки действий для форм (Сохранить/Отмена)
-│       ├── gallery_slider.html   # Слайдер для галерей изображений
-│       ├── header.html           # Главный хедер сайта (навигация)
-│       ├── image_item.html       # Элемент изображения в галерее (пустой)
-│       ├── image_uploader.html   # Компонент загрузки изображений (глобальный)
-│       ├── loading_spinner.html  # Индикатор загрузки (пустой)
-│       ├── messages.html         # Вывод системных сообщений (ошибки, успех)
-│       ├── meta_tags.html        # Динамические мета-теги для SEO
-│       ├── modal.html            # Базовое модальное окно (пустое)
-│       ├── modal_cookies.html    # Модальное окно для согласия на cookies
-│       ├── pagination.html       # Компонент пагинаци (пустой)
-│       ├── search_form.html      # Форма поиска (пустой)
-│       ├── sidebar.html          # Боковая панель (для пользовательской части)
-│       └── social_links.html     # Ссылки на социальные сети (пустое)
+│   │  │  └── emails/
+│   │  │      └── contact_form.html  # шаблон письма с сайта
+│   │  └── base.html          # Базовый шаблон (наследуется всеми)
+│   ├── breadcrumbs.html      # Навигационная цепочка (хлебные крошки)
+│   ├── contact_form.html     # Форма обратной связи (глобальная)
+│   ├── empty_state.html      # Состояние пустого списка (ничего не найдено)
+│   ├── filter_bar.html       # Панель фильтров для списков
+│   ├── footer.html           # Главный футер сайта
+│   ├── form_actions.html     # Кнопки действий для форм (Сохранить/Отмена)
+│   ├── gallery_slider.html   # Слайдер для галерей изображений
+│   ├── header.html           # Главный хедер сайта (навигация)
+│   ├── image_item.html       # Элемент изображения в галерее
+│   ├── image_uploader.html   # Компонент загрузки изображений (глобальный)
+│   ├── loading_spinner.html  # Индикатор загрузки
+│   ├── messages.html         # Вывод системных сообщений (ошибки, успех)
+│   ├── meta_tags.html        # Динамические мета-теги для SEO
+│   ├── modal.html            # Базовое модальное окно
+│   ├── modal_cookies.html    # Модальное окно для согласия на cookies
+│   ├── pagination.html       # Компонент пагинаци
+│   ├── search_form.html      # Форма поиска
+│   ├── sidebar.html          # Боковая панель (для пользовательской части)
+│   └── social_links.html     # Ссылки на социальные сети
 ├── build.sh                     # Построение веб-приложения при деплое
 ├── manage.py                    # Точка входа для управления Django-проектом
 ├── start.sh                     # Запуск веб-приложения при деплое
@@ -245,7 +248,7 @@ portfolio-django/                 # Проект Django 5.2
 
 1. Клонируйте репозиторий:
 
-   <span style="color: red;">_git clone https://github.com/fesik-evgenya/TeddysTale_with-BackEnd.git_</span>
+   <span style="color: red;">_git clone https://github.com/fesik-evgenya/portfolio-django.git_</span>
 
    <span style="color: red;">_cd teddys_tale_</span>
 2. Установите зависимости:

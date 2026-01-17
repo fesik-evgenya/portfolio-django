@@ -1,0 +1,23 @@
+{% load static %}
+<div class="solution-image-container">
+    {% if solution.main_image %}
+    <img src="{{ solution.main_image.image.url }}"
+         alt="{{ solution.name }}"
+         class="solution-main-image">
+    {% else %}
+    <div class="solution-image-placeholder">
+        <i class="fas fa-image"></i>
+        <p>Изображение отсутствует</p>
+    </div>
+    {% endif %}
+
+    {% if display_images|length > 1 %}
+    <div class="solution-gallery">
+        {% for image in display_images %}
+        <div class="gallery-thumb">
+            <img src="{{ image.image.url }}" alt="{{ solution.name }} - изображение {{ forloop.counter }}">
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

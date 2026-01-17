@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h3 class="sidebar-title">{{ title|default:"Меню" }}</h3>
+        {% if closeable %}
+        <button class="sidebar-close" aria-label="Закрыть боковую панель">
+            &times;
+        </button>
+        {% endif %}
+    </div>
 
-</body>
-</html>
+    <nav class="sidebar-nav">
+        <ul class="sidebar-menu">
+            {% for item in menu_items %}
+            <li class="sidebar-item {% if item.active %}active{% endif %}">
+                <a href="{{ item.url }}" class="sidebar-link">
+                    {% if item.icon %}<i class="{{ item.icon }}"></i>{% endif %}
+                    <span>{{ item.text }}</span>
+                    {% if item.badge %}
+                    <span class="sidebar-badge">{{ item.badge }}</span>
+                    {% endif %}
+                </a>
+
+                {% if item.submenu %}
+                <ul class="sidebar-submenu">
+                    {% for subitem in item.submenu %}
+                    <li class="sidebar-subitem {% if subitem.active %}active{% endif %}">
+                        <a href="{{ subitem.url }}">{{ subitem.text }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+    {% if sidebar_content %}
+    <div class="sidebar-content">
+        {{ sidebar_content|safe }}
+    </div>
+    {% endif %}
+
+    {% if sidebar_footer %}
+    <div class="sidebar-footer">
+        {{ sidebar_footer|safe }}
+    </div>
+    {% endif %}
+</aside>

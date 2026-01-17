@@ -1,0 +1,15 @@
+{% load static %}
+<section class="solutions-hero">
+    <div class="container">
+        <h1 class="page-title">Готовые решения для вашего бизнеса</h1>
+        <p class="hero__text">Выберите пакетный сайт или дополнительный модуль. Все решения адаптируются под ваш бренд и запускаются за 14 дней.</p>
+
+        {% include "search_form.html" with
+        action_url=request.path
+        placeholder="Поиск решений..."
+        name="search"
+        query=request.GET.search
+        filters=filter_options
+        %}
+    </div>
+</section>

@@ -1,11 +1,33 @@
+{% load static %}
 <div class="form-actions">
-  <button type="submit" class="btn btn-primary">
-    {% if save_icon %}<i class="{{ save_icon }}"></i>{% endif %}
-    {{ save_text|default:"Сохранить изменения" }}
+  {% if submit_text %}
+  <button type="submit" class="btn btn--primary">
+    {% if submit_icon %}<i class="{{ submit_icon }}"></i>{% endif %}
+    {{ submit_text }}
   </button>
+  {% endif %}
+
   {% if cancel_url %}
-  <a href="{{ cancel_url }}" class="btn btn-secondary">Отмена</a>
-  {% else %}
-  <button type="button" class="btn btn-secondary" onclick="history.back()">Отмена</button>
+  <a href="{{ cancel_url }}" class="btn btn--outline">
+    {% if cancel_icon %}<i class="{{ cancel_icon }}"></i>{% endif %}
+    {{ cancel_text|default:"Отмена" }}
+  </a>
+  {% endif %}
+
+  {% if delete_url and delete_text %}
+  <a href="{{ delete_url }}"
+     class="btn btn--danger"
+     onclick="return confirm('{{ delete_confirm|default:'Вы уверены, что хотите удалить этот элемент?' }}')">
+    <i class="fas fa-trash"></i> {{ delete_text }}
+  </a>
+  {% endif %}
+
+  {% if extra_actions %}
+  {% for action in extra_actions %}
+  <a href="{{ action.url }}" class="btn btn--{{ action.class|default:'outline' }}">
+    {% if action.icon %}<i class="{{ action.icon }}"></i>{% endif %}
+    {{ action.text }}
+  </a>
+  {% endfor %}
   {% endif %}
 </div>

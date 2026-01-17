@@ -1,0 +1,275 @@
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
+
+{% block title %}Добавление проекта | Админ-панель{% endblock %}
+
+{% block content %}
+<header class="admin-form-header">
+    <h1>Добавление нового проекта</h1>
+    <a href="{% url 'custom_admin:portfolio_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Назад к портфолио
+    </a>
+</header>
+
+<section class="admin-form-section">
+    <form method="POST" enctype="multipart/form-data" id="portfolioForm">
+        {% csrf_token %}
+
+        <!-- Основная информация -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Основная информация</h3>
+            <div class="form-grid">
+                <div class="form-group form-group-label-light">
+                    <label for="title">Название проекта *</label>
+                    <input type="text" id="title" name="title" class="form-control" required>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="slug">URL-идентификатор *</label>
+                    <input type="text" id="slug" name="slug" class="form-control" required>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="category">Категория *</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">-- Выберите категорию --</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="package">Пакет *</label>
+                    <select id="package" name="package" class="form-control" required>
+                        <option value="">-- Выберите пакет --</option>
+                        {% for package in package_choices %}
+                        <option value="{{ package.0 }}">{{ package.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="duration">Срок разработки *</label>
+                    <input type="text" id="duration" name="duration" class="form-control"
+                           placeholder="Например: 14 дней" required>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="geo">Локация</label>
+                    <input type="text" id="geo" name="geo" class="form-control"
+                           placeholder="Например: Санкт-Петербург">
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="client">Клиент *</label>
+                    <input type="text" id="client" name="client" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Описание -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Описание проекта</h3>
+            <div class="form-group form-group-label-light">
+                <label for="description">Описание *</label>
+                <textarea id="description" name="description" class="form-control" rows="5" required></textarea>
+            </div>
+        </div>
+
+        <!-- Технологии -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Технологии</h3>
+            <div class="form-group form-group-label-light">
+                <label for="technologies">Технологии (каждая с новой строки)</label>
+                <textarea id="technologies" name="technologies" class="form-control" rows="5"
+                          placeholder="Например:
+HTML/CSS
+JavaScript
+Python/Django
+Bootstrap"></textarea>
+            </div>
+        </div>
+
+        <!-- Особенности -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Особенности проекта</h3>
+            <div class="form-group form-group-label-light">
+                <label for="features">Особенности (каждая с новой строки)</label>
+                <textarea id="features" name="features" class="form-control" rows="5"
+                          placeholder="Например:
+Адаптивный дизайн
+Интеграция с соцсетями
+SEO-оптимизация
+Контактная форма"></textarea>
+            </div>
+        </div>
+
+        <!-- Ссылки -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Ссылки на проект</h3>
+            <div class="form-grid">
+                <div class="form-group form-group-label-light">
+                    <label for="live_url">Ссылка на сайт</label>
+                    <input type="url" id="live_url" name="live_url" class="form-control"
+                           placeholder="https://example.com">
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="github_url">GitHub репозиторий</label>
+                    <input type="url" id="github_url" name="github_url" class="form-control"
+                           placeholder="https://github.com/username/project">
+                </div>
+            </div>
+        </div>
+
+        <!-- Отзыв клиента -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Отзыв клиента</h3>
+            <div class="form-group form-group-label-light">
+                <label for="testimonial">Текст отзыва</label>
+                <textarea id="testimonial" name="testimonial" class="form-control" rows="4"></textarea>
+            </div>
+        </div>
+
+        <!-- Изображения -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Изображения проекта</h3>
+            <div class="form-group form-group-label-light">
+                <label>Загрузить изображения (рекомендуется 1000×400px для превью)</label>
+
+                <div class="file-dropzone" id="imageDropzone">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p>Кликните для выбора или перетащите файлы</p>
+                    <small class="file-hint">Можно загрузить до 10 изображений. Первое изображение будет использовано как превью</small>
+                    <small class="file-hint">Поддерживаются: JPG, PNG, WebP, GIF</small>
+                </div>
+
+                <input type="file" id="images" name="images" multiple
+                       accept="image/jpeg, image/png, image/webp, image/gif"
+                       style="display: none;">
+
+                <div class="file-counter" id="fileCounter" style="display: none;">
+                    <small>Выбрано файлов: <span id="fileCount">0</span> из 10</small>
+                </div>
+
+                <div class="image-previews-container" id="imagePreviewsContainer" style="display: none;">
+                    <h4>Выберите изображение для превью:</h4>
+                    <div class="image-previews-grid" id="imagePreviews"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статус и порядок -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Статус и порядок</h3>
+            <div class="form-grid">
+                <div class="form-group form-group-label-light">
+                    <label for="order">Порядок сортировки</label>
+                    <input type="number" id="order" name="order" class="form-control" value="0" min="0">
+                </div>
+
+                <div class="form-group-checkbox">
+                    <div class="form-group form-group-label-light">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_featured" id="is_featured">
+                            <span class="checkmark"></span>
+                            Избранный проект
+                        </label>
+                    </div>
+
+                    <div class="form-group form-group-label-light">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_active" id="is_active" checked>
+                            <span class="checkmark"></span>
+                            Активный проект
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Сохранить проект
+            </button>
+            <a href="{% url 'custom_admin:portfolio_list' %}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</section>
+
+<script src="{% static 'js/admin/portfolio-create.js' %}"></script>
+<script>
+    // Автогенерация slug из названия
+    document.getElementById('title').addEventListener('input', function() {
+        if (!document.getElementById('slug').value) {
+            const slug = this.value
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            document.getElementById('slug').value = slug;
+        }
+    });
+
+    // Управление загрузкой изображений
+    const dropzone = document.getElementById('imageDropzone');
+    const fileInput = document.getElementById('images');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        handleFiles(fileInput.files);
+    });
+
+    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+    function handleFiles(files) {
+        if (files.length > 10) {
+            alert('Можно загрузить не более 10 файлов');
+            return;
+        }
+
+        const fileCounter = document.getElementById('fileCounter');
+        const fileCountSpan = document.getElementById('fileCount');
+        const previewsContainer = document.getElementById('imagePreviewsContainer');
+        const previewsGrid = document.getElementById('imagePreviews');
+
+        fileCounter.style.display = 'block';
+        fileCountSpan.textContent = files.length;
+
+        previewsContainer.style.display = 'block';
+        previewsGrid.innerHTML = '';
+
+        Array.from(files).forEach((file, index) => {
+            if (!file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'image-preview-item';
+                previewItem.innerHTML = `
+                <div class="preview-image">
+                    <img src="${e.target.result}" alt="${file.name}">
+                </div>
+                <div class="preview-actions">
+                    <label class="preview-radio-label">
+                        <input type="radio" name="preview_image_index" value="${index}" ${index === 0 ? 'checked' : ''}>
+                        <span>Сделать превью</span>
+                    </label>
+                </div>
+            `;
+                previewsGrid.appendChild(previewItem);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+{% endblock %}

@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% load static %}
+<div class="solution-price">
+    <span class="price">от {{ solution.price }} ₽</span>
+    <span class="delivery-time">
+        <i class="fas fa-bolt"></i>
+        Срок: {{ solution.delivery_days }} дней
+    </span>
+</div>

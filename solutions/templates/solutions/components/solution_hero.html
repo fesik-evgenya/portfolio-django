@@ -1,0 +1,24 @@
+{% load static %}
+<div class="solution-hero">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'solutions:list' %}">Магазин решений</a>
+            <span class="separator">/</span>
+            <span>{{ solution.name }}</span>
+        </nav>
+
+        <h1 class="page-title">{{ solution.name }}</h1>
+
+        <div class="solution-badges">
+            {% if solution.is_new %}
+            <span class="solution-badge badge-new">Новинка</span>
+            {% endif %}
+            {% if solution.is_popular %}
+            <span class="solution-badge badge-popular">Популярное</span>
+            {% endif %}
+            <span class="solution-badge badge-category">
+                {{ solution.category.name }}
+            </span>
+        </div>
+    </div>
+</div>

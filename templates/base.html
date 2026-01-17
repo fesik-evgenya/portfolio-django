@@ -1,35 +1,13 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static 'images/logo/favicon.svg' %}" type="image/svg+xml">
 
-    <!-- SEO-блоки -->
-    <title>{{ meta_title|default:"Готовые сайты для бизнеса в СПб | Создание сайтов под ключ | Евгения Фесик" }}</title>
-    <meta name="description"
-          content="{{ meta_description|default:'Купить готовый сайт для бизнеса в СПб недорого. Шаблоны сайтов для кофеен, салонов красоты, ИП с быстрым запуском.' }}">
-    <meta name="keywords"
-          content="{{ meta_keywords|default:'готовый сайт СПб, купить сайт Санкт-Петербург, сайт под ключ недорого СПб, шаблон сайта для бизнеса, создание сайтов быстро СПб, сайт для кофейни Санкт-Петербург, сайт для салона красоты СПб, сайт за 3 дня СПб, лендинг пейдж СПб, сайт-визитка СПб, сайт для ИП СПб, готовый шаблон сайта, быстрый запуск сайта, кастомизация сайта' }}">
-
-    <!-- Open Graph -->
-    <meta property="og:title"
-          content="{{ meta_title|default:'Готовые сайты для бизнеса в СПб | Создание сайтов под ключ' }}">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo/og_image.jpg' %}">
-    <meta property="og:url" content="{{ request.build_absolute_uri|safe }}">
-    <meta property="og:description" content="{{ meta_description }}">
-    <meta property="og:site_name" content="Евгения Фесик - веб-разработчик">
-    <meta property="og:locale" content="ru_RU">
-
-    <!-- Гео-метки -->
-    <meta name="geo.region" content="RU-SPE">
-    <meta name="geo.placename" content="Saint Petersburg">
-    <meta name="author" content="Fesik Evgeniya">
-
-    <!-- Каноническая ссылка -->
-    <link rel="canonical" href="{{ request.build_absolute_uri|safe }}">
+    <!-- Мета-теги -->
+    {% include "includes/meta_tags.html" %}
 
     <!-- Шрифты и стили -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap"
@@ -42,47 +20,33 @@
 
     <!-- Блок для страничных стилей -->
     {% block styles %}{% endblock %}
-
-    <!-- Блок для дополнительных CSS -->
-    {% block extra_css %}{% endblock %}
 </head>
 <body>
 <canvas class="background-canvas" id="background-canvas"></canvas>
 <div class="page-wrapper">
-
-    {% include 'includes/header.html' %}
+    <!-- Хедер -->
+    {% include "includes/header.html" %}
 
     <main>
-        <!-- Контейнер для сообщений Django -->
-        {% if messages %}
-        <div class="flash-messages-container">
-            {% for message in messages %}
-            <div class="flash-message flash-{{ message.tags }}">
-                <span class="flash-text">{{ message }}</span>
-                <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Закрыть уведомление">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+        <!-- Хлебные крошки (опционально) -->
+        {% block breadcrumbs %}{% endblock %}
+
+        <!-- Сообщения Django -->
+        {% include "includes/messages.html" %}
 
         <!-- Основной контент страницы -->
         {% block content %}{% endblock %}
     </main>
 </div>
 
-{% include 'includes/footer.html' %}
+<!-- Футер -->
+{% include "includes/footer.html" %}
 
 <!-- Основные скрипты -->
-<script src="{% static 'js/base.js' %}"></script>
 <script src="{% static 'js/index.js' %}"></script>
 
-<!-- Блок для дополнительных скриптов -->
+<!-- Блок для страничных скриптов -->
 {% block scripts %}{% endblock %}
-
-<!-- Блок для дополнительных JS -->
-{% block extra_js %}{% endblock %}
 
 <!-- Микроразметка в футере -->
 <script type="application/ld+json">
@@ -98,7 +62,7 @@
             "postalCode": "190000"
         },
         "description": "Фрилансер full-stack разработчик (Python/JS) в Санкт-Петербурге. Создаю сайты под ключ и MVP для бизнеса.",
-        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'main:index' %}",
         "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/photo.jpg' %}",
         "sameAs": [
             "https://github.com/fesik-evgenya",
@@ -107,36 +71,81 @@
     }
 </script>
 
-<!-- Модальное окно Cookies -->
-<div id="cookiesModal" class="cookies-modal">
-    <div class="cookies-modal__content">
-        <div class="cookies-modal__header">
-            <i class="fas fa-cookie-bite cookies-modal__icon"></i>
-            <h3 class="cookies-modal__title">Мы используем cookie</h3>
-        </div>
+<!-- Модальное окно cookies -->
+{% include "includes/modal_cookies.html" %}
 
-        <div class="cookies-modal__body">
-            <p class="cookies-modal__text">
-                Мы используем cookie и рекомендательные технологии для персонализации сервисов
-                и удобства пользователей.<br>Вы можете запретить сохранение cookie в настройках своего браузера.
-            </p>
-
-            <div class="cookies-modal__links">
-                <a href="{% url 'main:privacy' %}" class="cookies-modal__link" target="_blank">
-                    <i class="fas fa-shield-alt"></i>
-                    Политика конфиденциальности
-                </a>
+<!-- Компонент: Cookie Consent Banner -->
+<div class="cookie-consent-banner" id="cookieConsentBanner" style="display: none;">
+    <div class="cookie-content">
+        <div class="cookie-text">
+            <i class="fas fa-cookie-bite"></i>
+            <div>
+                <h4>Мы используем cookie</h4>
+                <p>Это помогает улучшить работу сайта. Продолжая использовать сайт, вы соглашаетесь с использованием cookie.</p>
             </div>
         </div>
-
-        <div class="cookies-modal__footer">
-            <button id="acceptCookies" class="btn btn--primary cookies-modal__btn">
-                <i class="fas fa-check"></i>
-                Хорошо
-            </button>
+        <div class="cookie-actions">
+            <a href="{% url 'main:privacy' %}" class="cookie-link">Подробнее</a>
+            <button class="btn btn--primary" id="acceptCookiesBannerBtn">Принять</button>
         </div>
     </div>
 </div>
+
+<!-- Глобальный скрипт управления -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Управление cookie согласием
+        const cookieBanner = document.getElementById('cookieConsentBanner');
+        const acceptBtn = document.getElementById('acceptCookiesBannerBtn');
+        const cookiesModal = document.getElementById('cookiesModal');
+
+        if (!localStorage.getItem('cookiesAccepted')) {
+            setTimeout(() => {
+                cookieBanner.style.display = 'block';
+            }, 2000);
+        }
+
+        acceptBtn.addEventListener('click', function() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            cookieBanner.style.display = 'none';
+        });
+
+        // Управление модальным окном cookies
+        if (cookiesModal) {
+            const modalAcceptBtn = document.getElementById('acceptCookiesBtn');
+            const modalCloseBtn = cookiesModal.querySelector('.modal-close');
+
+            modalAcceptBtn.addEventListener('click', function() {
+                localStorage.setItem('cookiesAccepted', 'true');
+                cookiesModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+
+            modalCloseBtn.addEventListener('click', function() {
+                cookiesModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+
+            cookiesModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+
+        // Инициализация мобильного меню
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', function() {
+                navLinks.classList.toggle('show');
+                menuToggle.classList.toggle('active');
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

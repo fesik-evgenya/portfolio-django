@@ -1,10 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% load static %}
+{% if package_comparison %}
+<section class="package-comparison">
+    <div class="container">
+        <h2 class="section-title">Сравнение пакетов</h2>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                <tr>
+                    <th>Функция</th>
+                    {% for package in package_comparison %}
+                    <th>{{ package.name }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Цена</td>
+                    {% for package in package_comparison %}
+                    <td>{{ package.price }} ₽</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Срок разработки</td>
+                    {% for package in package_comparison %}
+                    <td>{{ package.delivery_days }} дней</td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endif %}

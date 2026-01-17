@@ -1,10 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<div class="project-testimonial">
+    <div class="testimonial-header">
+        <div class="client-info">
+            {% if project.client_logo %}
+            <img src="{{ project.client_logo.url }}" alt="Логотип {{ project.client }}" class="client-logo">
+            {% else %}
+            <div class="client-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            {% endif %}
+            <div class="client-details">
+                <h3>{{ project.client }}</h3>
+                {% if project.geo %}
+                <p class="client-location">{{ project.geo }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="quote-icon">
+            <i class="fas fa-quote-right"></i>
+        </div>
+    </div>
 
-</body>
-</html>
+    <blockquote class="testimonial-content">
+        {{ project.testimonial|linebreaks }}
+    </blockquote>
+
+    <div class="testimonial-footer">
+        <div class="project-details">
+            <span class="project-name">{{ project.title }}</span>
+            <span class="project-category">{{ project.category.name }}</span>
+        </div>
+    </div>
+</div>

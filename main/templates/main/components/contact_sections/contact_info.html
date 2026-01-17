@@ -1,10 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="contacts-card">
+    <h2 class="section-title">Способы связи</h2>
+    <div class="contact-methods">
+        <div class="contact-item">
+            <i class="fab fa-telegram contact-icon"></i>
+            <div>
+                <h3>Telegram</h3>
+                {% if contact_info and contact_info.telegram %}
+                <a href="{{ contact_info.telegram }}" target="_blank" rel="noopener" class="contact-link">
+                    {{ contact_info.telegram|cut:"https://t.me/" }}
+                </a>
+                {% else %}
+                <a href="https://t.me/Fesik_Evgeniya" target="_blank" rel="noopener" class="contact-link">
+                    @Fesik_Evgeniya
+                </a>
+                {% endif %}
+                <p class="contact-note">Основной канал связи</p>
+            </div>
+        </div>
 
-</body>
-</html>
+        <div class="contact-item">
+            <i class="fas fa-envelope contact-icon"></i>
+            <div>
+                <h3>Email</h3>
+                {% if contact_info and contact_info.email %}
+                <a href="mailto:{{ contact_info.email }}" class="contact-link">
+                    {{ contact_info.email }}
+                </a>
+                {% else %}
+                <a href="mailto:ganef85@mail.ru" class="contact-link">
+                    ganef85@mail.ru
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="contact-item">
+            <i class="fas fa-phone contact-icon"></i>
+            <div>
+                <h3>Телефон</h3>
+                {% if contact_info and contact_info.phone %}
+                <a href="tel:{{ contact_info.phone }}" class="contact-link">
+                    {{ contact_info.phone }}
+                </a>
+                <p class="contact-note">Только для личных встреч</p>
+                {% else %}
+                <a href="tel:+79500124011" class="contact-link">
+                    +7 (950) 012-40-11
+                </a>
+                <p class="contact-note">Только для личных встреч</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if contact_info and contact_info.address %}
+        <div class="contact-item">
+            <i class="fas fa-map-marker-alt contact-icon"></i>
+            <div>
+                <h3>Адрес</h3>
+                <span class="contact-link">{{ contact_info.address }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if contact_info and contact_info.github %}
+        <div class="contact-item">
+            <i class="fab fa-github contact-icon"></i>
+            <div>
+                <h3>GitHub</h3>
+                <a href="{{ contact_info.github }}" target="_blank" rel="noopener" class="contact-link">
+                    {{ contact_info.github|cut:"https://github.com/" }}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="meeting-note">
+        <i class="fas fa-info-circle"></i>
+        <p>Личные встречи только после онлайн-согласования ТЗ</p>
+    </div>
+</div>

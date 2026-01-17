@@ -1,47 +1,46 @@
-<div class="form-section">
-  <h3 class="form-group-label-light">{{ title|default:"Изображения" }}</h3>
-  <div class="form-group form-group-label-light">
-    <label>{{ label|default:"Загрузить изображения" }}</label>
-
-    <div class="file-upload-wrapper">
-      <label for="images" class="file-dropzone">
-        <i class="fas fa-cloud-upload-alt upload-icon"></i>
-        <p>Кликните для выбора или перетащите файлы</p>
-        <small class="file-hint">{{ hint|default:"Максимум 10 файлов, не более 2MB каждый" }}</small>
-        <small class="file-hint">Форматы: JPG, PNG, WEBP, GIF</small>
-        <span class="file-counter" id="fileCounter">0 из 10 файлов</span>
-      </label>
-      <input type="file" id="images" name="images" accept="image/*" multiple style="display: none;">
-    </div>
-
-    <div class="image-previews" id="imagePreviews">
-      <div class="preview-item template" style="display: none;">
-        <img src="" alt="Preview" class="preview-image">
-        <div class="preview-info">
-          <div class="preview-filename"></div>
-          <div class="preview-size"></div>
-        </div>
-        <div class="preview-actions">
-          <label class="preview-checkbox">
-            <input type="radio" name="preview_image_index_new" value="0">
-            <span>Превью</span>
-          </label>
-          <button type="button" class="btn-icon danger">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
+{% load static %}
+<div class="image-uploader">
+  <div class="uploader-header">
+    <h4>{{ title|default:"Загрузка изображений" }}</h4>
+    <div class="uploader-info">
+      <p>{{ hint|default:"Перетащите файлы сюда или нажмите для выбора" }}</p>
+      <small>Максимум: {{ max_files|default:10 }} файлов, {{ max_size|default:"2MB" }} каждый</small>
     </div>
   </div>
 
-  {% if existing_images %}
-  <div class="existing-images">
-    <h4 class="form-group-label-light">Текущие изображения</h4>
-    <div class="image-grid">
-      {% for image in existing_images %}
-      {% include "includes/image_item.html" with image=image %}
-      {% endfor %}
+  <div class="uploader-dropzone" id="dropzone-{{ id|default:'default' }}">
+    <div class="dropzone-content">
+      <i class="fas fa-cloud-upload-alt upload-icon"></i>
+      <p class="dropzone-text">Перетащите файлы сюда</p>
+      <p class="dropzone-subtext">или</p>
+      <button type="button" class="btn btn--outline select-files">
+        Выберите файлы
+      </button>
     </div>
+
+    <input type="file"
+           id="file-input-{{ id|default:'default' }}"
+           name="{{ name|default:'images' }}"
+           class="file-input"
+           multiple
+           accept="{{ accept|default:'image/*' }}"
+           style="display: none;">
   </div>
-  {% endif %}
+
+  <div class="uploader-preview" id="preview-{{ id|default:'default' }}">
+    <div class="preview-header">
+      <span class="file-counter">Выбрано файлов: <span class="count">0</span></span>
+      <button type="button" class="btn btn--text clear-all" style="display: none;">
+        Очистить все
+      </button>
+    </div>
+    <div class="preview-grid"></div>
+  </div>
+
+  <div class="uploader-status">
+    <div class="progress-bar" style="display: none;">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="status-message"></div>
+  </div>
 </div>

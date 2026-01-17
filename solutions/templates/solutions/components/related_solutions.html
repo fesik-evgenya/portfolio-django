@@ -1,10 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+{% if related_solutions %}
+<section class="related-solutions">
+    <div class="container">
+        <h2 class="section-title">Похожие решения</h2>
+        <div class="solutions-grid">
+            {% for related in related_solutions %}
+            <div class="solution-card">
+                <div class="solution-card__header">
+                    {% if related.main_image %}
+                    <img src="{{ related.main_image.image.url }}"
+                         alt="{{ related.name }}"
+                         class="solution-card__image">
+                    {% endif %}
 
-</body>
-</html>
+                    {% if related.is_new %}
+                    <span class="badge badge--new">Новинка</span>
+                    {% endif %}
+                </div>
+
+                <div class="solution-card__body">
+                    <h3 class="solution-card__title">
+                        <a href="{% url 'solutions:detail' related.slug %}">{{ related.name }}</a>
+                    </h3>
+
+                    <p class="solution-card__description">
+                        {{ related.description|truncatechars:100 }}
+                    </p>
+
+                    <div class="solution-card__footer">
+                        <div class="solution-card__price">
+                            от {{ related.price }} ₽
+                        </div>
+                    </div>
+                </div>
+
+                <div class="solution-card__actions">
+                    <a href="{% url 'solutions:detail' related.slug %}" class="btn btn--outline">Подробнее</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

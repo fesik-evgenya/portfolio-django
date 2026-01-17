@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block extra_css %}
+{% block styles %}
 <link rel="stylesheet" href="{% static 'css/about.css' %}">
 {% endblock %}
 
 {% block seo_extra %}
+<!-- Дополнительная микроразметка для отзывов -->
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -18,8 +19,8 @@
       "addressCountry": "RU"
     },
     "description": "Профессиональный full-stack разработчик с опытом создания веб-приложений на Python и JavaScript",
-    "url": "{{ request.build_absolute_uri }}",
-    "image": "{% static 'images/photo.jpg' %}",
+    "url": "{% url 'main:about' %}",
+    "image": "{% static 'uploads/'|add:biography.image.name if biography and biography.image else 'images/photo.jpg' %}",
     "sameAs": [
       "https://github.com/fesik-evgenya",
       "https://t.me/Fesik_Evgeniya"
@@ -31,169 +32,30 @@
 {% block content %}
 <section class="about-section">
   <div class="container">
+    <!-- Заголовок из БД или резервный -->
     <h1 class="page-title">
       {{ biography.title|default:"О моем пути в разработке" }}
     </h1>
 
+    <!-- Biography Section -->
     <div class="about__content">
-      <div class="about__text">
-        {% if biography and biography.image %}
-        <div class="about__image-container">
-          <img src="{{ biography.image.url }}"
-               alt="Евгения Фесик, full-stack разработчик в Санкт-Петербурге"
-               class="about__image" width="550" height="733" loading="lazy">
-        </div>
-        {% else %}
-        <div class="about__image-container">
-          <img src="{% static 'images/about_photo.png' %}"
-               alt="Евгения Фесик, full-stack разработчик в Санкт-Петербурге"
-               class="about__image" width="550" height="733" loading="lazy">
-        </div>
-        {% endif %}
+      <!-- Компонент: Биография -->
+      {% include "main/components/about_sections/biography.html" %}
 
-        {% if biography and biography.content %}
-        {{ biography.content|safe }}
-        {% else %}
-        <p>Привет!<br>Я Евгения Фесик, full-stack разработчик из Санкт-Петербурга. Специализируюсь на создании
-          современных веб-решений для бизнеса с использованием Python и JavaScript.</p>
-        {% endif %}
+      <!-- Компонент: Философия работы -->
+      {% include "main/components/about_sections/philosophy.html" %}
 
-        <h3>Образование и квалификация</h3>
-        {% if education_items %}
-        <ul class="about__list">
-          {% for item in education_items %}
-          <li>{{ item.text|safe }}</li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <ul class="about__list">
-          <li><strong>СПБ Колледж Радиоэлектронного Приборостроения</strong> (2005) - "Программное обеспечение
-            вычислительной техники и автоматизированных систем"
-          </li>
-          <li><strong>СПб Государственный Политехнический Университет</strong> (2008) - Экономики и
-            менеджмента / Менеджмент организаций
-          </li>
-          <li><strong>Аналитик данных</strong> (2024) - "С нуля до разработки прикладных решений для бизнеса",
-            Томский Государственный Университет (256 ак.ч.)
-          </li>
-          <li><strong>Повышение квалификации</strong> (2025) - "Программирование и создание IT-продуктов на
-            языке Python", ИПАП, Санкт-Петербург (200 ак.ч.)
-          </li>
-        </ul>
-        {% endif %}
-
-        {% if biography and biography.education_summary %}
-        {{ biography.education_summary|safe }}
-        {% else %}
-        <p>Постоянно совершенствую свои навыки через курсы и практику, чтобы предлагать клиентам в
-          Санкт-Петербурге самые современные решения.</p>
-        {% endif %}
-      </div>
-
-      <div class="about__text">
-        <h2>{{ philosophy.title|default:"Философия работы" }}</h2>
-
-        {% if philosophy_slots %}
-        <div class="philosophy-grid">
-          {% for slot in philosophy_slots %}
-          <div class="philosophy-card">
-            <h3>{{ slot.title }}</h3>
-            <p>{{ slot.content }}</p>
-          </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <div class="philosophy-grid">
-          <div class="philosophy-card">
-            <h3>Код ≠ цель. Решаю бизнес-задачи</h3>
-            <p>Фокусируюсь на том, как технологии могут помочь вашему бизнесу расти, а не просто на
-              написании кода. Каждая строка кода — это шаг к решению вашей конкретной задачи.</p>
-          </div>
-
-          <div class="philosophy-card">
-            <h3>Минимум технического жаргона</h3>
-            <p>Объясняю сложные веди простыми словами. Вы будете в курсе процесса без лишней терминологии и
-              технических сложностей.</p>
-          </div>
-
-          <div class="philosophy-card">
-            <h3>Прозрачность этапов и сроки</h3>
-            <p>Четкие этапы работы, понятные сроки и регулярная отчетность. Никаких неожиданностей — только
-              предсказуемый результат.</p>
-          </div>
-        </div>
-        {% endif %}
-
-        <h3>Рабочий процесс</h3>
-        {% if philosophy and philosophy.workflow_text %}
-        {{ philosophy.workflow_text|safe }}
-        {% else %}
-        <p>Мой подход сочетает техническую экспертизу и понимание бизнес-процессов, что позволяет создавать
-          решения, которые действительно работают на ваши цели.</p>
-        {% endif %}
-
-        <h2>{{ tools.title|default:"Инструменты и технологии" }}</h2>
-
-        {% if tools and tools.content %}
-        {{ tools.content|safe }}
-        {% endif %}
-
-        {% if technology_tools %}
-        <div class="workflow">
-          <img src="{% static 'images/workstation.webp' %}"
-               alt="Рабочее место веб-разработчика в Санкт-Петербурге с Python кодом">
-
-          <div class="tools-grid">
-            {% for tool in technology_tools %}
-            <div class="tool-item">
-              <img src="{{ tool.icon.url }}" alt="{{ tool.name }}" width="40" height="40">
-              <span>{{ tool.name }}</span>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-        {% else %}
-        <div class="workflow">
-          <img src="{% static 'images/workstation.webp' %}"
-               alt="Рабочее место веб-разработчика в Санкт-Петербурге с Python кодом">
-
-          <div class="tools-grid">
-            <div class="tool-item">
-              <img src="{% static 'images/icon/python.svg' %}" alt="Python">
-              <span>Python</span>
-            </div>
-            <div class="tool-item">
-              <img src="{% static 'images/icon/flask.svg' %}" alt="Flask">
-              <span>Flask</span>
-            </div>
-            <div class="tool-item">
-              <img src="{% static 'images/icon/JavaScript.svg' %}" alt="JavaScript">
-              <span>JavaScript</span>
-            </div>
-            <div class="tool-item">
-              <img src="{% static 'images/icon/html5.svg' %}" alt="HTML5">
-              <span>HTML5</span>
-            </div>
-            <div class="tool-item">
-              <img src="{% static 'images/icon/css3.svg' %}" alt="CSS3">
-              <span>CSS3</span>
-            </div>
-            <div class="tool-item">
-              <img src="{% static 'images/icon/figma.svg' %}" alt="Figma">
-              <span>Figma</span>
-            </div>
-          </div>
-        </div>
-        {% endif %}
-      </div>
+      <!-- Компонент: Инструменты и технологии -->
+      {% include "main/components/about_sections/technologies.html" %}
     </div>
 
+    <!-- Reviews Section -->
     <section class="reviews">
       <div class="reviews-cta">
         <p>Хотите качественный результат для своего проекта?</p>
         <div class="reviews-cta__btns">
           <a href="{% url 'main:contacts' %}" class="btn btn--primary">Обсудить ваш проект</a>
-          <a href="{% url 'portfolio:portfolio_list' %}" class="btn btn--outline">Вдохновиться примерами</a>
+          <a href="{% url 'portfolio:list' %}" class="btn btn--outline">Вдохновиться примерами</a>
         </div>
       </div>
     </section>

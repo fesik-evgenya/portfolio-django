@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<div class="solution-image-manager">
+    <div class="image-manager-header">
+        <h4>Изображения решения</h4>
+        <button type="button" class="btn btn-sm btn-primary" id="addImagesBtn">
+            <i class="fas fa-plus"></i> Добавить изображения
+        </button>
+    </div>
 
-</body>
-</html>
+    <input type="file" id="imageUpload" name="images" multiple accept="image/*" style="display: none;">
+
+    <div class="image-manager-content">
+        <div class="image-upload-area" id="imageDropzone">
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <p>Перетащите изображения сюда или нажмите для выбора</p>
+            <small>Максимум 10 файлов, до 2MB каждый</small>
+        </div>
+
+        <div class="image-preview-grid" id="imagePreviews">
+            {% for image in solution.images.all %}
+            <div class="image-preview-item" data-image-id="{{ image.id }}">
+                <div class="image-preview">
+                    <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:solution.name }}" loading="lazy">
+                    <div class="image-actions">
+                        <button type="button" class="btn-icon set-main-image {% if image.is_main %}active{% endif %}"
+                                title="Сделать основным" data-image-id="{{ image.id }}">
+                            <i class="fas fa-star"></i>
+                        </button>
+                        <button type="button" class="btn-icon delete-image" title="Удалить" data-image-id="{{ image.id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    {% if image.is_main %}
+                    <div class="main-badge">Основное</div>
+                    {% endif %}
+                </div>
+                <div class="image-info">
+                    <input type="text" class="form-control form-control-sm alt-text"
+                           value="{{ image.alt_text|default:'' }}" placeholder="Alt текст"
+                           data-image-id="{{ image.id }}">
+                    <input type="number" class="form-control form-control-sm order-input"
+                           value="{{ image.order }}" placeholder="Порядок" min="0"
+                           data-image-id="{{ image.id }}">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

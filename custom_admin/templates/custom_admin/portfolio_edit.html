@@ -1,0 +1,144 @@
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
+
+{% block title %}Редактирование: {{ portfolio_item.title }} | Админ-панель{% endblock %}
+
+{% block content %}
+<header class="admin-form-header">
+    <h1>Редактирование проекта: {{ portfolio_item.title }}</h1>
+    <div class="header-actions">
+        <a href="{% url 'custom_admin:portfolio_detail' portfolio_item.id %}" class="btn btn-secondary">
+            <i class="fas fa-eye"></i> Просмотр
+        </a>
+        <a href="{% url 'custom_admin:portfolio_list' %}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Назад
+        </a>
+    </div>
+</header>
+
+<section class="admin-form-section">
+    <form method="POST" enctype="multipart/form-data" id="portfolioForm">
+        <!-- Включаем компонент полей формы -->
+        {% include "portfolio/admin/includes/portfolio_form_fields.html" %}
+
+        <!-- Статистика -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Статистика проекта</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Дата создания:</strong>
+                    <span>{{ portfolio_item.created_at|date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Дата обновления:</strong>
+                    <span>{{ portfolio_item.updated_at|date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Slug:</strong>
+                    <code>{{ portfolio_item.slug }}</code>
+                </div>
+                <div class="info-item">
+                    <strong>Изображений:</strong>
+                    <span>{{ portfolio_item.images.count }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Сохранить изменения
+            </button>
+            <a href="{% url 'custom_admin:portfolio_detail' portfolio_item.id %}" class="btn btn-secondary">Отмена</a>
+
+            {% if perms.portfolio.delete_portfolioitem %}
+            <button type="button" class="btn btn-danger" id="deletePortfolioBtn"
+                    data-url="{% url 'custom_admin:portfolio_delete' portfolio_item.id %}"
+                    onclick="confirmDelete(this)">
+                <i class="fas fa-trash"></i> Удалить проект
+            </button>
+            {% endif %}
+        </div>
+    </form>
+</section>
+
+<!-- Модальное окно управления изображениями -->
+<div class="modal fade" id="imageManagerModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Управление изображениями для {{ portfolio_item.title }}</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                {% include "portfolio/admin/includes/portfolio_image_manager.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/admin/portfolio-edit.js' %}"></script>
+<script>
+    // Подтверждение удаления
+    function confirmDelete(button) {
+        if (confirm('Вы уверены, что хотите удалить этот проект? Все связанные изображения также будут удалены.')) {
+            fetch(button.dataset.url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "{% url 'custom_admin:portfolio_list' %}";
+                } else {
+                    alert('Ошибка при удалении проекта');
+                }
+            });
+        }
+    }
+
+    // Управление изображениями
+    document.querySelectorAll('.delete-existing-image').forEach(button => {
+        button.addEventListener('click', function() {
+            const imageId = this.dataset.imageId;
+            if (confirm('Удалить это изображение?')) {
+                fetch("{% url 'custom_admin:portfolio_image_delete' portfolio_item.id %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({image_id: imageId})
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.closest('.image-item').remove();
+                        } else {
+                            alert('Ошибка: ' + data.error);
+                        }
+                    });
+            }
+        });
+    });
+
+    // Установка изображения как основного
+    document.querySelectorAll('.set-main-image').forEach(button => {
+        button.addEventListener('click', function() {
+            const imageId = this.dataset.imageId;
+            fetch("{% url 'custom_admin:portfolio_image_set_main' portfolio_item.id %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({image_id: imageId})
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    }
+                });
+        });
+    });
+</script>
+{% endblock %}

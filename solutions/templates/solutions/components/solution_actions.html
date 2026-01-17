@@ -1,0 +1,13 @@
+{% load static %}
+<div class="solution-actions">
+    <a href="{% url 'solutions:order_create' solution.slug %}"
+       class="btn btn--primary btn--large">
+        <i class="fas fa-shopping-cart"></i>
+        Заказать решение
+    </a>
+    <a href="{% url 'main:contacts' %}?interest={{ solution.name|urlencode }}"
+       class="btn btn--outline">
+        <i class="fas fa-question-circle"></i>
+        Задать вопрос
+    </a>
+</div>

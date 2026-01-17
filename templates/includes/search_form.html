@@ -1,10 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<form class="search-form" method="get" action="{{ action_url|default:'#' }}">
+    <div class="search-field">
+        <input type="search"
+               name="{{ name|default:'q' }}"
+               class="search-input"
+               placeholder="{{ placeholder|default:'Поиск...' }}"
+               value="{{ query|default:'' }}"
+               aria-label="Поиск">
 
-</body>
-</html>
+        <button type="submit" class="search-button" aria-label="Искать">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+
+    {% if filters %}
+    <div class="search-filters">
+        {% for filter in filters %}
+        <div class="filter-group">
+            <label for="{{ filter.id }}">{{ filter.label }}</label>
+            <select id="{{ filter.id }}" name="{{ filter.name }}" class="filter-select">
+                <option value="">{{ filter.all_label|default:'Все' }}</option>
+                {% for option in filter.options %}
+                <option value="{{ option.value }}"
+                        {% if option.selected %}selected{% endif %}>
+                    {{ option.label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if advanced_search %}
+    <div class="advanced-search-toggle">
+        <button type="button" class="btn btn--text" id="toggleAdvancedSearch">
+            <i class="fas fa-sliders-h"></i> Расширенный поиск
+        </button>
+    </div>
+
+    <div class="advanced-search-fields" style="display: none;">
+        {{ advanced_search|safe }}
+    </div>
+    {% endif %}
+</form>

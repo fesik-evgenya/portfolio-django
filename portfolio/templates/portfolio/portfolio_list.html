@@ -2,94 +2,96 @@
 {% load static %}
 
 {% block seo_extra %}
-<!-- Дополнительные SEO-теги для страницы портфолио -->
-<meta name="robots" content="index, follow">
-<link rel="alternate" hreflang="ru" href="{{ request.build_absolute_uri }}"/>
+<title>Портфолио - успешные проекты для бизнеса | Евгения Фесик</title>
+<meta name="description" content="Реальные кейсы пакетных сайтов, запущенных за 14 дней. Каждый проект адаптирован под специфику бизнеса клиента.">
+<meta name="keywords" content="портфолио, кейсы, проекты, сайты для бизнеса, готовые решения, Санкт-Петербург">
+<link rel="alternate" hreflang="ru" href="{{ request.build_absolute_uri }}">
 {% endblock %}
 
-{% block extra_css %}
+{% block styles %}
 <link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
 {% endblock %}
 
 {% block content %}
+<!-- Герой-секция -->
 <section class="portfolio-hero">
     <div class="container">
         <h1 class="page-title">Успешные проекты для бизнеса:<br> от идеи до реализации</h1>
-        <p class="hero__text">Реальные кейсы пакетных сайтов, запущенных за 14 дней.<br> Каждый проект адаптирован под
-            специфику бизнеса клиента.</p>
+        <p class="hero__text">Реальные кейсы пакетных сайтов, запущенных за 14 дней.<br> Каждый проект адаптирован под специфику бизнеса клиента.</p>
 
+        <!-- Фильтры по категориям -->
         <div class="portfolio-filters">
             <button class="btn btn--outline active" data-filter="all">Все проекты</button>
-            <button class="btn btn--outline" data-filter="startap">Стартап-Лаунч</button>
-            <button class="btn btn--outline" data-filter="profi">Профи-Портфолио</button>
-            <button class="btn btn--outline" data-filter="magazin">Магазин-Мини</button>
-            <button class="btn btn--outline" data-filter="kofeynya">Кофейня-Кафе</button>
-            <button class="btn btn--outline" data-filter="uslugi">Услуги-Мастер</button>
-            <button class="btn btn--outline" data-filter="salon">Салон-Клиника</button>
-            <button class="btn btn--outline" data-filter="agentstvo">Агентство-Студия</button>
-            <button class="btn btn--outline" data-filter="other">Индивидуальный проект</button>
+            {% for category in categories %}
+            <button class="btn btn--outline" data-filter="{{ category.slug }}">{{ category.name }}</button>
+            {% endfor %}
         </div>
     </div>
 </section>
 
+<!-- Сетка проектов -->
 <section class="portfolio-grid-section">
     <div class="container">
-        <div class="portfolio-grid">
+        <div class="portfolio-grid" id="portfolioGrid">
             {% if portfolio_items %}
             {% for item in portfolio_items %}
-            <div class="portfolio-card"
-                 data-package="{{ item.package|lower }}"
-                 data-title="{{ item.title|lower }}"
-                 data-id="{{ item.id }}">
-                <div class="portfolio-card__image">
-                    {% if item.main_image %}
-                    <img src="{{ item.main_image.image.url }}"
-                         alt="{{ item.title }}"
-                         loading="lazy">
-                    {% else %}
-                    <img src="{% static 'images/placeholder.jpg' %}"
-                         alt="{{ item.title }}"
-                         loading="lazy">
-                    {% endif %}
-                    <div class="portfolio-card__overlay">
-                        <a href="{% url 'portfolio:portfolio_detail' slug=item.slug %}" class="btn btn--primary">Подробнее</a>
-                    </div>
-                </div>
-                <div class="portfolio-card__content">
-                    <span class="portfolio-card__category">{{ item.category.name }}</span>
-                    <h3 class="portfolio-card__title">{{ item.title }}</h3>
-                    <p class="portfolio-card__desc">{{ item.features.0|default:"Профессиональный сайт" }}</p>
-                    <div class="portfolio-card__meta">
-                        <span>Срок: {{ item.duration }}</span>
-                        <span>|</span>
-                        <span>Пакет: {{ item.get_package_display }}</span>
-                    </div>
-                </div>
-            </div>
+            {% include "portfolio/components/project_card.html" %}
             {% endfor %}
             {% else %}
+            <!-- Заглушка если нет проектов -->
             <div class="empty-state">
                 <div class="empty-state__icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/>
-                    </svg>
+                    <i class="fas fa-folder-open fa-3x"></i>
                 </div>
                 <h3>Обновление портфолио</h3>
                 <p>уже скоро</p>
+                <a href="{% url 'solutions:list' %}" class="btn btn--primary">Посмотреть готовые решения</a>
             </div>
             {% endif %}
         </div>
 
-        {% if portfolio_items and portfolio_items|length > 6 %}
-        <div class="portfolio-pagination">
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn--outline">Показать ещё</a>
-            {% endif %}
-        </div>
+        {% if is_paginated %}
+        <!-- Пагинация -->
+        <nav class="pagination">
+            <ul class="pagination-list">
+                {% if page_obj.has_previous %}
+                <li class="pagination-item">
+                    <a class="pagination-link" href="?page={{ page_obj.previous_page_number }}{{ query_string }}" aria-label="Предыдущая">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="pagination-item active">
+                    <span class="pagination-link">{{ num }}</span>
+                </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="pagination-item">
+                    <a class="pagination-link" href="?page={{ num }}{{ query_string }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="pagination-item">
+                    <a class="pagination-link" href="?page={{ page_obj.next_page_number }}{{ query_string }}" aria-label="Следующая">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <div class="pagination-info">
+                Показано {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ paginator.count }}
+            </div>
+        </nav>
         {% endif %}
     </div>
 </section>
 
+<!-- SEO-блок -->
 <div class="portfolio-seo">
     <div class="container">
         <h2>Создание сайтов для бизнеса в Санкт-Петербурге</h2>
@@ -101,8 +103,44 @@
         </p>
     </div>
 </div>
+
+<!-- Призыв к действию -->
+<section class="portfolio-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Хотите такой же проект для своего бизнеса?</h2>
+            <p>Расскажите о вашем проекте, и я разработаю индивидуальное решение специально для вас</p>
+            <a href="{% url 'main:contacts' %}" class="btn btn--primary btn--large">Обсудить индивидуальный проект</a>
+        </div>
+    </div>
+</section>
 {% endblock %}
 
-{% block extra_js %}
+{% block scripts %}
 <script src="{% static 'js/portfolio.js' %}"></script>
+<script>
+    // Фильтрация проектов по категориям
+    document.querySelectorAll('.portfolio-filters .btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Убираем активный класс у всех кнопок
+            document.querySelectorAll('.portfolio-filters .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Добавляем активный класс текущей кнопке
+            this.classList.add('active');
+
+            const filter = this.getAttribute('data-filter');
+            const projects = document.querySelectorAll('.portfolio-grid .portfolio-card');
+
+            projects.forEach(project => {
+                if (filter === 'all' || project.getAttribute('data-category') === filter) {
+                    project.style.display = 'block';
+                } else {
+                    project.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

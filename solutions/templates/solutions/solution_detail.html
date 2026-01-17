@@ -1,187 +1,77 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block meta_title %}{{ solution.meta_title|default:solution.name }}{% endblock %}
-{% block meta_description %}{{ solution.meta_description|default:solution.description|truncatechars:160 }}{% endblock %}
-{% block meta_keywords %}{{ solution.meta_keywords }}{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/solution_detail.css' %}">
-{% endblock %}
-
 {% block seo_extra %}
-<meta property="og:title" content="{{ solution.meta_title|default:solution.name }}">
-<meta property="og:description" content="{{ solution.meta_description|default:solution.description|truncatechars:160 }}">
-<meta property="og:type" content="product">
-<meta property="og:url" content="{{ request.build_absolute_uri }}">
-{% if solution.main_image %}
-<meta property="og:image" content="{{ solution.main_image.image.url }}">
+{% if solution.meta_title or solution.meta_description or solution.meta_keywords %}
+<!-- SEO мета-теги -->
+<title>{{ solution.meta_title|default:solution.name }} | Магазин решений</title>
+<meta name="description" content="{{ solution.meta_description|default:solution.description|truncatechars:160 }}">
+<meta name="keywords" content="{{ solution.meta_keywords }}">
+{% else %}
+<title>{{ solution.name }} | Магазин решений</title>
+<meta name="description" content="{{ solution.description|truncatechars:160 }}">
 {% endif %}
 
+<!-- Микроразметка -->
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": "{{ solution.name }}",
-    "description": "{{ solution.description }}",
+    "description": "{{ solution.description|truncatechars:200 }}",
+    "image": "{% if solution.main_image %}{{ solution.main_image.image.url }}{% endif %}",
     "offers": {
       "@type": "Offer",
       "price": "{{ solution.price }}",
-      "priceCurrency": "RUB"
-    },
-  {% if solution.main_image %}
-  "image": "{{ solution.main_image.image.url }}",
-  {% endif %}
-  "brand": {
-  "@type": "Brand",
-  "name": "Full-stack разработчик"
-  }
+      "priceCurrency": "RUB",
+      "availability": "https://schema.org/InStock"
+    }
   }
 </script>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/solution_detail.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container solution-detail">
-  {% if solution %}
-  {% include 'includes/gallery_slider.html' with images=solution.display_images title=solution.name %}
+<main class="solution-detail-page">
+  <!-- Герой-секция -->
+  {% include "solutions/components/solution_hero.html" %}
 
-  <div class="solution-content">
-    <div class="solution-header">
-      <div class="solution-title-section">
-        <h1 class="solution-title">{{ solution.name }}</h1>
+  <section class="solution-content">
+    <div class="container">
+      <div class="solution-grid">
+        <!-- Галерея изображений -->
+        {% include "solutions/components/solution_image_gallery.html" %}
 
-        <div class="solution-badges">
-          {% if solution.is_new %}
-          <span class="solution-badge badge-new">Новинка</span>
-          {% endif %}
-          {% if solution.is_popular %}
-          <span class="solution-badge badge-popular">Популярное</span>
-          {% endif %}
+        <div class="solution-info">
+          <!-- Цена и срок -->
+          {% include "solutions/components/solution_pricing.html" %}
+
+          <!-- Описание -->
+          {% include "solutions/components/solution_description.html" %}
+
+          <!-- Особенности -->
+          {% include "solutions/components/solution_features.html" %}
+
+          <!-- Требования -->
+          {% include "solutions/components/solution_requirements.html" %}
+
+          <!-- Кнопки действий -->
+          {% include "solutions/components/solution_actions.html" %}
         </div>
       </div>
-
-      <div class="solution-price-section">
-        <div class="solution-price">от {{ solution.price }} ₽</div>
-        <div class="solution-delivery">
-          <svg class="delivery-icon" viewBox="0 0 24 24">
-            <path d="M13 5.08A7 7 0 0 1 18.92 11h3.03c-.47-4.72-4.23-8.48-8.95-8.95v3.03zM18.92 13A7 7 0 0 1 13 18.92v3.03c4.72-.47 8.48-4.23 8.95-8.95h-3.03zM11 18.92A7 7 0 0 1 5.08 13H2.05c.47 4.72 4.23 8.48 8.95 8.95v-3.03zM5.08 11A7 7 0 0 1 11 5.08V2.05c-4.72.47-8.48 4.23-8.95 8.95h3.03z"/>
-          </svg>
-          Запуск за {{ solution.delivery_days }} дней
-        </div>
-      </div>
     </div>
+  </section>
 
-    <div class="solution-meta">
-      <div class="meta-item">
-        <span class="meta-label">Категория:</span>
-        <span class="meta-value">{{ solution.category.name }}</span>
-      </div>
-      {% if solution.package_type %}
-      <div class="meta-item">
-        <span class="meta-label">Тип пакета:</span>
-        <span class="meta-value">{{ solution.get_package_type_display }}</span>
-      </div>
-      {% endif %}
-    </div>
+  <!-- Сравнение пакетов -->
+  {% include "solutions/components/package_comparison.html" %}
 
-    <div class="solution-description">
-      <p>{{ solution.description }}</p>
-      {% if solution.detailed_description %}
-      <div class="detailed-description">
-        {{ solution.detailed_description|safe }}
-      </div>
-      {% endif %}
-    </div>
+  <!-- Похожие решения -->
+  {% include "solutions/components/related_solutions.html" %}
 
-    {% if solution.features %}
-    <div class="solution-features">
-      <h2>Что входит в решение:</h2>
-      <ul>
-        {% for feature in solution.features %}
-        <li>
-          <svg class="feature-icon" viewBox="0 0 24 24">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-          </svg>
-          <span>{{ feature }}</span>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
-
-    <div class="solution-actions">
-      <a href="{% url 'main:contacts' %}?interest={{ solution.name|urlencode }}"
-         class="btn btn--primary"
-         aria-label="Заказать решение {{ solution.name }}">
-        <svg class="btn-icon" viewBox="0 0 24 24">
-          <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17l-.59.59-.58.58V4h16v12zM6 12h2v2H6zm0-3h2v2H6zm0-3h2v2H6zm4 6h5v2h-5zm0-3h8v2h-8zm0-3h8v2h-8z"/>
-        </svg>
-        Заказать решение
-      </a>
-      <a href="{% url 'solutions:solution_list' %}"
-         class="btn btn--outline"
-         aria-label="Вернуться к списку решений">
-        <svg class="btn-icon" viewBox="0 0 24 24">
-          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-        </svg>
-        Все решения
-      </a>
-    </div>
-  </div>
-
-  {% if related_solutions %}
-  <div class="related-solutions">
-    <h2>Похожие решения</h2>
-    <div class="related-grid">
-      {% for related in related_solutions %}
-      <div class="related-card">
-        <a href="{% url 'solutions:solution_detail' slug=related.slug %}">
-          {% if related.main_image %}
-          <img src="{{ related.main_image.image.url }}"
-               alt="{{ related.name }}"
-               loading="lazy">
-          {% else %}
-          <img src="{% static 'images/placeholder.jpg' %}"
-               alt="{{ related.name }}"
-               loading="lazy">
-          {% endif %}
-          <div class="related-card-content">
-            <h3>{{ related.name }}</h3>
-            <p class="related-price">от {{ related.price }} ₽</p>
-          </div>
-        </a>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
-
-  {% else %}
-  <div class="empty-state">
-    <div class="empty-state__icon">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-    </div>
-    <h3>Решение не найдено</h3>
-    <p>Запрошенное решение не существует или было удалено</p>
-    <a href="{% url 'solutions:solution_list' %}" class="btn btn--primary">
-      Вернуться к решениям
-    </a>
-  </div>
-  {% endif %}
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'js/gallery.js' %}"></script>
-<script>
-  const SOLUTION_CONFIG = {
-    id: {{ solution.id|default:0 }},
-  totalImages: {{ solution.display_images|length|default:0 }},
-  imagesPerPage: 10,
-          currentPage: 1
-  };
-</script>
-<script src="{% static 'js/solution_detail.js' %}"></script>
+  <!-- FAQ -->
+  {% include "solutions/components/faq.html" %}
+</main>
 {% endblock %}

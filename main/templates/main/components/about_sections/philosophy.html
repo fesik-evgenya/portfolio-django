@@ -1,10 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="about__text">
+    <h2>{{ philosophy.title|default:"Философия работы" }}</h2>
 
-</body>
-</html>
+    <!-- Слоты философии из БД -->
+    {% if philosophy_slots %}
+    <div class="philosophy-grid">
+        {% for slot in philosophy_slots %}
+        <div class="philosophy-card">
+            <h3>{{ slot.title }}</h3>
+            <p>{{ slot.content }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="philosophy-grid">
+        <div class="philosophy-card">
+            <h3>Код ≠ цель. Решаю бизнес-задачи</h3>
+            <p>Фокусируюсь на том, как технологии могут помочь вашему бизнесу расти, а не просто на
+                написании кода. Каждая строка кода — это шаг к решению вашей конкретной задачи.</p>
+        </div>
+
+        <div class="philosophy-card">
+            <h3>Минимум технического жаргона</h3>
+            <p>Объясняю сложные веди простыми словами. Вы будете в курсе процесса без лишней терминологии и
+                технических сложностей.</p>
+        </div>
+
+        <div class="philosophy-card">
+            <h3>Прозрачность этапов и сроки</h3>
+            <p>Четкие этапы работы, понятные сроки и регулярная отчетность. Никаких неожиданностей — только
+                предсказуемый результат.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Текст рабочего процесса из БД -->
+    <h3>Рабочий процесс</h3>
+    {% if philosophy and philosophy.workflow_text %}
+    {{ philosophy.workflow_text|safe }}
+    {% else %}
+    <p>Мой подход сочетает техническую экспертизу и понимание бизнес-процессов, что позволяет создавать
+        решения, которые действительно работают на ваши цели.</p>
+    {% endif %}
+</div>

@@ -1,10 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<div class="contact-form-section">
+    <h2 class="section-title">Обсудим ваш проект?</h2>
+    <form class="contact-form" id="contact-form" method="post" action="{% url 'main:contact_submit' %}">
+        {% csrf_token %}
 
-</body>
-</html>
+        {% if interest %}
+        <input type="hidden" name="interest" value="{{ interest }}">
+        {% endif %}
+
+        <div class="form-group">
+            <label for="name" class="form-group-label-dark">Имя *</label>
+            <input type="text" id="name" name="name" class="form-group-label" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email" class="form-group-label-dark">Email *</label>
+            <input type="email" id="email" name="email" class="form-group-label" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone" class="form-group-label-dark">Телефон</label>
+            <input type="tel" id="phone" name="phone" class="form-group-label" placeholder="+7 (999) 999-99-99">
+        </div>
+
+        <div class="form-group">
+            <label for="subject" class="form-group-label-dark">Тема сообщения</label>
+            <input type="text" id="subject" name="subject" class="form-group-label">
+        </div>
+
+        <div class="form-group">
+            <label for="message" class="form-group-label-dark">Сообщение *</label>
+            <textarea id="message" name="message" class="form-group-label" rows="5" required></textarea>
+        </div>
+
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="privacyPolicy" required>
+            <label class="form-check-label" for="privacyPolicy">
+                Я согласен(а) с обработкой персональных данных в соответствии с
+                <a href="{% url 'main:privacy' %}" target="_blank">политикой конфиденциальности</a>
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn--primary">
+            <i class="fas fa-paper-plane"></i> Отправить сообщение
+        </button>
+    </form>
+</div>

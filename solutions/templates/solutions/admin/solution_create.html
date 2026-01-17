@@ -1,10 +1,392 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}Создание нового решения | Админ-панель{% endblock %}
+
+{% block content %}
+<header class="admin-form-header">
+    <h1>Добавление нового решения</h1>
+    <a href="{% url 'custom_admin:solution_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Назад к решениям
+    </a>
+</header>
+
+<section class="admin-form-section">
+    <form method="POST" enctype="multipart/form-data" id="solutionForm">
+        {% csrf_token %}
+
+        <!-- Основная информация -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Основная информация</h3>
+            <div class="form-grid">
+                <div class="form-group form-group-label-light">
+                    <label for="solution_type">Тип решения *</label>
+                    <select id="solution_type" name="solution_type" class="form-control" required>
+                        <option value="">-- Выберите тип --</option>
+                        <option value="package">Пакетное решение</option>
+                        <option value="module">Дополнительный модуль</option>
+                    </select>
+                </div>
+
+                <!-- Поле для выбора пакета (только для пакетных решений) -->
+                <div class="form-group form-group-label-light" id="package_select_group" style="display: none;">
+                    <label for="package_name">Выберите пакет *</label>
+                    <select id="package_name" name="package_name" class="form-control">
+                        <option value="">-- Выберите пакет --</option>
+                        <option value="starter" data-name="Стартап-Лаунч">Стартап-Лаунч</option>
+                        <option value="profi" data-name="Профи-Портфолио">Профи-Портфолио</option>
+                        <option value="business" data-name="Бизнес-Магазин">Бизнес-Магазин</option>
+                        <option value="custom" data-name="Индивидуальный">Индивидуальный</option>
+                    </select>
+                </div>
+
+                <!-- Поле для произвольного названия (только для модулей) -->
+                <div class="form-group form-group-label-light" id="custom_name_group" style="display: none;">
+                    <label for="custom_name">Название модуля *</label>
+                    <input type="text" id="custom_name" name="custom_name" class="form-control">
+                </div>
+
+                <!-- Скрытое поле для итогового названия -->
+                <input type="hidden" id="name" name="name">
+
+                <div class="form-group form-group-label-light">
+                    <label for="slug">URL-идентификатор *</label>
+                    <input type="text" id="slug" name="slug" class="form-control" required>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="price">Цена (₽) *</label>
+                    <input type="number" id="price" name="price" class="form-control" min="0" required>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="delivery_days">Срок разработки (дни) *</label>
+                    <input type="number" id="delivery_days" name="delivery_days" class="form-control" min="1" required>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="category">Категория *</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">-- Выберите категорию --</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }} ({{ category.get_category_type_display }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="package_type">Тип пакета</label>
+                    <select id="package_type" name="package_type" class="form-control">
+                        <option value="">-- Не указано --</option>
+                        {% for package in package_types %}
+                        <option value="{{ package.0 }}">{{ package.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group-checkbox">
+                    <div class="form-group form-group-label-light">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_new" id="is_new">
+                            <span class="checkmark"></span>
+                            Отметить как новинку
+                        </label>
+                    </div>
+
+                    <div class="form-group form-group-label-light">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_popular" id="is_popular">
+                            <span class="checkmark"></span>
+                            Отметить как популярное
+                        </label>
+                    </div>
+
+                    <div class="form-group form-group-label-light">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_active" id="is_active" checked>
+                            <span class="checkmark"></span>
+                            Активное решение
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Описание -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Описание решения</h3>
+            <div class="form-group form-group-label-light">
+                <label for="description">Описание *</label>
+                <textarea id="description" name="description" class="form-control" rows="5" required></textarea>
+            </div>
+
+            <div class="form-group form-group-label-light">
+                <label for="detailed_description">Детальное описание</label>
+                <textarea id="detailed_description" name="detailed_description" class="form-control" rows="8"></textarea>
+            </div>
+        </div>
+
+        <!-- Особенности -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Особенности решения</h3>
+            <div class="form-group form-group-label-light">
+                <label for="features">Особенности (каждая с новой строки)</label>
+                <textarea id="features" name="features" class="form-control" rows="5"
+                          placeholder="Например:
+• Адаптивный дизайн
+• Интеграция с соцсетями
+• SEO-оптимизация"></textarea>
+            </div>
+        </div>
+
+        <!-- Требования -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Что нужно для запуска</h3>
+            <div class="form-group form-group-label-light">
+                <label for="requirements">Требования (каждое с новой строки)</label>
+                <textarea id="requirements" name="requirements" class="form-control" rows="5"
+                          placeholder="Например:
+• Доменное имя
+• Хостинг
+• Контент для сайта"></textarea>
+            </div>
+        </div>
+
+        <!-- Изображения -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">Изображения решения</h3>
+            <div class="form-group form-group-label-light">
+                <label>Загрузить изображения (рекомендуется 1080×750px для превью)</label>
+
+                <div class="file-dropzone" id="imageDropzone">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p>Кликните для выбора или перетащите файлы</p>
+                    <small class="file-hint">Можно загрузить до 10 изображений. Первое изображение будет использовано как превью</small>
+                    <small class="file-hint">Поддерживаются: JPG, PNG, WebP, GIF</small>
+                </div>
+
+                <input type="file" id="image" name="images" multiple
+                       accept="image/jpeg, image/png, image/webp, image/gif"
+                       style="display: none;">
+
+                <div class="file-counter" id="fileCounter" style="margin-top: 10px; display: none;">
+                    <small>Выбрано файлов: <span id="fileCount">0</span> из 10</small>
+                </div>
+
+                <div class="image-previews-container" id="imagePreviewsContainer" style="display: none; margin-top: 15px;">
+                    <h4>Выберите изображение для превью:</h4>
+                    <div class="image-previews-grid" id="imagePreviews"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO настройки -->
+        <div class="form-section">
+            <h3 class="form-group-label-light">SEO настройки</h3>
+            <div class="form-grid">
+                <div class="form-group form-group-label-light">
+                    <label for="meta_title">Meta Title</label>
+                    <input type="text" id="meta_title" name="meta_title" class="form-control">
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="meta_description">Meta Description</label>
+                    <textarea id="meta_description" name="meta_description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-group form-group-label-light">
+                    <label for="meta_keywords">Meta Keywords</label>
+                    <input type="text" id="meta_keywords" name="meta_keywords" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Сохранить решение
+            </button>
+            <a href="{% url 'custom_admin:solution_list' %}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</section>
+
+<script src="{% static 'js/admin/solution-create.js' %}"></script>
+<script>
+    // Автогенерация slug из названия
+    document.getElementById('name').addEventListener('input', function() {
+        if (!document.getElementById('slug').value) {
+            const slug = this.value
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            document.getElementById('slug').value = slug;
+        }
+    });
+
+    // Управление типами решений
+    document.getElementById('solution_type').addEventListener('change', function() {
+        const packageGroup = document.getElementById('package_select_group');
+        const customGroup = document.getElementById('custom_name_group');
+
+        if (this.value === 'package') {
+            packageGroup.style.display = 'block';
+            customGroup.style.display = 'none';
+            document.getElementById('package_name').required = true;
+            document.getElementById('custom_name').required = false;
+
+            // Автозаполнение названия при выборе пакета
+            document.getElementById('package_name').addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const packageName = selectedOption.getAttribute('data-name');
+                if (packageName) {
+                    document.getElementById('name').value = packageName;
+                }
+            });
+        } else if (this.value === 'module') {
+            packageGroup.style.display = 'none';
+            customGroup.style.display = 'block';
+            document.getElementById('package_name').required = false;
+            document.getElementById('custom_name').required = true;
+
+            // Автозаполнение названия для модуля
+            document.getElementById('custom_name').addEventListener('input', function() {
+                document.getElementById('name').value = this.value;
+            });
+        } else {
+            packageGroup.style.display = 'none';
+            customGroup.style.display = 'none';
+            document.getElementById('package_name').required = false;
+            document.getElementById('custom_name').required = false;
+        }
+    });
+
+    // Управление загрузкой изображений
+    const dropzone = document.getElementById('imageDropzone');
+    const fileInput = document.getElementById('image');
+    const previewsContainer = document.getElementById('imagePreviewsContainer');
+    const fileCounter = document.getElementById('fileCounter');
+    const fileCountSpan = document.getElementById('fileCount');
+    const previewsGrid = document.getElementById('imagePreviews');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        handleFiles(fileInput.files);
+    });
+
+    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+    function handleFiles(files) {
+        if (files.length > 10) {
+            alert('Можно загрузить не более 10 файлов');
+            return;
+        }
+
+        fileCounter.style.display = 'block';
+        fileCountSpan.textContent = files.length;
+
+        previewsContainer.style.display = 'block';
+        previewsGrid.innerHTML = '';
+
+        Array.from(files).forEach((file, index) => {
+            if (!file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'image-preview-item';
+                previewItem.innerHTML = `
+                <div class="preview-image-container">
+                    <img src="${e.target.result}" alt="${file.name}">
+                </div>
+                <div class="preview-actions">
+                    <label class="preview-radio-label">
+                        <input type="radio" name="preview_image_index" value="${index}" ${index === 0 ? 'checked' : ''}>
+                        <span>Сделать превью</span>
+                    </label>
+                    <button type="button" class="btn btn-sm btn-danger remove-preview" data-index="${index}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+                previewsGrid.appendChild(previewItem);
+
+                // Обработчик удаления превью
+                previewItem.querySelector('.remove-preview').addEventListener('click', function() {
+                    const dataTransfer = new DataTransfer();
+                    const newFiles = Array.from(fileInput.files).filter((_, i) => i != this.dataset.index);
+                    newFiles.forEach(file => dataTransfer.items.add(file));
+                    fileInput.files = dataTransfer.files;
+                    handleFiles(fileInput.files);
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+
+<style>
+    .file-dropzone {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+    .file-dropzone:hover, .file-dropzone.dragover {
+        border-color: #4a6cf7;
+    }
+    .upload-icon {
+        font-size: 48px;
+        color: #4a6cf7;
+        margin-bottom: 15px;
+    }
+    .file-hint {
+        display: block;
+        color: #666;
+        margin-top: 5px;
+    }
+    .image-previews-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    .image-preview-item {
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .preview-image-container {
+        height: 120px;
+        overflow: hidden;
+    }
+    .preview-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .preview-actions {
+        padding: 10px;
+        background: #f8f9fa;
+    }
+    .preview-radio-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin-bottom: 5px;
+    }
+    .preview-radio-label input {
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}

@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block seo_extra %}
+<!-- Запрет индексации -->
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="googlebot" content="noindex, nofollow, noarchive">
 {% endblock %}
@@ -16,22 +17,30 @@
     <form method="POST" id="login-form" autocomplete="off">
         {% csrf_token %}
 
-        <div class="form-group">
-            <label for="username">Имя пользователя</label>
-            <input type="text" name="username" class="form-control" autocomplete="new-username" id="username-field">
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            Неверное имя пользователя или пароль
         </div>
+        {% endif %}
 
         <div class="form-group">
-            <label for="password">Пароль</label>
-            <input type="password" name="password" class="form-control" autocomplete="new-password" id="password-field">
+            <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+            {{ form.username }}
         </div>
-
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">Пароль</label>
+            {{ form.password }}
+        </div>
+        <!-- Поле "Запомнить меня" -->
         <div class="form-group remember-me-group">
-            <input type="checkbox" name="remember_me" id="remember-me">
-            <label for="remember-me">Запомнить меня</label>
+            {{ form.remember_me }}
+            <label for="{{ form.remember_me.id_for_label }}">Запомнить меня</label>
         </div>
-
         <button type="submit" class="btn btn-primary login-btn">Войти</button>
+
+        <div class="login-links">
+            <a href="{% url 'main:index' %}">Вернуться на сайт</a>
+        </div>
     </form>
 </div>
 {% endblock %}
@@ -40,23 +49,49 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const loginForm = document.getElementById('login-form');
-        const usernameField = document.getElementById('username-field');
-        const passwordField = document.getElementById('password-field');
-        const rememberMe = document.getElementById('remember-me');
+        const usernameField = document.getElementById('id_username');
+        const passwordField = document.getElementById('id_password');
+        const rememberMe = document.getElementById('id_remember_me');
 
+        // Принудительно очищаем поля при загрузке страницы
         function clearFormFields() {
-            usernameField.value = '';
-            passwordField.value = '';
-            rememberMe.checked = false;
+            const isRemembered = localStorage.getItem('admin_remember_me') === 'true';
+
+            if (!isRemembered) {
+                if (usernameField) usernameField.value = '';
+                if (passwordField) passwordField.value = '';
+                if (rememberMe) rememberMe.checked = false;
+            }
+
+            // Дополнительная защита - очищаем поля даже если remember me установлен
+            if (window.performance && performance.navigation.type === 1) {
+                // Страница загружена по refresh - очищаем пароль
+                if (passwordField) passwordField.value = '';
+            }
         }
 
+        // Очистка при загрузке
         clearFormFields();
 
+        // Очистка при уходе со страницы (если не установлен remember me)
         window.addEventListener('beforeunload', function() {
-            if (!rememberMe.checked) {
-                clearFormFields();
+            if (rememberMe && !rememberMe.checked) {
+                if (usernameField) usernameField.value = '';
+                if (passwordField) passwordField.value = '';
             }
         });
+
+        // Сохраняем состояние remember me
+        if (rememberMe) {
+            rememberMe.addEventListener('change', function() {
+                localStorage.setItem('admin_remember_me', this.checked);
+            });
+        }
+
+        // Восстанавливаем состояние remember me
+        if (rememberMe && localStorage.getItem('admin_remember_me') === 'true') {
+            rememberMe.checked = true;
+        }
     });
 </script>
 {% endblock %}

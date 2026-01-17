@@ -1,0 +1,29 @@
+<div class="error__actions">
+    <a href="{% url 'main:index' %}" class="btn btn--primary">
+        <i class="fas fa-home"></i>
+        На главную
+    </a>
+    <a href="{% url 'solutions:list' %}" class="btn btn--outline">
+        <i class="fas fa-store"></i>
+        Магазин решений
+    </a>
+    <a href="{% url 'portfolio:list' %}" class="btn btn--outline">
+        <i class="fas fa-briefcase"></i>
+        Портфолио
+    </a>
+</div>
+
+<div class="error__links">
+    <a href="{% url 'main:about' %}" class="error__link">
+        <i class="fas fa-user"></i>
+        Обо мне
+    </a>
+    <a href="{% url 'main:contacts' %}" class="error__link">
+        <i class="fas fa-envelope"></i>
+        Контакты
+    </a>
+    <a href="{% url 'main:sitemap' %}" class="error__link">
+        <i class="fas fa-sitemap"></i>
+        Карта сайта
+    </a>
+</div>

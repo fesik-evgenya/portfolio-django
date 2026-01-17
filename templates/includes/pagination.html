@@ -1,10 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="pagination" aria-label="Навигация по страницам">
+    <ul class="pagination-list">
+        {% if page_obj.has_previous %}
+        <li class="pagination-item">
+            <a class="pagination-link" href="?page={{ page_obj.previous_page_number }}{{ query_string }}" aria-label="Предыдущая">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
 
-</body>
-</html>
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="pagination-item active">
+            <span class="pagination-link">{{ num }}</span>
+        </li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="pagination-item">
+            <a class="pagination-link" href="?page={{ num }}{{ query_string }}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="pagination-item">
+            <a class="pagination-link" href="?page={{ page_obj.next_page_number }}{{ query_string }}" aria-label="Следующая">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+
+    <div class="pagination-info">
+        Показано {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ page_obj.paginator.count }}
+    </div>
+</nav>
+{% endif %}

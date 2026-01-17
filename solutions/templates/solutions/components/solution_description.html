@@ -1,0 +1,11 @@
+{% load static %}
+<div class="solution-description">
+    <h3>Описание решения</h3>
+    {{ solution.description|linebreaks }}
+
+    {% if solution.detailed_description %}
+    <div class="detailed-description">
+        {{ solution.detailed_description|linebreaks }}
+    </div>
+    {% endif %}
+</div>

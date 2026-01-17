@@ -1,30 +1,18 @@
-<!-- Модальное окно Cookies -->
-<div id="cookiesModal" class="cookies-modal">
-  <div class="cookies-modal__content">
-    <div class="cookies-modal__header">
-      <i class="fas fa-cookie-bite cookies-modal__icon"></i>
-      <h3 class="cookies-modal__title">Мы используем cookie</h3>
+{% load static %}
+<div class="modal-overlay" id="cookiesModal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <i class="fas fa-cookie-bite"></i>
+      <h3 class="modal-title">Мы используем cookie</h3>
+      <button class="modal-close">&times;</button>
     </div>
-
-    <div class="cookies-modal__body">
-      <p class="cookies-modal__text">
-        Мы используем cookie и рекомендательные технологии для персонализации сервисов
-        и удобства пользователей.<br>Вы можете запретить сохранение cookie в настройках своего браузера.
-      </p>
-
-      <div class="cookies-modal__links">
-        <a href="{% url 'main:privacy' %}" class="cookies-modal__link" target="_blank">
-          <i class="fas fa-shield-alt"></i>
-          Политика конфиденциальности
-        </a>
-      </div>
+    <div class="modal-body">
+      <p>Мы используем cookie и рекомендательные технологии для персонализации сервисов и удобства пользователей.</p>
+      <p>Вы можете запретить сохранение cookie в настройках своего браузера.</p>
     </div>
-
-    <div class="cookies-modal__footer">
-      <button id="acceptCookies" class="btn btn--primary cookies-modal__btn">
-        <i class="fas fa-check"></i>
-        Хорошо
-      </button>
+    <div class="modal-footer">
+      <a href="{% url 'main:privacy' %}" class="btn btn--outline">Подробнее</a>
+      <button class="btn btn--primary" id="acceptCookiesBtn">Принять</button>
     </div>
   </div>
 </div>

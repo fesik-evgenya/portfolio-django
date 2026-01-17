@@ -1,0 +1,107 @@
+<div class="cookie-consent" id="cookieConsent">
+    <div class="cookie-content">
+        <div class="cookie-text">
+            <i class="fas fa-cookie-bite"></i>
+            <div>
+                <h4>Мы используем cookie</h4>
+                <p>Это помогает улучшить работу сайта. Продолжая использовать сайт, вы соглашаетесь с использованием cookie.</p>
+            </div>
+        </div>
+        <div class="cookie-actions">
+            <a href="{% url 'main:privacy' %}" class="cookie-link">Подробнее</a>
+            <button class="btn btn--primary" id="acceptCookiesBtn">Принять</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cookieConsent = document.getElementById('cookieConsent');
+        const acceptBtn = document.getElementById('acceptCookiesBtn');
+
+        // Проверяем, было ли уже принято согласие
+        if (!localStorage.getItem('cookiesAccepted')) {
+            cookieConsent.style.display = 'block';
+        }
+
+        // Обработка принятия согласия
+        acceptBtn.addEventListener('click', function() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            cookieConsent.style.display = 'none';
+        });
+    });
+</script>
+
+<style>
+    .cookie-consent {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 15px 20px;
+        z-index: 1000;
+        display: none;
+    }
+
+    .cookie-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .cookie-text {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+    }
+
+    .cookie-text i {
+        font-size: 24px;
+        color: #764ba2;
+    }
+
+    .cookie-text h4 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+    }
+
+    .cookie-text p {
+        margin: 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .cookie-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .cookie-link {
+        color: #764ba2;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .cookie-link:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .cookie-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .cookie-text {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>

@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
+<div class="empty-state">
+    <div class="empty-state__icon">
+        {% if icon %}
+        <i class="{{ icon }}"></i>
+        {% else %}
+        <i class="fas fa-inbox"></i>
+        {% endif %}
+    </div>
 
-</body>
-</html>
+    <h3 class="empty-state__title">
+        {{ title|default:"Ничего не найдено" }}
+    </h3>
+
+    <p class="empty-state__description">
+        {{ description|default:"Пока здесь пусто. Добавьте что-нибудь или вернитесь позже." }}
+    </p>
+
+    {% if action_url and action_text %}
+    <div class="empty-state__actions">
+        <a href="{{ action_url }}" class="btn btn--primary">
+            {{ action_text }}
+        </a>
+    </div>
+    {% endif %}
+</div>

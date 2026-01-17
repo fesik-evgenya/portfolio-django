@@ -1,40 +1,48 @@
-<!-- Компонент галереи для повторного использования -->
-<div class="gallery-container" data-gallery-id="{{ gallery_id|default:'default' }}">
+{% load static %}
+<div class="gallery-slider">
     <div class="gallery-main">
         {% for image in images %}
-        <div class="gallery-slide {% if forloop.first %}active{% endif %}">
-            <img src="{{ image.url|default:image }}"
-                 alt="{{ image.alt|default:title }} - изображение {{ forloop.counter }}"
-                 loading="lazy">
+        <div class="gallery-slide {% if forloop.first %}active{% endif %}"
+             data-index="{{ forloop.counter0 }}">
+            <img src="{{ image.url }}"
+                 alt="{{ image.alt|default:'' }}"
+                 loading="lazy"
+                 class="gallery-image">
         </div>
         {% empty %}
         <div class="gallery-slide active">
-            <img src="{% static 'images/placeholder.jpg' %}"
-                 alt="Изображение не найдено"
-                 loading="lazy">
+            <div class="no-image">
+                <i class="fas fa-image"></i>
+                <p>Нет изображений</p>
+            </div>
         </div>
         {% endfor %}
     </div>
 
     {% if images|length > 1 %}
-    <div class="gallery-navigation">
-        <div class="gallery-thumbnails">
-            {% for image in images %}
-            <div class="thumbnail {% if forloop.first %}active{% endif %}"
-                 data-index="{{ forloop.counter0 }}">
-                <img src="{{ image.url|default:image }}"
-                     alt="Thumbnail {{ forloop.counter }}">
-            </div>
-            {% endfor %}
+    <div class="gallery-controls">
+        <button class="gallery-prev" aria-label="Предыдущее изображение">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="gallery-counter">
+            <span class="current-slide">1</span> / <span class="total-slides">{{ images|length }}</span>
         </div>
 
-        <div class="gallery-controls">
-            <button class="gallery-prev" aria-label="Предыдущее изображение">‹</button>
-            <div class="gallery-counter">
-                <span class="current-slide">1</span> / {{ images|length }}
-            </div>
-            <button class="gallery-next" aria-label="Следующее изображение">›</button>
+        <button class="gallery-next" aria-label="Следующее изображение">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <div class="gallery-thumbnails">
+        {% for image in images %}
+        <div class="gallery-thumb {% if forloop.first %}active{% endif %}"
+             data-index="{{ forloop.counter0 }}">
+            <img src="{{ image.thumbnail_url|default:image.url }}"
+                 alt="Миниатюра {{ forloop.counter }}"
+                 loading="lazy">
         </div>
+        {% endfor %}
     </div>
     {% endif %}
 </div>
