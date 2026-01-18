@@ -1,0 +1,413 @@
+{% extends "custom_admin/base_admin.html" %}
+{% load static %}
+
+{% block title %}{{ portfolio_item.title }} | Админ-панель{% endblock %}
+
+{% block content %}
+<header class="admin-detail-header">
+    <div class="header-main">
+        <h1>{{ portfolio_item.title }}</h1>
+        <div class="header-actions">
+            <a href="{% url 'custom_admin:portfolio_edit' portfolio_item.id %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Редактировать
+            </a>
+            <a href="{% url 'portfolio:detail' portfolio_item.slug %}" target="_blank" class="btn btn-secondary">
+                <i class="fas fa-external-link-alt"></i> На сайте
+            </a>
+            <a href="{% url 'custom_admin:portfolio_list' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Назад
+            </a>
+        </div>
+    </div>
+
+    <div class="header-meta">
+        <div class="badges">
+            {% if portfolio_item.is_featured %}
+            <span class="badge badge-featured">Избранное</span>
+            {% endif %}
+            {% if not portfolio_item.is_active %}
+            <span class="badge badge-inactive">Неактивно</span>
+            {% endif %}
+            <span class="badge badge-category">{{ portfolio_item.category.name }}</span>
+            <span class="badge badge-package">{{ portfolio_item.get_package_display }}</span>
+            {% if portfolio_item.geo %}
+            <span class="badge badge-geo">{{ portfolio_item.geo }}</span>
+            {% endif %}
+        </div>
+
+        <div class="stats">
+            <span class="stat"><i class="fas fa-clock"></i> {{ portfolio_item.duration }}</span>
+            <span class="stat"><i class="fas fa-images"></i> {{ portfolio_item.images.count }} изображений</span>
+            <span class="stat"><i class="fas fa-calendar"></i> {{ portfolio_item.created_at|date:"d.m.Y" }}</span>
+        </div>
+    </div>
+</header>
+
+<div class="admin-detail-content">
+    <div class="detail-grid">
+        <!-- Левая колонка -->
+        <div class="detail-left">
+            <!-- Изображения -->
+            <div class="detail-section">
+                <h3><i class="fas fa-images"></i> Изображения проекта</h3>
+                <div class="image-gallery">
+                    {% if portfolio_item.main_image %}
+                    <div class="main-image">
+                        <img src="{{ portfolio_item.main_image.image.url }}"
+                             alt="{{ portfolio_item.title }}"
+                             class="img-fluid rounded">
+                        <div class="image-badge">Основное</div>
+                    </div>
+                    {% endif %}
+
+                    {% if portfolio_item.images.count > 1 %}
+                    <div class="gallery-thumbnails">
+                        <h5>Дополнительные изображения:</h5>
+                        <div class="thumbnails-grid">
+                            {% for image in portfolio_item.images.all %}
+                            {% if not image.is_main %}
+                            <div class="thumbnail">
+                                <img src="{{ image.image.url }}"
+                                     alt="{{ portfolio_item.title }}"
+                                     class="img-thumbnail"
+                                     style="max-height: 100px;">
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <button class="btn btn-sm btn-outline mt-3" data-toggle="modal" data-target="#imageManagerModal">
+                        <i class="fas fa-cog"></i> Управление изображениями
+                    </button>
+                </div>
+            </div>
+
+            <!-- Основная информация -->
+            <div class="detail-section">
+                <h3><i class="fas fa-info-circle"></i> Основная информация</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>ID:</strong>
+                        <span>#{{ portfolio_item.id }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Slug:</strong>
+                        <code>{{ portfolio_item.slug }}</code>
+                    </div>
+                    <div class="info-item">
+                        <strong>Категория:</strong>
+                        <span>{{ portfolio_item.category.name }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Пакет:</strong>
+                        <span>{{ portfolio_item.get_package_display }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Клиент:</strong>
+                        <span>{{ portfolio_item.client }}</span>
+                    </div>
+                    {% if portfolio_item.client_logo %}
+                    <div class="info-item">
+                        <strong>Логотип клиента:</strong>
+                        <img src="{{ portfolio_item.client_logo.url }}" alt="Логотип {{ portfolio_item.client }}"
+                             style="max-height: 40px; max-width: 100px;">
+                    </div>
+                    {% endif %}
+                    <div class="info-item">
+                        <strong>Срок разработки:</strong>
+                        <span>{{ portfolio_item.duration }}</span>
+                    </div>
+                    {% if portfolio_item.geo %}
+                    <div class="info-item">
+                        <strong>Локация:</strong>
+                        <span>{{ portfolio_item.geo }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="info-item">
+                        <strong>Порядок сортировки:</strong>
+                        <span>{{ portfolio_item.order }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Создано:</strong>
+                        <span>{{ portfolio_item.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Обновлено:</strong>
+                        <span>{{ portfolio_item.updated_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ссылки -->
+            {% if portfolio_item.live_url or portfolio_item.github_url %}
+            <div class="detail-section">
+                <h3><i class="fas fa-link"></i> Ссылки на проект</h3>
+                <div class="project-links">
+                    {% if portfolio_item.live_url %}
+                    <div class="link-item">
+                        <i class="fas fa-globe"></i>
+                        <a href="{{ portfolio_item.live_url }}" target="_blank" rel="noopener noreferrer">
+                            {{ portfolio_item.live_url|truncatechars:40 }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% if portfolio_item.github_url %}
+                    <div class="link-item">
+                        <i class="fab fa-github"></i>
+                        <a href="{{ portfolio_item.github_url }}" target="_blank" rel="noopener noreferrer">
+                            {{ portfolio_item.github_url|truncatechars:40 }}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Правая колонка -->
+        <div class="detail-right">
+            <!-- Описание -->
+            <div class="detail-section">
+                <h3><i class="fas fa-file-alt"></i> Описание проекта</h3>
+                <div class="description-content">
+                    {{ portfolio_item.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Технологии -->
+            {% if portfolio_item.technologies %}
+            <div class="detail-section">
+                <h3><i class="fas fa-code"></i> Технологии</h3>
+                <div class="technologies-list">
+                    {% for technology in portfolio_item.technologies %}
+                    <span class="technology-badge">{{ technology }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Особенности -->
+            {% if portfolio_item.features %}
+            <div class="detail-section">
+                <h3><i class="fas fa-star"></i> Особенности проекта</h3>
+                <ul class="features-list">
+                    {% for feature in portfolio_item.features %}
+                    <li><i class="fas fa-check text-success"></i> {{ feature }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Отзыв клиента -->
+            {% if portfolio_item.testimonial %}
+            <div class="detail-section">
+                <h3><i class="fas fa-comment"></i> Отзыв клиента</h3>
+                <div class="testimonial">
+                    <blockquote class="blockquote">
+                        <p class="mb-0">{{ portfolio_item.testimonial }}</p>
+                        <footer class="blockquote-footer">{{ portfolio_item.client }}</footer>
+                    </blockquote>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Быстрые действия -->
+            <div class="detail-section">
+                <h3><i class="fas fa-bolt"></i> Быстрые действия</h3>
+                <div class="quick-actions">
+                    <a href="{% url 'portfolio:detail' portfolio_item.slug %}"
+                       target="_blank" class="btn btn-success">
+                        <i class="fas fa-eye"></i> Просмотр на сайте
+                    </a>
+                    <button class="btn btn-warning" onclick="duplicateProject({{ portfolio_item.id }})">
+                        <i class="fas fa-copy"></i> Дублировать
+                    </button>
+                    {% if portfolio_item.is_active %}
+                    <button class="btn btn-secondary" onclick="toggleActive({{ portfolio_item.id }}, false)">
+                        <i class="fas fa-eye-slash"></i> Скрыть
+                    </button>
+                    {% else %}
+                    <button class="btn btn-primary" onclick="toggleActive({{ portfolio_item.id }}, true)">
+                        <i class="fas fa-eye"></i> Показать
+                    </button>
+                    {% endif %}
+                    {% if portfolio_item.is_featured %}
+                    <button class="btn btn-secondary" onclick="toggleFeatured({{ portfolio_item.id }}, false)">
+                        <i class="fas fa-star"></i> Убрать из избранного
+                    </button>
+                    {% else %}
+                    <button class="btn btn-warning" onclick="toggleFeatured({{ portfolio_item.id }}, true)">
+                        <i class="fas fa-star"></i> В избранное
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно управления изображениями -->
+<div class="modal fade" id="imageManagerModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Управление изображениями для {{ portfolio_item.title }}</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                {% include "portfolio/admin/includes/portfolio_image_manager.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/admin/portfolio-detail.js' %}"></script>
+<script>
+    // Дублирование проекта
+    function duplicateProject(projectId) {
+        if (confirm('Создать копию этого проекта?')) {
+            fetch(`/admin/portfolio/${projectId}/duplicate/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = `../../../../portfolio/${data.new_id}/edit/`;
+                    }
+                });
+        }
+    }
+
+    // Переключение активности
+    function toggleActive(projectId, isActive) {
+        fetch(`/admin/portfolio/${projectId}/toggle-active/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({is_active: isActive})
+        }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+    }
+
+    // Переключение избранного
+    function toggleFeatured(projectId, isFeatured) {
+        fetch(`/admin/portfolio/${projectId}/toggle-featured/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({is_featured: isFeatured})
+        }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+    }
+</script>
+
+<style>
+    .admin-detail-content {
+        background: #fff;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 30px;
+    }
+    .detail-section {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+    .detail-section:last-child {
+        border-bottom: none;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dashed #f0f0f0;
+    }
+    .info-item strong {
+        color: #555;
+    }
+    .image-gallery .main-image {
+        margin-bottom: 20px;
+        position: relative;
+    }
+    .image-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #4a6cf7;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+    .thumbnails-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .project-links .link-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    .technologies-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .technology-badge {
+        background: #e9ecef;
+        color: #495057;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 13px;
+    }
+    .features-list li {
+        margin-bottom: 8px;
+    }
+    .testimonial {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #4a6cf7;
+    }
+    .quick-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .badge-featured { background: #ffc107; color: #000; }
+    .badge-inactive { background: #6c757d; }
+    .badge-category { background: #17a2b8; }
+    .badge-package { background: #6610f2; }
+    .badge-geo { background: #20c997; }
+</style>
+{% endblock %}
