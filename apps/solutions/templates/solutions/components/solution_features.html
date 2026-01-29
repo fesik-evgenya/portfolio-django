@@ -1,14 +1,13 @@
-{% load static %}
-{% if solution.features %}
-<div class="solution-features">
-    <h3>Особенности</h3>
-    <ul>
+<section class="solution-features-section">
+    <h2>Что входит в решение:</h2>
+    <div class="features-grid">
         {% for feature in solution.features %}
-        <li>
-            <i class="fas fa-check"></i>
-            {{ feature }}
-        </li>
+        <div class="feature-card">
+            <svg class="feature-icon" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+            <span>{{ feature }}</span>
+        </div>
         {% endfor %}
-    </ul>
-</div>
-{% endif %}
+    </div>
+</section>

@@ -1,0 +1,228 @@
+/* Основные стили детальной страницы */
+:root {
+    --dark-bg: #0f0f1a;
+    --darker-bg: #0a0a12;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --white: #ffffff;
+    --light-gray: #b0b0c0;
+    --accent-purple: #8a2be2;
+    --accent-pink: #ff6b9d;
+    --dark-purple: #1a0f2a;
+}
+
+.solution-detail-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 20px 60px;
+}
+
+.solution-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.solution-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.solution-sidebar {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+/* Hero секция */
+.solution-hero {
+    margin-bottom: 2rem;
+}
+
+.solution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.solution-title-section {
+    flex: 1;
+}
+
+.solution-title {
+    font-size: 2.5rem;
+    color: var(--accent-purple);
+    margin-bottom: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.solution-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.solution-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-new {
+    background: linear-gradient(135deg, var(--accent-pink), #ff4d7c);
+    color: white;
+}
+
+.badge-popular {
+    background: linear-gradient(135deg, var(--accent-purple), #9d4edd);
+    color: white;
+}
+
+.solution-price-section {
+    text-align: right;
+    min-width: 200px;
+}
+
+.solution-price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    margin-bottom: 1rem;
+    line-height: 1;
+}
+
+.solution-delivery {
+    color: var(--light-gray);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.delivery-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+/* Связанные решения */
+.related-solutions {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.related-solutions h2 {
+    color: var(--accent-purple);
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.related-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.related-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-purple);
+    box-shadow: 0 10px 25px rgba(138, 43, 226, 0.2);
+}
+
+.related-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+
+.related-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.related-card-content {
+    padding: 1.5rem;
+}
+
+.related-card h3 {
+    font-size: 1.2rem;
+    color: var(--light-gray);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.related-price {
+    color: var(--accent-purple);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .solution-content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .solution-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .solution-detail-wrapper {
+        padding: 80px 15px 40px;
+    }
+
+    .solution-header {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .solution-title {
+        font-size: 2rem;
+    }
+
+    .solution-price-section {
+        text-align: center;
+        min-width: auto;
+    }
+
+    .solution-price {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .solution-title {
+        font-size: 1.75rem;
+    }
+
+    .related-grid {
+        grid-template-columns: 1fr;
+    }
+}

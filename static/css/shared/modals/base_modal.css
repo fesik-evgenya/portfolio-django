@@ -1,0 +1,131 @@
+/* ===== BASE MODAL COMPONENT ===== */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 26, 46, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal__container {
+    position: relative;
+    z-index: 10001;
+    background: color-mix(in srgb, var(--overlay-color) 95%, transparent);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(210, 168, 225, 0.3);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(210, 168, 225, 0.2);
+}
+
+.modal__title {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 1.5rem;
+    color: var(--accent-purple);
+    margin: 0;
+}
+
+.modal__close {
+    background: none;
+    border: none;
+    color: var(--accent-purple);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.modal__close:hover {
+    color: var(--pink-accent);
+    transform: rotate(90deg);
+}
+
+.modal__body {
+    margin-bottom: 25px;
+}
+
+.modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(210, 168, 225, 0.2);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Modal Responsive */
+@media (max-width: 768px) {
+    .modal__container {
+        padding: 20px;
+        width: 95%;
+    }
+
+    .modal__title {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal__container {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .modal__header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .modal__footer {
+        flex-direction: column;
+    }
+
+    .modal__footer .btn {
+        width: 100%;
+    }
+}

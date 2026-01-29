@@ -1,30 +1,10 @@
-{% load static %}
 {% if messages %}
-<div class="flash-messages-container">
-  {% for message in messages %}
-  <div class="flash-message flash-{{ message.tags }}">
-    <div class="flash-icon">
-      {% if message.tags == 'success' %}
-      <i class="fas fa-check-circle"></i>
-      {% elif message.tags == 'error' or message.tags == 'danger' %}
-      <i class="fas fa-exclamation-circle"></i>
-      {% elif message.tags == 'warning' %}
-      <i class="fas fa-exclamation-triangle"></i>
-      {% elif message.tags == 'info' %}
-      <i class="fas fa-info-circle"></i>
-      {% else %}
-      <i class="fas fa-bell"></i>
-      {% endif %}
-    </div>
-
-    <div class="flash-content">
-      <span class="flash-text">{{ message }}</span>
-    </div>
-
-    <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Закрыть уведомление">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  {% endfor %}
+{% for message in messages %}
+<div class="flash-message flash-{{ message.tags }}">
+  <span class="flash-text">{{ message }}</span>
+  <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Закрыть уведомление">
+    <i class="fas fa-times"></i>
+  </button>
 </div>
+{% endfor %}
 {% endif %}

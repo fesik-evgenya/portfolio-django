@@ -1,69 +1,50 @@
 {% load static %}
+
 <div class="project-gallery">
     <div class="gallery-main">
-        {% if project.main_image %}
-        <div class="gallery-slide active">
-            <img src="{{ project.main_image.image.url }}"
-                 alt="{{ project.title }}"
-                 loading="lazy"
-                 class="gallery-image">
-        </div>
-        {% endif %}
-
-        {% for image in project.gallery_images %}
-        {% if not image.is_main %}
-        <div class="gallery-slide">
+        {% for image in portfolio_item.images.all|dictsort:"order" %}
+        {% if image.is_active %}
+        <div class="gallery-slide {% if forloop.first %}active{% endif %}">
             <img src="{{ image.image.url }}"
-                 alt="{{ project.title }} - изображение {{ forloop.counter }}"
-                 loading="lazy"
-                 class="gallery-image">
+                 alt="{{ image.alt_text|default:portfolio_item.title }} - изображение {{ forloop.counter }}"
+                 loading="lazy">
         </div>
         {% endif %}
         {% empty %}
-        {% if not project.main_image %}
         <div class="gallery-slide active">
-            <div class="no-image">
-                <i class="fas fa-image"></i>
-                <p>Нет изображений</p>
+            <img src="{% static 'images/placeholder.jpg' %}"
+                 alt="{{ portfolio_item.title }}"
+                 loading="lazy">
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if portfolio_item.images.count > 1 %}
+    <div class="gallery-navigation">
+        <div class="gallery-thumbnails">
+            {% for image in portfolio_item.images.all|dictsort:"order" %}
+            {% if image.is_active %}
+            <div class="thumbnail {% if forloop.first %}active{% endif %}"
+                 data-index="{{ forloop.counter0 }}">
+                {% if image.thumbnail %}
+                <img src="{{ image.thumbnail.url }}"
+                     alt="Thumbnail {{ forloop.counter }}">
+                {% else %}
+                <img src="{{ image.image.url }}"
+                     alt="Thumbnail {{ forloop.counter }}">
+                {% endif %}
             </div>
-        </div>
-        {% endif %}
-        {% endfor %}
-    </div>
-
-    {% if project.gallery_images.count > 0 or project.main_image %}
-    <div class="gallery-controls">
-        <button class="gallery-prev" aria-label="Предыдущее изображение">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-
-        <div class="gallery-counter">
-            <span class="current-slide">1</span> / <span class="total-slides">{{ project.images.count }}</span>
+            {% endif %}
+            {% endfor %}
         </div>
 
-        <button class="gallery-next" aria-label="Следующее изображение">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
-
-    <div class="gallery-thumbnails">
-        {% if project.main_image %}
-        <div class="gallery-thumb active" data-index="0">
-            <img src="{{ project.main_image.image.url }}"
-                 alt="{{ project.title }} - миниатюра"
-                 loading="lazy">
+        <div class="gallery-controls">
+            <button class="gallery-prev" aria-label="Предыдущее изображение">‹</button>
+            <div class="gallery-counter">
+                <span class="current-slide">1</span> / <span class="total-slides">{{ portfolio_item.images.count }}</span>
+            </div>
+            <button class="gallery-next" aria-label="Следующее изображение">›</button>
         </div>
-        {% endif %}
-
-        {% for image in project.gallery_images %}
-        {% if not image.is_main %}
-        <div class="gallery-thumb" data-index="{{ forloop.counter }}">
-            <img src="{{ image.image.url }}"
-                 alt="{{ project.title }} - миниатюра {{ forloop.counter }}"
-                 loading="lazy">
-        </div>
-        {% endif %}
-        {% endfor %}
     </div>
     {% endif %}
 </div>

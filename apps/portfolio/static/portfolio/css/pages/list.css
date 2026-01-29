@@ -1,0 +1,323 @@
+/* ========== СТРАНИЦА ПОРТФОЛИО ========== */
+
+/* Герой-секция портфолио */
+.portfolio-hero {
+    padding: 50px 0;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(255, 107, 157, 0.05) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.portfolio-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+}
+
+.portfolio-hero .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero__text {
+    font-size: 1rem;
+    color: var(--light-gray);
+    line-height: 1.4;
+    max-width: 600px;
+    margin: 0 auto 1rem;
+}
+
+/* Сетка проектов */
+.portfolio-grid-section {
+    padding: 80px 0;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Состояние пустого портфолио */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state__icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: rgba(210, 168, 225, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state__icon svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--accent-purple);
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--light-gray);
+}
+
+.empty-state p {
+    color: var(--light-gray);
+    opacity: 0.7;
+}
+
+/* Пагинация Django */
+.portfolio-pagination {
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.pagination__link {
+    padding: 0.5rem 1rem;
+    color: var(--accent-purple);
+    text-decoration: none;
+    border: 1px solid rgba(138, 43, 226, 0.3);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.pagination__link:hover {
+    background: var(--accent-purple);
+    color: white;
+    border-color: var(--accent-purple);
+}
+
+.pagination__current {
+    padding: 0.5rem 1rem;
+    background: var(--accent-purple);
+    color: white;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+.pagination__numbers {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* SEO-блок */
+.portfolio-seo {
+    padding: 60px 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.portfolio-seo h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--light-gray);
+}
+
+.portfolio-seo p {
+    text-align: center;
+    color: var(--light-gray);
+    opacity: 0.8;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.seo-keywords {
+    color: var(--accent-purple);
+    font-weight: 500;
+}
+
+/* Модальное окно */
+.portfolio-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.portfolio-modal__content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--dark-purple);
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    border: 1px solid var(--accent-purple);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.portfolio-modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--light-gray);
+    font-size: 2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.portfolio-modal__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.portfolio-modal__body {
+    padding: 1rem 0;
+}
+
+/* Loader для AJAX загрузки */
+.portfolio-loader {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+}
+
+.loader-spinner {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(138, 43, 226, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--accent-purple);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Анимации для hero-секции */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.portfolio-hero .page-title {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.hero__text {
+    animation: fadeInUp 0.8s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .portfolio-hero {
+        padding: 120px 0 40px;
+    }
+
+    .portfolio-hero .page-title {
+        font-size: 2.5rem;
+    }
+
+    .hero__text {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .portfolio-modal__content {
+        padding: 1.5rem;
+        max-width: 95%;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .pagination__numbers {
+        order: -1;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio-hero {
+        padding: 100px 0 30px;
+    }
+
+    .portfolio-hero .page-title {
+        font-size: 2rem;
+    }
+
+    .hero__text {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Поддержка reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .portfolio-hero .page-title,
+    .hero__text {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+/* CSS переменные */
+:root {
+    --dark-bg: #0f0f1a;
+    --darker-bg: #0a0a12;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --white: #ffffff;
+    --light-gray: #b0b0c0;
+    --accent-purple: #8a2be2;
+    --accent-pink: #ff6b9d;
+    --dark-purple: #1a0f2a;
+}

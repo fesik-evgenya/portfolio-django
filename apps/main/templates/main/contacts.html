@@ -1,17 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/contacts.css' %}">
+{% block title %}Контакты | {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'main/css/pages/contacts.css' %}">
+<link rel="stylesheet" href="{% static 'main/css/components/contact/info.css' %}">
+<link rel="stylesheet" href="{% static 'main/css/components/contact/form.css' %}">
+<link rel="stylesheet" href="{% static 'main/css/components/contact/map.css' %}">
 {% endblock %}
 
 {% block seo_extra %}
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="{% url 'main:contacts' %}">
-{% endblock %}
-
-{% block breadcrumbs %}
-{% include "includes/breadcrumbs.html" with current_page="Контакты" %}
 {% endblock %}
 
 {% block content %}
@@ -20,158 +21,35 @@
         <h1 class="page-title">Давайте создадим ваш проект вместе</h1>
 
         <div class="contacts-grid">
-            <!-- Компонент: Способы связи -->
-            <div class="contacts-card">
-                <h2 class="section-title">Способы связи</h2>
-                <div class="contact-methods">
-                    <div class="contact-item">
-                        <i class="fab fa-telegram contact-icon"></i>
-                        <div>
-                            <h3>Telegram</h3>
-                            {% if contact_info and contact_info.telegram %}
-                            <a href="{{ contact_info.telegram }}" target="_blank" rel="noopener" class="contact-link">
-                                {{ contact_info.telegram|cut:"https://t.me/" }}
-                            </a>
-                            {% else %}
-                            <a href="https://t.me/Fesik_Evgeniya" target="_blank" rel="noopener" class="contact-link">
-                                @Fesik_Evgeniya
-                            </a>
-                            {% endif %}
-                            <p class="contact-note">Основной канал связи</p>
-                        </div>
-                    </div>
+            <!-- Способы связи -->
+            {% include "main/components/contact/contact_info.html" %}
 
-                    <div class="contact-item">
-                        <i class="fas fa-envelope contact-icon"></i>
-                        <div>
-                            <h3>Email</h3>
-                            {% if contact_info and contact_info.email %}
-                            <a href="mailto:{{ contact_info.email }}" class="contact-link">
-                                {{ contact_info.email }}
-                            </a>
-                            {% else %}
-                            <a href="mailto:ganef85@mail.ru" class="contact-link">
-                                ganef85@mail.ru
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="contact-item">
-                        <i class="fas fa-phone contact-icon"></i>
-                        <div>
-                            <h3>Телефон</h3>
-                            {% if contact_info and contact_info.phone %}
-                            <a href="tel:{{ contact_info.phone }}" class="contact-link">
-                                {{ contact_info.phone }}
-                            </a>
-                            <p class="contact-note">Только для личных встреч</p>
-                            {% else %}
-                            <a href="tel:+79500124011" class="contact-link">
-                                +7 (950) 012-40-11
-                            </a>
-                            <p class="contact-note">Только для личных встреч</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Компонент: Форма обратной связи -->
-            {% include "includes/contact_form.html" %}
+            <!-- Форма обратной связи -->
+            {% include "main/components/contact/contact_form.html" %}
         </div>
 
-        <!-- Социальные ссылки -->
-        {% include "includes/social_links.html" with
-        telegram=contact_info.telegram|default:"https://t.me/Fesik_Evgeniya"
-        github=contact_info.github|default:"https://github.com/fesik-evgenya"
-        email=contact_info.email|default:"ganef85@mail.ru"
-        title="Я в соцсетях"
-        %}
+        <!-- Карта и график -->
+        {% include "main/components/contact/map.html" %}
     </div>
 </section>
 
 <!-- Модальное окно успешной отправки -->
-{% include "includes/modal.html" with
-modal_id="successModal"
-title="Сообщение отправлено!"
-content="<p>Ваш запрос успешно отправлен.</p><p>Я свяжусь с вами в ближайшее время через указанные контакты.</p>"
-actions=success_actions
-%}
+<div class="custom-modal" id="successModal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div class="modal-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Сообщение отправлено!</h3>
+        <span>Ваш запрос успешно отправлен.</span>
+        <span>Я свяжусь с вами в ближайшее время через указанные контакты.</span>
+        <button class="btn btn--primary modal-confirm">Хорошо</button>
+    </div>
+</div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
 <script src="https://api-maps.yandex.ru/2.1/?apikey=cd75c453-5925-4862-8f2e-acd46e2b692a&lang=ru_RU"
         type="text/javascript"></script>
-<script src="{% static 'js/contacts.js' %}"></script>
-
-<script>
-    // Инициализация формы обратной связи
-    document.addEventListener('DOMContentLoaded', function() {
-        const contactForm = document.getElementById('contact-form');
-
-        if (contactForm) {
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Показываем спиннер загрузки
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
-                submitBtn.disabled = true;
-
-                // Отправка формы через AJAX
-                const formData = new FormData(this);
-
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Показываем модальное окно успеха
-                            const successModal = document.getElementById('successModal');
-                            if (successModal) {
-                                successModal.style.display = 'flex';
-                                document.body.style.overflow = 'hidden';
-                            }
-                            contactForm.reset();
-                        } else {
-                            alert('Ошибка при отправке: ' + data.error);
-                        }
-                    })
-                    .catch(error => {
-                        alert('Произошла ошибка при отправке формы');
-                    })
-                    .finally(() => {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    });
-            });
-        }
-
-        // Инициализация карты
-        if (typeof ymaps !== 'undefined') {
-            ymaps.ready(function() {
-                const map = new ymaps.Map('map', {
-                    center: [59.9342802, 30.3350986],
-                    zoom: 10,
-                    controls: ['zoomControl']
-                });
-
-                // Добавляем метку
-                const placemark = new ymaps.Placemark([59.9342802, 30.3350986], {
-                    hintContent: 'Санкт-Петербург',
-                    balloonContent: 'Работаю в Санкт-Петербурге'
-                });
-
-                map.geoObjects.add(placemark);
-            });
-        }
-    });
-</script>
+<script src="{% static 'main/js/pages/contacts.js' %}"></script>
 {% endblock %}

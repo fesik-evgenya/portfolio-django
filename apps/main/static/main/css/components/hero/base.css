@@ -1,0 +1,111 @@
+/* ===== HERO BASE STYLES ===== */
+.hero {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 50px 0;
+    position: relative;
+}
+
+.hero__content {
+    max-width: 800px;
+    position: relative;
+    z-index: 10;
+    padding: 40px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--overlay-color) 1%, transparent);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.hero__title {
+    font-family: var(--font-heading), sans-serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: var(--accent-purple);
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.hero__subtitle {
+    font-family: var(--font-heading), sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--white);
+    margin-bottom: 24px;
+}
+
+.hero__text {
+    color: var(--light-gray);
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+
+.hero__cta-text {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    color: var(--light-gray);
+    opacity: 0.8;
+}
+
+.hero__buttons {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.hero__usp {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(210, 168, 225, 0.2);
+}
+
+.usp-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--light-gray);
+    justify-content: flex-start;
+}
+
+.usp-icon {
+    color: var(--accent-purple);
+    width: 16px;
+    height: 16px;
+    margin-right: 15px;
+}
+
+/* Responsive for Hero */
+@media (max-width: 768px) {
+    .hero__title {
+        font-size: 2rem;
+    }
+
+    .hero__subtitle {
+        font-size: 1.3rem;
+    }
+
+    .hero__text {
+        font-size: 1rem;
+    }
+
+    .hero__usp {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .hero__buttons {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero__title {
+        font-size: 1.7rem;
+    }
+}

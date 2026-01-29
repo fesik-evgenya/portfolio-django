@@ -1,27 +1,24 @@
 {% load static %}
-<nav class="breadcrumb" aria-label="Хлебные крошки">
-    <div class="container">
-        <ol class="breadcrumb-list">
-            <li class="breadcrumb-item">
-                <a href="{% url 'main:index' %}">Главная</a>
-            </li>
-            {% if breadcrumbs %}
-            {% for crumb in breadcrumbs %}
+
+<!-- Базовый шаблон хлебных крошек -->
+{% if breadcrumbs %}
+<nav aria-label="Хлебные крошки" class="breadcrumbs">
+    <ol class="breadcrumbs__list">
+        <li class="breadcrumbs__item">
+            <a href="{% url 'main:index' %}" class="breadcrumbs__link">
+                <i class="fas fa-home"></i>
+                Главная
+            </a>
+        </li>
+        {% for crumb in breadcrumbs %}
+        <li class="breadcrumbs__item">
             {% if forloop.last %}
-            <li class="breadcrumb-item active" aria-current="page">
-                {{ crumb.name }}
-            </li>
+            <span class="breadcrumbs__current">{{ crumb.title }}</span>
             {% else %}
-            <li class="breadcrumb-item">
-                <a href="{{ crumb.url }}">{{ crumb.name }}</a>
-            </li>
+            <a href="{{ crumb.url }}" class="breadcrumbs__link">{{ crumb.title }}</a>
             {% endif %}
-            {% endfor %}
-            {% elif current_page %}
-            <li class="breadcrumb-item active" aria-current="page">
-                {{ current_page }}
-            </li>
-            {% endif %}
-        </ol>
-    </div>
+        </li>
+        {% endfor %}
+    </ol>
 </nav>
+{% endif %}

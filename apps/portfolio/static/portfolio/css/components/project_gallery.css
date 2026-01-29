@@ -1,0 +1,134 @@
+/* ========== ГАЛЕРЕЯ ПРОЕКТА ========== */
+
+.project-gallery {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.gallery-main {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1rem;
+}
+
+.gallery-slide {
+    display: none;
+    position: relative;
+}
+
+.gallery-slide.active {
+    display: block;
+}
+
+.gallery-slide img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-navigation {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.gallery-thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+    opacity: 1;
+    border-color: var(--accent-purple);
+    transform: translateY(-2px);
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.gallery-prev,
+.gallery-next {
+    background: var(--accent-purple);
+    color: var(--dark-purple);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.gallery-prev:hover,
+.gallery-next:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(210, 168, 225, 0.4);
+}
+
+.gallery-counter {
+    color: var(--light-gray);
+    font-weight: 600;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Адаптивность галереи */
+@media (max-width: 768px) {
+    .gallery-navigation {
+        flex-direction: column;
+    }
+
+    .gallery-slide img {
+        height: 300px;
+    }
+
+    .thumbnail {
+        width: 60px;
+        height: 45px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-slide img {
+        height: 250px;
+    }
+
+    .gallery-thumbnails {
+        gap: 0.25rem;
+    }
+
+    .thumbnail {
+        width: 50px;
+        height: 40px;
+    }
+}

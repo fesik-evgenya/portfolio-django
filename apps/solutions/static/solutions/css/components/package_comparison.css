@@ -1,0 +1,147 @@
+.package-comparison-section {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.package-comparison-section h2 {
+    color: var(--accent-purple);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.comparison-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--light-gray);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    border-color: var(--accent-purple);
+    color: var(--accent-purple);
+}
+
+.tab-btn.active {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    color: white;
+}
+
+.comparison-content {
+    position: relative;
+    min-height: 400px;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.package-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    padding: 2rem;
+    border: 2px solid var(--border-color);
+    text-align: center;
+}
+
+.package-card h3 {
+    color: var(--accent-purple);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.package-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+}
+
+.package-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.package-features li {
+    color: var(--light-gray);
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.package-features li:before {
+    content: "✓";
+    color: var(--accent-purple);
+    font-weight: bold;
+}
+
+.package-basic {
+    border-color: #4a90e2;
+}
+
+.package-standard {
+    border-color: var(--accent-purple);
+}
+
+.package-premium {
+    border-color: #ff6b9d;
+}
+
+.btn--accent {
+    background: linear-gradient(135deg, var(--accent-pink), #ff4d7c);
+    color: white;
+}
+
+.btn--accent:hover {
+    background: linear-gradient(135deg, #ff4d7c, var(--accent-pink));
+}
+
+@media (max-width: 768px) {
+    .comparison-tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        width: 100%;
+    }
+
+    .package-card {
+        padding: 1.5rem;
+    }
+}

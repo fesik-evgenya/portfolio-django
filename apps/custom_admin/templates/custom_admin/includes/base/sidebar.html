@@ -1,50 +1,81 @@
-<aside class="admin-sidebar">
-  <div class="admin-brand">
-    <i class="fas fa-cog"></i>
-    <span>Админ-панель</span>
+{% load static %}
+<aside class="admin-sidebar" id="adminSidebar">
+  <div class="sidebar-header">
+    <div class="admin-brand">
+      <i class="fas fa-cog"></i>
+      <span>Админ-панель</span>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <i class="fas fa-bars"></i>
+    </button>
   </div>
 
   <nav class="admin-nav">
-    <ul>
-      <li class="{% if active_admin == 'dashboard' %}active{% endif %}">
-        <a href="{% url 'custom_admin:dashboard' %}">
+    <ul class="nav-menu">
+      <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <a href="{% url 'custom_admin:dashboard' %}" class="nav-link">
           <i class="fas fa-tachometer-alt"></i>
-          <span>Дашборд</span>
+          <span class="nav-text">Дашборд</span>
         </a>
       </li>
-      <li class="{% if active_admin == 'about' %}active{% endif %}">
-        <a href="{% url 'custom_admin:manage_about' %}">
+
+      <li class="nav-item {% if 'about' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'custom_admin:about_list' %}" class="nav-link">
           <i class="fas fa-user-circle"></i>
-          <span>Обо мне</span>
+          <span class="nav-text">Обо мне</span>
         </a>
       </li>
-      <li class="{% if active_admin == 'contacts' %}active{% endif %}">
-        <a href="{% url 'custom_admin:manage_contacts' %}">
+
+      <li class="nav-item {% if 'contact' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'custom_admin:contact_messages' %}" class="nav-link">
           <i class="fas fa-address-book"></i>
-          <span>Контакты</span>
+          <span class="nav-text">Контакты</span>
+          {% with unread_count=request.unread_contact_count|default:0 %}
+          {% if unread_count > 0 %}
+          <span class="nav-badge">{{ unread_count }}</span>
+          {% endif %}
+          {% endwith %}
         </a>
       </li>
-      <li class="{% if active_admin == 'solutions' %}active{% endif %}">
-        <a href="{% url 'custom_admin:manage_solutions' %}">
+
+      <li class="nav-item {% if 'solution' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'custom_admin:solution_list' %}" class="nav-link">
           <i class="fas fa-box-open"></i>
-          <span>Решения</span>
+          <span class="nav-text">Решения</span>
         </a>
+        <ul class="nav-submenu">
+          <li><a href="{% url 'custom_admin:solution_list' %}">Все решения</a></li>
+          <li><a href="{% url 'custom_admin:solution_categories' %}">Категории</a></li>
+          <li><a href="{% url 'custom_admin:solution_orders' %}">Заказы</a></li>
+        </ul>
       </li>
-      <li class="{% if active_admin == 'portfolio' %}active{% endif %}">
-        <a href="{% url 'custom_admin:manage_portfolio' %}">
+
+      <li class="nav-item {% if 'portfolio' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'custom_admin:portfolio_list' %}" class="nav-link">
           <i class="fas fa-briefcase"></i>
-          <span>Портфолио</span>
+          <span class="nav-text">Портфолио</span>
+        </a>
+        <ul class="nav-submenu">
+          <li><a href="{% url 'custom_admin:portfolio_list' %}">Все проекты</a></li>
+          <li><a href="{% url 'custom_admin:portfolio_categories' %}">Категории</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item {% if 'settings' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'custom_admin:site_settings' %}" class="nav-link">
+          <i class="fas fa-cogs"></i>
+          <span class="nav-text">Настройки</span>
         </a>
       </li>
     </ul>
   </nav>
 
-  <div class="admin-footer">
-    <a href="{% url 'main:index' %}" class="btn btn-outline">
+  <div class="sidebar-footer">
+    <a href="{% url 'main:index' %}" class="btn btn-outline btn-block">
       <i class="fas fa-external-link-alt"></i>
       На сайт
     </a>
-    <button type="button" onclick="openLogoutModal()" class="btn btn-outline" id="admin-logout-btn">
+    <button type="button" onclick="openLogoutModal()" class="btn btn-outline btn-block" id="admin-logout-btn">
       <i class="fas fa-sign-out-alt"></i>
       Выйти
     </button>

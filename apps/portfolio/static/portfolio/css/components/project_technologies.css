@@ -1,0 +1,90 @@
+/* ========== КОМПОНЕНТ ТЕХНОЛОГИЙ ========== */
+
+.project-technologies {
+    margin-bottom: 2.5rem;
+}
+
+.project-technologies h2 {
+    color: var(--accent-purple);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.technologies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1.5rem;
+}
+
+.technology-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.technology-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-purple);
+    box-shadow: 0 5px 15px rgba(210, 168, 225, 0.2);
+}
+
+.technology-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.technology-icon img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.technology-icon svg {
+    width: 32px;
+    height: 32px;
+    fill: var(--accent-purple);
+}
+
+.technology-name {
+    color: var(--light-gray);
+    font-size: 0.9rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Адаптивность технологий */
+@media (max-width: 768px) {
+    .technologies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 1rem;
+    }
+
+    .technology-icon {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .technologies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .technology-item {
+        padding: 0.75rem;
+    }
+
+    .technology-name {
+        font-size: 0.8rem;
+    }
+}

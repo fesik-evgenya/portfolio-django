@@ -1,0 +1,148 @@
+/* ===== COOKIE CONSENT MODAL ===== */
+
+.cookies-modal {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    max-width: 400px;
+    background: color-mix(in srgb, var(--overlay-color) 95%, transparent);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(210, 168, 225, 0.3);
+    border-radius: 15px;
+    padding: 0;
+    z-index: 10050;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideInUp 0.5s ease-out;
+    display: none;
+}
+
+.cookies-modal.active {
+    display: block;
+}
+
+.cookies-modal__content {
+    padding: 24px;
+}
+
+.cookies-modal__header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(210, 168, 225, 0.2);
+}
+
+.cookies-modal__icon {
+    font-size: 1.5rem;
+    color: var(--accent-purple);
+    margin-right: 12px;
+}
+
+.cookies-modal__title {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 1.3rem;
+    color: var(--accent-purple);
+    margin: 0;
+}
+
+.cookies-modal__body {
+    margin-bottom: 20px;
+}
+
+.cookies-modal__text {
+    color: var(--light-gray);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    text-align: justify;
+}
+
+.cookies-modal__links {
+    margin-top: 16px;
+}
+
+.cookies-modal__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-purple);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.cookies-modal__link:hover {
+    color: var(--pink-accent);
+}
+
+.cookies-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid rgba(210, 168, 225, 0.2);
+}
+
+.cookies-modal__btn {
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Анимация появления */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Адаптивность для модального окна */
+@media (max-width: 768px) {
+    .cookies-modal {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .cookies-modal__content {
+        padding: 20px;
+    }
+
+    .cookies-modal__title {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cookies-modal {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .cookies-modal__content {
+        padding: 16px;
+    }
+
+    .cookies-modal__header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .cookies-modal__icon {
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+
+    .cookies-modal__footer {
+        justify-content: center;
+    }
+}

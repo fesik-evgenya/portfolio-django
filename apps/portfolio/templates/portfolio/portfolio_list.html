@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Портфолио проектов - успешные кейсы для бизнеса{% endblock %}
+
 {% block seo_extra %}
-<title>Портфолио - успешные проекты для бизнеса | Евгения Фесик</title>
+<meta name="robots" content="index, follow">
 <meta name="description" content="Реальные кейсы пакетных сайтов, запущенных за 14 дней. Каждый проект адаптирован под специфику бизнеса клиента.">
-<meta name="keywords" content="портфолио, кейсы, проекты, сайты для бизнеса, готовые решения, Санкт-Петербург">
-<link rel="alternate" hreflang="ru" href="{{ request.build_absolute_uri }}">
+<link rel="canonical" href="{% url 'portfolio:list' %}">
 {% endblock %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'portfolio/css/pages/list.css' %}">
+<link rel="stylesheet" href="{% static 'portfolio/css/components/project_card.css' %}">
+<link rel="stylesheet" href="{% static 'portfolio/css/components/filters.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -19,13 +22,8 @@
         <h1 class="page-title">Успешные проекты для бизнеса:<br> от идеи до реализации</h1>
         <p class="hero__text">Реальные кейсы пакетных сайтов, запущенных за 14 дней.<br> Каждый проект адаптирован под специфику бизнеса клиента.</p>
 
-        <!-- Фильтры по категориям -->
-        <div class="portfolio-filters">
-            <button class="btn btn--outline active" data-filter="all">Все проекты</button>
-            {% for category in categories %}
-            <button class="btn btn--outline" data-filter="{{ category.slug }}">{{ category.name }}</button>
-            {% endfor %}
-        </div>
+        <!-- Подключаем компонент фильтров -->
+        {% include 'portfolio/components/filters.html' %}
     </div>
 </section>
 
@@ -33,60 +31,51 @@
 <section class="portfolio-grid-section">
     <div class="container">
         <div class="portfolio-grid" id="portfolioGrid">
-            {% if portfolio_items %}
-            {% for item in portfolio_items %}
-            {% include "portfolio/components/project_card.html" %}
+            {% if page_obj %}
+            {% for item in page_obj %}
+            {% include 'portfolio/components/project_card.html' with item=item %}
             {% endfor %}
             {% else %}
             <!-- Заглушка если нет проектов -->
             <div class="empty-state">
                 <div class="empty-state__icon">
-                    <i class="fas fa-folder-open fa-3x"></i>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/>
+                    </svg>
                 </div>
                 <h3>Обновление портфолио</h3>
                 <p>уже скоро</p>
-                <a href="{% url 'solutions:list' %}" class="btn btn--primary">Посмотреть готовые решения</a>
             </div>
             {% endif %}
         </div>
 
-        {% if is_paginated %}
-        <!-- Пагинация -->
-        <nav class="pagination">
-            <ul class="pagination-list">
+        <!-- Django пагинация -->
+        {% if page_obj.has_other_pages %}
+        <div class="portfolio-pagination">
+            <div class="pagination">
                 {% if page_obj.has_previous %}
-                <li class="pagination-item">
-                    <a class="pagination-link" href="?page={{ page_obj.previous_page_number }}{{ query_string }}" aria-label="Предыдущая">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.package %}&package={{ request.GET.package }}{% endif %}" class="pagination__link pagination__prev">
+                    ← Назад
+                </a>
                 {% endif %}
 
-                {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                <li class="pagination-item active">
-                    <span class="pagination-link">{{ num }}</span>
-                </li>
-                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                <li class="pagination-item">
-                    <a class="pagination-link" href="?page={{ num }}{{ query_string }}">{{ num }}</a>
-                </li>
-                {% endif %}
-                {% endfor %}
+                <div class="pagination__numbers">
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="pagination__current">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.package %}&package={{ request.GET.package }}{% endif %}" class="pagination__link">{{ num }}</a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
 
                 {% if page_obj.has_next %}
-                <li class="pagination-item">
-                    <a class="pagination-link" href="?page={{ page_obj.next_page_number }}{{ query_string }}" aria-label="Следующая">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.package %}&package={{ request.GET.package }}{% endif %}" class="pagination__link pagination__next">
+                    Вперед →
+                </a>
                 {% endif %}
-            </ul>
-
-            <div class="pagination-info">
-                Показано {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ paginator.count }}
             </div>
-        </nav>
+        </div>
         {% endif %}
     </div>
 </section>
@@ -97,50 +86,38 @@
         <h2>Создание сайтов для бизнеса в Санкт-Петербурге</h2>
         <p>Специализируюсь на разработке готовых решений для малого бизнеса СПб:
             <span class="seo-keywords">
-                сайты для кофеен и ресурсы для салонов красоты, интернет-магазины для ИП,
-                сайты-визитки для самозанятых, промо-сайты для стартапов, лендинги для презентаций идей инвесторам
+                сайты для кофеен и ресурсы для салонов красоты,
+                интернет-магазины для ИП, сайты-визитки для самозанятых,
+                промо-сайты для стартапов, лендинги для презентаций идей инвесторам
             </span>
         </p>
     </div>
 </div>
 
-<!-- Призыв к действию -->
-<section class="portfolio-cta">
-    <div class="container">
-        <div class="cta-content">
-            <h2>Хотите такой же проект для своего бизнеса?</h2>
-            <p>Расскажите о вашем проекте, и я разработаю индивидуальное решение специально для вас</p>
-            <a href="{% url 'main:contacts' %}" class="btn btn--primary btn--large">Обсудить индивидуальный проект</a>
+<!-- Модальное окно для проектов -->
+<div class="portfolio-modal" id="projectModal">
+    <div class="portfolio-modal__content">
+        <button class="portfolio-modal__close">&times;</button>
+        <div class="portfolio-modal__body">
+            <!-- Контент подгружается динамически -->
         </div>
     </div>
-</section>
+</div>
 {% endblock %}
 
-{% block scripts %}
-<script src="{% static 'js/portfolio.js' %}"></script>
+{% block extra_js %}
+<script src="{% static 'portfolio/js/components/filters.js' %}"></script>
+<script src="{% static 'portfolio/js/components/project_hover.js' %}"></script>
+<script src="{% static 'portfolio/js/pages/portfolio_list.js' %}"></script>
+
 <script>
-    // Фильтрация проектов по категориям
-    document.querySelectorAll('.portfolio-filters .btn').forEach(button => {
-        button.addEventListener('click', function() {
-            // Убираем активный класс у всех кнопок
-            document.querySelectorAll('.portfolio-filters .btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Добавляем активный класс текущей кнопке
-            this.classList.add('active');
-
-            const filter = this.getAttribute('data-filter');
-            const projects = document.querySelectorAll('.portfolio-grid .portfolio-card');
-
-            projects.forEach(project => {
-                if (filter === 'all' || project.getAttribute('data-category') === filter) {
-                    project.style.display = 'block';
-                } else {
-                    project.style.display = 'none';
-                }
-            });
-        });
+    // Инициализация с учетом Django пагинации
+    document.addEventListener('DOMContentLoaded', function() {
+        const portfolioGrid = document.getElementById('portfolioGrid');
+        if (portfolioGrid) {
+            portfolioGrid.dataset.currentPage = {{ page_obj.number|default:1 }};
+            portfolioGrid.dataset.totalPages = {{ page_obj.paginator.num_pages|default:1 }};
+        }
     });
 </script>
 {% endblock %}

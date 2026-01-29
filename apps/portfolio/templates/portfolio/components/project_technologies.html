@@ -1,28 +1,21 @@
-{% load static %}
+{% if portfolio_item.technologies %}
 <div class="project-technologies">
     <h2>Использованные технологии:</h2>
     <div class="technologies-grid">
-        {% for technology in project.technologies %}
+        {% for tech in portfolio_item.technologies %}
         <div class="technology-item">
             <div class="technology-icon">
-                {% if technology == 'HTML/CSS' %}
-                <i class="fab fa-html5 html-icon"></i>
-                {% elif technology == 'JavaScript' %}
-                <i class="fab fa-js-square js-icon"></i>
-                {% elif technology == 'Python' or technology == 'Django' %}
-                <i class="fab fa-python python-icon"></i>
-                {% elif technology == 'Bootstrap' %}
-                <i class="fab fa-bootstrap bootstrap-icon"></i>
-                {% elif technology == 'Git' %}
-                <i class="fab fa-git-alt git-icon"></i>
-                {% elif technology == 'PostgreSQL' %}
-                <i class="fas fa-database db-icon"></i>
+                {% if tech.icon %}
+                <img src="{{ tech.icon }}" alt="{{ tech.name }}" loading="lazy">
                 {% else %}
-                <i class="fas fa-code code-icon"></i>
+                <svg viewBox="0 0 24 24">
+                    <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                </svg>
                 {% endif %}
             </div>
-            <span class="technology-name">{{ technology }}</span>
+            <span class="technology-name">{{ tech.name }}</span>
         </div>
         {% endfor %}
     </div>
 </div>
+{% endif %}

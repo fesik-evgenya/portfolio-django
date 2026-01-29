@@ -1,0 +1,110 @@
+/* Образование */
+.education-section h3 {
+    margin-bottom: 1.5rem;
+}
+
+.education-list {
+    margin: 1.5rem 0;
+}
+
+.education-item {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: color-mix(in srgb, var(--overlay-color) 2%, transparent);
+}
+
+.education-header {
+    padding: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.education-year {
+    background: var(--accent-purple);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.education-header strong {
+    flex: 1;
+    min-width: 200px;
+}
+
+.accordion-toggle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--pink-accent);
+    transition: transform 0.3s ease;
+}
+
+.education-item.active .accordion-toggle {
+    transform: rotate(45deg);
+}
+
+.education-details {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 1.2rem;
+    transition: all 0.3s ease;
+    background: color-mix(in srgb, var(--dark-bg) 95%, transparent);
+}
+
+.education-item.active .education-details {
+    max-height: 500px;
+    padding: 1rem 1.2rem;
+    border-top: 1px solid rgba(210, 168, 225, 0.1);
+}
+
+.education-summary {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: color-mix(in srgb, var(--overlay-color) 5%, transparent);
+    border-radius: 12px;
+    border-left: 4px solid var(--pink-accent);
+    font-style: italic;
+}
+
+/* Анимация аккордеона */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+    }
+}
+
+.education-item.active .education-details {
+    animation: slideDown 0.5s ease-out;
+}
+
+@media (max-width: 768px) {
+    .education-header {
+        padding: 1rem;
+    }
+
+    .education-header strong {
+        min-width: 100%;
+        order: 3;
+        margin-top: 0.5rem;
+    }
+
+    .education-year {
+        order: 1;
+    }
+
+    .accordion-toggle {
+        order: 2;
+    }
+}

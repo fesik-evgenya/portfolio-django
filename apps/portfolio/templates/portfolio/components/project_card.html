@@ -1,59 +1,85 @@
 {% load static %}
+
 <div class="portfolio-card"
+     data-package="{{ item.package|lower }}"
      data-category="{{ item.category.slug }}"
-     data-package="{{ item.package }}"
-     data-title="{{ item.title|lower }}">
+     data-title="{{ item.title|lower }}"
+     data-id="{{ item.id }}"
+     data-created="{{ item.created_at|date:'Y-m-d' }}"
+     data-featured="{{ item.is_featured|yesno:'true,false' }}">
 
     <div class="portfolio-card__image">
-        {% if item.main_image %}
-        <img src="{{ item.main_image.image.url }}" alt="{{ item.title }}" loading="lazy">
+        {% with main_image=item.main_image %}
+        {% if main_image and main_image.image %}
+        <img src="{{ main_image.image.url }}"
+             alt="{{ main_image.alt_text|default:item.title }}"
+             loading="lazy">
         {% else %}
-        <div class="portfolio-card__image-placeholder">
-            <i class="fas fa-image"></i>
-        </div>
+        <img src="{% static 'images/placeholder.jpg' %}"
+             alt="{{ item.title }}"
+             loading="lazy">
         {% endif %}
+        {% endwith %}
 
         <div class="portfolio-card__overlay">
-            {% if item.is_featured %}
-            <span class="featured-badge">Избранное</span>
-            {% endif %}
+            <!-- Используем тег url вместо get_absolute_url -->
             <a href="{% url 'portfolio:detail' item.slug %}" class="btn btn--primary">Подробнее</a>
+            <button class="btn btn--secondary quick-view" data-id="{{ item.id }}">Быстрый просмотр</button>
         </div>
+
+        {% if item.is_featured %}
+        <div class="portfolio-card__badge featured-badge">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+            </svg>
+            Популярный
+        </div>
+        {% endif %}
     </div>
 
     <div class="portfolio-card__content">
         <span class="portfolio-card__category">{{ item.category.name }}</span>
-        <h3 class="portfolio-card__title">
-            <a href="{% url 'portfolio:detail' item.slug %}">{{ item.title }}</a>
-        </h3>
-
+        <h3 class="portfolio-card__title">{{ item.title }}</h3>
         <p class="portfolio-card__desc">
+            {% if item.features and item.features|length > 0 %}
+            {{ item.features.0|truncatechars:100 }}
+            {% else %}
             {{ item.description|truncatechars:100 }}
+            {% endif %}
         </p>
 
         <div class="portfolio-card__meta">
             <span class="meta-item">
-                <i class="fas fa-clock"></i> {{ item.duration }}
+                <svg viewBox="0 0 24 24" width="14" height="14">
+                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/>
+                </svg>
+                {{ item.duration }}
             </span>
-            <span class="separator">|</span>
+            <span class="meta-divider">|</span>
             <span class="meta-item">
-                <i class="fas fa-layer-group"></i> {{ item.get_package_display }}
+                <svg viewBox="0 0 24 24" width="14" height="14">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                {% if item.geo %}{{ item.geo }}{% else %}Санкт-Петербург{% endif %}
             </span>
         </div>
 
-        <div class="portfolio-card__footer">
-            {% if item.technologies %}
-            <div class="technologies">
-                {% for tech in item.technologies|slice:":3" %}
-                <span class="tech-tag">{{ tech }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
+        <div class="portfolio-card__package">
+            {% if item.package == 'basic' %}Базовый пакет
+            {% elif item.package == 'standard' %}Стандартный пакет
+            {% elif item.package == 'premium' %}Премиум пакет
+            {% elif item.package == 'custom' %}Индивидуальный проект
+            {% else %}{{ item.package }}{% endif %}
+        </div>
 
-            {% if item.geo %}
-            <div class="location">
-                <i class="fas fa-map-marker-alt"></i> {{ item.geo }}
-            </div>
+        <div class="portfolio-card__technologies">
+            {% if item.technologies and item.technologies|length > 0 %}
+            {% for tech in item.technologies|slice:":4" %}
+            <span class="tech-badge">{{ tech }}</span>
+            {% endfor %}
+            {% if item.technologies|length > 4 %}
+            <span class="tech-badge more">+{{ item.technologies|length|add:"-4" }}</span>
+            {% endif %}
             {% endif %}
         </div>
     </div>

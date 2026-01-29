@@ -1,53 +1,61 @@
 {% load static %}
-<div class="solution-card" data-category="{{ solution.category.slug }}">
-    <div class="solution-card__header">
-        {% if solution.main_image %}
-        <img src="{{ solution.main_image.image.url }}"
-             alt="{{ solution.name }}"
-             class="solution-card__image">
-        {% else %}
-        <div class="solution-card__image-placeholder">
-            <i class="fas fa-image"></i>
-        </div>
+<article class="card solution-card" data-category="{{ solution.category.category_type }}"
+         data-price="{{ solution.price }}" data-id="{{ solution.id }}"
+         data-popular="{{ solution.is_popular|yesno:'true,false' }}"
+         data-new="{{ solution.is_new|yesno:'true,false' }}">
+    <div class="card-header">
+        {% if solution.is_new %}
+        <span class="solution-badge badge-new">Новинка</span>
+        {% endif %}
+        {% if solution.is_popular %}
+        <span class="solution-badge badge-popular">Популярное</span>
         {% endif %}
 
-        <div class="solution-card__badges">
-            {% if solution.is_new %}
-            <span class="badge badge--new">Новинка</span>
-            {% endif %}
-            {% if solution.is_popular %}
-            <span class="badge badge--popular">Популярное</span>
-            {% endif %}
-        </div>
+        <!-- Чекбокс для сравнения -->
+        <label class="compare-checkbox">
+            <input type="checkbox" class="compare-item" data-id="{{ solution.id }}">
+            <span class="checkmark"></span>
+            <span class="compare-label">Сравнить</span>
+        </label>
+
+        <img src="{% if solution.main_image %}{{ solution.main_image.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
+             alt="{{ solution.name }}"
+             class="solution-image"
+             loading="lazy">
     </div>
 
-    <div class="solution-card__body">
-        <h3 class="solution-card__title">
-            <a href="{% url 'solutions:detail' solution.slug %}">{{ solution.name }}</a>
-        </h3>
+    <div class="card-content">
+        <h3 class="solution-title">{{ solution.name }}</h3>
+        <p class="solution-description">{{ solution.description|truncatechars:100 }}</p>
 
-        <p class="solution-card__description">
-            {{ solution.description|truncatechars:120 }}
-        </p>
-
-        <div class="solution-card__features">
+        <div class="solution-features">
             {% for feature in solution.features|slice:":3" %}
             <span class="feature-tag">{{ feature }}</span>
             {% endfor %}
         </div>
 
-        <div class="solution-card__footer">
-            <div class="solution-card__price">
-                от {{ solution.price }} ₽
-            </div>
-            <div class="solution-card__delivery">
-                <i class="far fa-clock"></i> {{ solution.delivery_days }} дн.
-            </div>
+        <div class="solution-meta">
+            <span class="solution-price">от {{ solution.price }} ₽</span>
+            <span class="solution-delivery">
+                <i class="fas fa-bolt"></i> {{ solution.delivery_days }} дней
+            </span>
         </div>
     </div>
 
-    <div class="solution-card__actions">
-        <a href="{% url 'solutions:detail' solution.slug %}" class="btn btn--outline">Подробнее</a>
-        <a href="{% url 'solutions:order_create' solution.slug %}" class="btn btn--primary">Заказать</a>
+    <div class="card-actions">
+        <a href="{% url 'solutions:solution_detail' solution.slug %}"
+           class="btn btn--outline">
+            Подробнее
+        </a>
+        <button type="button" class="btn btn--primary add-to-cart-btn"
+                data-id="{{ solution.id }}"
+                data-name="{{ solution.name }}"
+                data-price="{{ solution.price }}"
+                data-url="{% url 'solutions:solution_detail' solution.slug %}">
+            <span class="btn-text">Заказать</span>
+            <span class="btn-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </span>
+        </button>
     </div>
-</div>
+</article>

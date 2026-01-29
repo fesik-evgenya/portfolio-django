@@ -1,20 +1,24 @@
-{% load static %}
-<section class="solution-faq">
-    <div class="container">
-        <h2 class="section-title">Частые вопросы</h2>
-        <div class="faq-list">
-            <div class="faq-item">
-                <h3 class="faq-question">Можно ли изменить дизайн шаблона?</h3>
-                <p class="faq-answer">Да, я адаптирую цветовую схему, шрифты и размещение блоков под ваш бренд.</p>
-            </div>
-            <div class="faq-item">
-                <h3 class="faq-question">Входит ли хостинг и домен в стоимость?</h3>
-                <p class="faq-answer">Хостинг и домен оплачиваются отдельно. Я помогу с выбором и настройкой.</p>
-            </div>
-            <div class="faq-item">
-                <h3 class="faq-question">Как происходит передача проекта?</h3>
-                <p class="faq-answer">После завершения работы я передаю вам все доступы и провожу инструктаж по управлению сайтом.</p>
+<section class="faq-section">
+    <h2>Часто задаваемые вопросы</h2>
+    <div class="faq-accordion">
+        {% for faq in faq_items %}
+        <div class="faq-item" data-faq-id="{{ faq.id }}">
+            <button class="faq-question" aria-expanded="false">
+                <span>{{ faq.question }}</span>
+                <svg class="faq-icon" viewBox="0 0 24 24">
+                    <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+                </svg>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-content">
+                    {{ faq.answer|linebreaks }}
+                </div>
             </div>
         </div>
+        {% empty %}
+        <div class="no-faq">
+            <p>Вопросы пока не добавлены</p>
+        </div>
+        {% endfor %}
     </div>
 </section>

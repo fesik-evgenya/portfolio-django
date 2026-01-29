@@ -1,34 +1,16 @@
 {% load static %}
-<div class="project-testimonial">
-    <div class="testimonial-header">
-        <div class="client-info">
-            {% if project.client_logo %}
-            <img src="{{ project.client_logo.url }}" alt="Логотип {{ project.client }}" class="client-logo">
-            {% else %}
-            <div class="client-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            {% endif %}
-            <div class="client-details">
-                <h3>{{ project.client }}</h3>
-                {% if project.geo %}
-                <p class="client-location">{{ project.geo }}</p>
-                {% endif %}
-            </div>
-        </div>
-        <div class="quote-icon">
-            <i class="fas fa-quote-right"></i>
-        </div>
-    </div>
 
-    <blockquote class="testimonial-content">
-        {{ project.testimonial|linebreaks }}
-    </blockquote>
-
-    <div class="testimonial-footer">
-        <div class="project-details">
-            <span class="project-name">{{ project.title }}</span>
-            <span class="project-category">{{ project.category.name }}</span>
+<blockquote class="project-testimonial">
+    <div class="quote-icon">"</div>
+    <p>{{ portfolio_item.testimonial }}</p>
+    <div class="testimonial-author">
+        {% if portfolio_item.client_logo %}
+        <div class="client-logo">
+            <img src="{{ portfolio_item.client_logo.url }}"
+                 alt="Логотип {{ portfolio_item.client }}"
+                 loading="lazy">
         </div>
+        {% endif %}
+        <cite>{{ portfolio_item.client }}</cite>
     </div>
-</div>
+</blockquote>

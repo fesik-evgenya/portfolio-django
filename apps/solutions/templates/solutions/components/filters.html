@@ -1,0 +1,60 @@
+<section class="controls-section">
+    <div class="container">
+        <!-- Фильтры по категориям -->
+        <div class="filters-container">
+            <h3 class="filters-title">Категории:</h3>
+            <div class="filters-row">
+                {% for category in categories %}
+                <label class="filter-option">
+                    <input type="checkbox"
+                           name="category"
+                           value="{{ category.category_type }}"
+                           {% if category.category_type in selected_categories %}checked{% endif %}>
+                    <span class="checkmark"></span>
+                    <span class="filter-text">{{ category.name }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Сортировка -->
+        <div class="sorting">
+            <span class="sort-label">Сортировка:</span>
+            <select name="sort" id="sortSelect" class="sort-select">
+                <option value="popular" {% if request.GET.sort == 'popular' %}selected{% endif %}>По популярности</option>
+                <option value="new" {% if request.GET.sort == 'new' %}selected{% endif %}>Сначала новинки</option>
+                <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>По цене (возр.)</option>
+                <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>По цене (убыв.)</option>
+                <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>По названию</option>
+            </select>
+        </div>
+
+        <!-- Дополнительные фильтры -->
+        <div class="advanced-filters">
+            <button type="button" class="btn btn--outline" id="toggleAdvancedFilters">
+                <i class="fas fa-sliders-h"></i> Доп. фильтры
+            </button>
+
+            <div class="advanced-filters-content" id="advancedFilters">
+                <div class="price-filter">
+                    <h4>Цена</h4>
+                    <div class="price-range">
+                        <input type="number" id="minPrice" placeholder="От" value="{{ request.GET.min_price|default:'' }}">
+                        <span>-</span>
+                        <input type="number" id="maxPrice" placeholder="До" value="{{ request.GET.max_price|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="delivery-filter">
+                    <h4>Сроки</h4>
+                    <select id="deliveryTime">
+                        <option value="">Любой</option>
+                        <option value="7">До 7 дней</option>
+                        <option value="14">До 14 дней</option>
+                        <option value="30">До 30 дней</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

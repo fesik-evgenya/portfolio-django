@@ -1,25 +1,24 @@
-<div class="contacts-card">
+<div class="contacts-card contact-form-card">
     <h2 class="section-title">Обсудим ваш проект?</h2>
     <form class="contact-form" id="contact-form" method="post" action="{% url 'main:contact_submit' %}">
         {% csrf_token %}
 
-        {% if interest %}
-        <input type="hidden" name="interest" value="{{ interest }}">
-        {% endif %}
-
         <div class="form-group">
             <label for="name" class="form-group-label-dark">Имя</label>
-            <input type="text" id="name" name="name" class="form-group-label" required>
+            <input type="text" id="name" name="name" class="form-group-label" required
+                   minlength="2" maxlength="100">
         </div>
 
         <div class="form-group">
             <label for="contact" class="form-group-label-dark">Телеграм или email</label>
-            <input type="text" id="contact" name="contact" class="form-group-label" required>
+            <input type="text" id="contact" name="contact" class="form-group-label" required
+                   pattern="^(?:@\w{5,32}|[^@\s]+@[^@\s]+\.[^@\s]+)$"
+                   title="Введите Telegram (@username) или Email">
         </div>
 
         <div class="form-group">
-            <label for="project-type" class="form-group-label-dark">Тип проекта</label>
-            <select id="project-type" name="project_type" required>
+            <label for="project_type" class="form-group-label-dark">Тип проекта</label>
+            <select id="project_type" name="project_type" required>
                 <option value="" disabled selected>Выберите тип проекта</option>
                 <option value="startup-launch">Стартап-Лаунч</option>
                 <option value="profi-portfolio">Профи-Портфолио</option>

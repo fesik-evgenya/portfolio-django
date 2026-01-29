@@ -1,0 +1,76 @@
+/* Форма обратной связи */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.form-group-label-dark {
+    color: var(--light-gray) !important;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-left: 5px;
+}
+
+.form-group input, .form-group select {
+    padding: 14px 16px;
+    border-radius: 8px;
+    background: rgba(26, 26, 46, 0.7);
+    border: 1px solid rgba(210, 168, 225, 0.2);
+    color: var(--light-gray);
+    font-family: var(--font-body), sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 3px rgba(210, 168, 225, 0.2);
+}
+
+.form-group input::placeholder {
+    color: var(--light-gray);
+}
+
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d2a8e1'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+}
+
+/* Маска для телефона/email */
+input[name="contact"]:invalid {
+    border-color: var(--pink-accent);
+}
+
+input[name="contact"]:valid {
+    border-color: rgba(210, 168, 225, 0.2);
+}
+
+/* Hover optimization for contact page */
+@media (hover: hover) and (pointer: fine) {
+    .contact-link:hover,
+    .contact-item:hover .contact-icon {
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+}
+
+@media (pointer: coarse) {
+    .contact-link:active {
+        transform: translateY(-1px);
+    }
+
+    .contact-link:hover {
+        transform: none;
+    }
+}

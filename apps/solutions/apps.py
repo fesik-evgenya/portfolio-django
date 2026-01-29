@@ -2,4 +2,6 @@ from django.apps import AppConfig
 
 
 class SolutionsConfig(AppConfig):
-    name = 'solutions'
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.solutions'
+    verbose_name = 'Магазин решений'

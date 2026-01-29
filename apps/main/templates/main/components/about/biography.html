@@ -1,58 +1,24 @@
-{% load static %}
-<div class="about__text">
+<div class="about__text biography-section">
     <!-- Фото из БД -->
-    {% if biography and biography.image %}
     <div class="about__image-container">
+        {% if biography and biography.image %}
         <img src="{{ biography.image.url }}"
              alt="Евгения Фесик, full-stack разработчик в Санкт-Петербурге"
              class="about__image" width="550" height="733" loading="lazy">
-    </div>
-    {% else %}
-    <div class="about__image-container">
+        {% else %}
         <img src="{% static 'images/about_photo.png' %}"
              alt="Евгения Фесик, full-stack разработчик в Санкт-Петербурге"
              class="about__image" width="550" height="733" loading="lazy">
+        {% endif %}
     </div>
-    {% endif %}
 
     <!-- Основной текст из БД -->
     {% if biography and biography.content %}
-    {{ biography.content|safe }}
+    <div class="biography-content">
+        {{ biography.content|safe }}
+    </div>
     {% else %}
-    <p>Привет!<br>Я Евгения Фесик, full-stack разработчик из Санкт-Петербурга. Специализируюсь на создании
+    <p class="biography-default">Привет!<br>Я Евгения Фесик, full-stack разработчик из Санкт-Петербурга. Специализируюсь на создании
         современных веб-решений для бизнеса с использованием Python и JavaScript.</p>
-    {% endif %}
-
-    <!-- Образование из БД -->
-    <h3>Образование и квалификация</h3>
-    {% if education_items %}
-    <ul class="about__list">
-        {% for item in education_items %}
-        <li>{{ item.text|safe }}</li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <ul class="about__list">
-        <li><strong>СПБ Колледж Радиоэлектронного Приборостроения</strong> (2005) - "Программное обеспечение
-            вычислительной техники и автоматизированных систем"
-        </li>
-        <li><strong>СПб Государственный Политехнический Университет</strong> (2008) - Экономики и
-            менеджмента / Менеджмент организаций
-        </li>
-        <li><strong>Аналитик данных</strong> (2024) - "С нуля до разработки прикладных решений для бизнеса",
-            Томский Государственный Университет (256 ак.ч.)
-        </li>
-        <li><strong>Повышение квалификации</strong> (2025) - "Программирование и создание IT-продуктов на
-            языке Python", ИПАП, Санкт-Петербург (200 ак.ч.)
-        </li>
-    </ul>
-    {% endif %}
-
-    <!-- Заключение образования из БД -->
-    {% if biography and biography.education_summary %}
-    {{ biography.education_summary|safe }}
-    {% else %}
-    <p>Постоянно совершенствую свои навыки через курсы и практику, чтобы предлагать клиентам в
-        Санкт-Петербурге самые современные решения.</p>
     {% endif %}
 </div>

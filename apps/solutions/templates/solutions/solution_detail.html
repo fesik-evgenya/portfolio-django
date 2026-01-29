@@ -1,77 +1,130 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block seo_extra %}
-{% if solution.meta_title or solution.meta_description or solution.meta_keywords %}
-<!-- SEO мета-теги -->
-<title>{{ solution.meta_title|default:solution.name }} | Магазин решений</title>
-<meta name="description" content="{{ solution.meta_description|default:solution.description|truncatechars:160 }}">
+{% block title %}{{ solution.meta_title|default:solution.name }}{% endblock %}
+
+{% block meta_description %}{{ solution.meta_description|default:solution.description|truncatechars:160 }}{% endblock %}
+
+{% block extra_meta %}
+{% if solution.meta_keywords %}
 <meta name="keywords" content="{{ solution.meta_keywords }}">
-{% else %}
-<title>{{ solution.name }} | Магазин решений</title>
-<meta name="description" content="{{ solution.description|truncatechars:160 }}">
 {% endif %}
 
-<!-- Микроразметка -->
+<!-- Open Graph разметка -->
+<meta property="og:title" content="{{ solution.meta_title|default:solution.name }}">
+<meta property="og:description" content="{{ solution.meta_description|default:solution.description|truncatechars:160 }}">
+<meta property="og:type" content="product">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% if solution.images.all %}
+<meta property="og:image" content="{{ solution.images.first.image.url }}">
+{% elif solution.image_path_compat %}
+<meta property="og:image" content="{% static solution.image_path_compat %}">
+{% endif %}
+
+<!-- Schema.org микроразметка -->
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": "{{ solution.name }}",
     "description": "{{ solution.description|truncatechars:200 }}",
-    "image": "{% if solution.main_image %}{{ solution.main_image.image.url }}{% endif %}",
     "offers": {
       "@type": "Offer",
       "price": "{{ solution.price }}",
-      "priceCurrency": "RUB",
-      "availability": "https://schema.org/InStock"
-    }
+      "priceCurrency": "RUB"
+    },
+  {% if solution.images.all %}
+  "image": "{{ solution.images.first.image.url }}",
+  {% elif solution.image_path_compat %}
+  "image": "{% static solution.image_path_compat %}",
+  {% endif %}
+  "brand": {
+  "@type": "Brand",
+  "name": "Full-stack разработчик"
+  }
   }
 </script>
 {% endblock %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/solution_detail.css' %}">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'solutions/css/pages/detail.css' %}">
+<link rel="stylesheet" href="{% static 'solutions/css/components/solution_features.css' %}">
+<link rel="stylesheet" href="{% static 'solutions/css/components/solution_pricing.css' %}">
+<link rel="stylesheet" href="{% static 'solutions/css/components/package_comparison.css' %}">
+<link rel="stylesheet" href="{% static 'solutions/css/components/faq.css' %}">
 {% endblock %}
 
 {% block content %}
-<main class="solution-detail-page">
-  <!-- Герой-секция -->
-  {% include "solutions/components/solution_hero.html" %}
+<div class="solution-detail-wrapper">
+  <!-- Hero секция с галереей -->
+  {% include "solutions/components/solution_hero.html" with solution=solution %}
 
-  <section class="solution-content">
-    <div class="container">
-      <div class="solution-grid">
-        <!-- Галерея изображений -->
-        {% include "solutions/components/solution_image_gallery.html" %}
+  <!-- Основной контент -->
+  <div class="solution-content-grid">
+    <div class="solution-main-content">
+      <!-- Описание -->
+      {% include "solutions/components/solution_description.html" with solution=solution %}
 
-        <div class="solution-info">
-          <!-- Цена и срок -->
-          {% include "solutions/components/solution_pricing.html" %}
+      <!-- Функции -->
+      {% include "solutions/components/solution_features.html" with solution=solution %}
 
-          <!-- Описание -->
-          {% include "solutions/components/solution_description.html" %}
+      <!-- Требования -->
+      {% include "solutions/components/solution_requirements.html" with solution=solution %}
 
-          <!-- Особенности -->
-          {% include "solutions/components/solution_features.html" %}
+      <!-- FAQ -->
+      {% include "solutions/components/faq.html" with faq_items=solution.faq_items.all %}
+    </div>
 
-          <!-- Требования -->
-          {% include "solutions/components/solution_requirements.html" %}
+    <div class="solution-sidebar">
+      <!-- Цены и пакеты -->
+      {% include "solutions/components/solution_pricing.html" with solution=solution %}
 
-          <!-- Кнопки действий -->
-          {% include "solutions/components/solution_actions.html" %}
-        </div>
+      <!-- Сравнение пакетов -->
+      {% include "solutions/components/package_comparison.html" %}
+    </div>
+  </div>
+
+  <!-- Связанные решения -->
+  {% if related_solutions %}
+  <section class="related-solutions">
+    <h2>Похожие решения</h2>
+    <div class="related-grid">
+      {% for related in related_solutions %}
+      <div class="related-card">
+        <a href="{% url 'solutions:detail' related.slug %}">
+          {% if related.images.all %}
+          <img src="{{ related.images.first.image.url }}"
+               alt="{{ related.name }}"
+               loading="lazy">
+          {% else %}
+          <img src="{% static 'images/placeholder.jpg' %}"
+               alt="{{ related.name }}"
+               loading="lazy">
+          {% endif %}
+          <div class="related-card-content">
+            <h3>{{ related.name }}</h3>
+            <p class="related-price">от {{ related.price }} ₽</p>
+          </div>
+        </a>
       </div>
+      {% endfor %}
     </div>
   </section>
+  {% endif %}
+</div>
+{% endblock %}
 
-  <!-- Сравнение пакетов -->
-  {% include "solutions/components/package_comparison.html" %}
-
-  <!-- Похожие решения -->
-  {% include "solutions/components/related_solutions.html" %}
-
-  <!-- FAQ -->
-  {% include "solutions/components/faq.html" %}
-</main>
+{% block extra_js %}
+<script>
+  const SOLUTION_CONFIG = {
+    id: {{ solution.id|default:0 }},
+  totalImages: {{ solution.images.all.count|default:0 }},
+  imagesPerPage: 10,
+          currentPage: 1
+  };
+</script>
+<script src="{% static 'solutions/js/pages/solution_detail.js' %}"></script>
+<script src="{% static 'solutions/js/components/package_comparison.js' %}"></script>
+<script src="{% static 'solutions/js/components/faq_accordion.js' %}"></script>
+<script src="{% static 'solutions/js/components/pricing_calculator.js' %}"></script>
 {% endblock %}

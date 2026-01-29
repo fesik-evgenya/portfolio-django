@@ -1,0 +1,78 @@
+/* Философия работы */
+.philosophy-section {
+    padding: 2rem 0;
+}
+
+.philosophy-section h2 {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.philosophy-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--pink-accent), var(--accent-purple));
+    border-radius: 2px;
+}
+
+.philosophy-icon {
+    font-size: 2rem;
+    color: var(--pink-accent);
+    margin-bottom: 1rem;
+}
+
+.workflow-text {
+    background: color-mix(in srgb, var(--overlay-color) 5%, transparent);
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border-left: 4px solid var(--accent-purple);
+}
+
+.workflow-default {
+    font-style: italic;
+    color: var(--light-gray);
+    opacity: 0.9;
+    margin-top: 1.5rem;
+}
+
+/* Активный таб философии */
+.philosophy-card.active {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(210, 168, 225, 0.2);
+    border-color: var(--pink-accent);
+}
+
+/* Анимация переключения табов */
+@keyframes tabFade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.philosophy-card {
+    animation: tabFade 0.5s ease-out;
+}
+
+@media (max-width: 768px) {
+    .philosophy-section h2 {
+        font-size: 1.6rem;
+        margin-bottom: 2rem;
+    }
+
+    .workflow-text {
+        padding: 1.2rem;
+    }
+}

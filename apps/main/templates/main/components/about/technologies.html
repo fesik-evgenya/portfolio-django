@@ -1,22 +1,37 @@
-{% load static %}
-<div class="about__text">
-    <h2>{{ technology_tools_title|default:"Инструменты и технологии" }}</h2>
+<div class="about__text technologies-section">
+    <h2>{{ tools.title|default:"Инструменты и технологии" }}</h2>
 
-    {% if technology_tools_content %}
-    {{ technology_tools_content|safe }}
+    {% if tools and tools.content %}
+    <div class="tools-intro">
+        {{ tools.content|safe }}
+    </div>
     {% endif %}
 
     <!-- Инструменты из БД -->
-    {% if technology_tools %}
+    {% if tools_list %}
     <div class="workflow">
         <img src="{% static 'images/workstation.webp' %}"
-             alt="Рабочее место веб-разработчика в Санкт-Петербурге с Python кодом">
+             alt="Рабочее место веб-разработчика в Санкт-Петербурге с Python кодом"
+             loading="lazy">
 
-        <div class="tools-grid">
-            {% for tool in technology_tools %}
-            <div class="tool-item">
-                <img src="{{ tool.icon.url }}" alt="{{ tool.name }}" width="40" height="40">
+        <div class="tools-grid" id="toolsTabs">
+            {% for tool in tools_list|dictsort:"order" %}
+            <div class="tool-item" data-tool="{{ tool.name|slugify }}">
+                {% if tool.icon %}
+                <img src="{{ tool.icon.url }}"
+                     alt="{{ tool.name }}"
+                     width="40" height="40"
+                     loading="lazy">
+                {% else %}
+                <img src="{% static 'images/icons/default-tool.svg' %}"
+                     alt="{{ tool.name }}"
+                     width="40" height="40"
+                     loading="lazy">
+                {% endif %}
                 <span>{{ tool.name }}</span>
+                {% if tool.description %}
+                <div class="tool-tooltip">{{ tool.description }}</div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -24,32 +39,39 @@
     {% else %}
     <div class="workflow">
         <img src="{% static 'images/workstation.webp' %}"
-             alt="Рабочее место веб-разработчика в Санкт-Петербурге с Python кодом">
+             alt="Рабочее место веб-разработчика в Санкт-Петербурге с Python кодом"
+             loading="lazy">
 
-        <div class="tools-grid">
-            <div class="tool-item">
-                <img src="{% static 'images/icon/python.svg' %}" alt="Python">
+        <div class="tools-grid" id="toolsTabs">
+            <div class="tool-item" data-tool="python">
+                <img src="{% static 'images/icons/python.svg' %}" alt="Python">
                 <span>Python</span>
+                <div class="tool-tooltip">Основной язык для backend разработки</div>
             </div>
-            <div class="tool-item">
-                <img src="{% static 'images/icon/flask.svg' %}" alt="Flask">
+            <div class="tool-item" data-tool="flask">
+                <img src="{% static 'images/icons/flask.svg' %}" alt="Flask">
                 <span>Flask</span>
+                <div class="tool-tooltip">Веб-фреймворк для Python</div>
             </div>
-            <div class="tool-item">
-                <img src="{% static 'images/icon/JavaScript.svg' %}" alt="JavaScript">
+            <div class="tool-item" data-tool="javascript">
+                <img src="{% static 'images/icons/JavaScript.svg' %}" alt="JavaScript">
                 <span>JavaScript</span>
+                <div class="tool-tooltip">Frontend разработка и интерактивность</div>
             </div>
-            <div class="tool-item">
-                <img src="{% static 'images/icon/html5.svg' %}" alt="HTML5">
+            <div class="tool-item" data-tool="html5">
+                <img src="{% static 'images/icons/html5.svg' %}" alt="HTML5">
                 <span>HTML5</span>
+                <div class="tool-tooltip">Семантическая верстка</div>
             </div>
-            <div class="tool-item">
-                <img src="{% static 'images/icon/css3.svg' %}" alt="CSS3">
+            <div class="tool-item" data-tool="css3">
+                <img src="{% static 'images/icons/css3.svg' %}" alt="CSS3">
                 <span>CSS3</span>
+                <div class="tool-tooltip">Стили и анимации</div>
             </div>
-            <div class="tool-item">
-                <img src="{% static 'images/icon/figma.svg' %}" alt="Figma">
+            <div class="tool-item" data-tool="figma">
+                <img src="{% static 'images/icons/figma.svg' %}" alt="Figma">
                 <span>Figma</span>
+                <div class="tool-tooltip">Дизайн и прототипирование</div>
             </div>
         </div>
     </div>

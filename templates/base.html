@@ -1,54 +1,93 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1A1A2E">
+
+    <!-- Preload критических ресурсов -->
+    <link rel="preload" href="{% static 'css/global.css' %}" as="style">
+    <link rel="preload" href="{% static 'js/global.js' %}" as="script">
+
+    <!-- Preload шрифтов -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+
+    <!-- Inline Critical CSS -->
+    <style>
+        {% include 'includes/critical_css.html' %}
+    </style>
+
+    <!-- Async CSS Loading -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="{% static 'css/global.css' %}" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="{% static 'css/global.css' %}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
+
+    <!-- Favicon -->
     <link rel="shortcut icon" href="{% static 'images/logo/favicon.svg' %}" type="image/svg+xml">
 
-    <!-- Мета-теги -->
-    {% include "includes/meta_tags.html" %}
-
-    <!-- Шрифты и стили -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap"
-          rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-
-    <!-- Блок для дополнительных SEO-тегов -->
+    <!-- SEO блоки -->
+    {% include 'includes/components/meta_tags.html' %}
     {% block seo_extra %}{% endblock %}
 
-    <!-- Блок для страничных стилей -->
+    <!-- Блок для дополнительных стилей -->
     {% block styles %}{% endblock %}
 </head>
-<body>
-<canvas class="background-canvas" id="background-canvas"></canvas>
+<body class="loading">
+<!-- Canvas фон - отложенная загрузка -->
+<canvas class="background-canvas" id="background-canvas"
+        data-lazy="canvas"
+        data-script="{% static 'js/components/canvas-background.js' %}">
+</canvas>
+
 <div class="page-wrapper">
-    <!-- Хедер -->
-    {% include "includes/header.html" %}
+    <!-- Хедер с lazy attributes -->
+    {% include 'includes/layout/header.html' %}
 
     <main>
-        <!-- Хлебные крошки (опционально) -->
-        {% block breadcrumbs %}{% endblock %}
+        <!-- Флеш-сообщения -->
+        <div class="flash-messages-container"
+             data-lazy="messages"
+             data-styles="{% static 'css/components/messages.css' %}"
+             data-script="{% static 'js/components/messages.js' %}">
+            {% include 'includes/components/messages.html' %}
+        </div>
 
-        <!-- Сообщения Django -->
-        {% include "includes/messages.html" %}
-
-        <!-- Основной контент страницы -->
+        <!-- Контент страницы -->
         {% block content %}{% endblock %}
     </main>
 </div>
 
 <!-- Футер -->
-{% include "includes/footer.html" %}
+{% include 'includes/layout/footer.html' %}
 
-<!-- Основные скрипты -->
-<script src="{% static 'js/index.js' %}"></script>
+<!-- Global JS (defer) -->
+<script src="{% static 'js/vendors/intersection-observer-polyfill.js' %}" defer></script>
+<script src="{% static 'js/global.js' %}" defer></script>
 
-<!-- Блок для страничных скриптов -->
+<!-- Lazy Loader System -->
+<script src="{% static 'js/components/lazy-loader.js' %}" defer></script>
+
+<!-- Блок для дополнительных скриптов -->
 {% block scripts %}{% endblock %}
 
-<!-- Микроразметка в футере -->
+<!-- Cookie Consent (lazy modal) -->
+<div id="cookiesModal"
+     class="cookies-modal"
+     data-lazy="cookie-consent"
+     data-styles="{% static 'css/components/modals.css' %}"
+     data-script="{% static 'js/components/cookie-consent.js' %}">
+    {% include 'includes/modals/cookie_consent.html' %}
+</div>
+
+<!-- Schema Markup -->
 <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -58,94 +97,16 @@
         "address": {
             "@type": "PostalAddress",
             "addressLocality": "Санкт-Петербург",
-            "addressCountry": "RU",
-            "postalCode": "190000"
+            "addressCountry": "RU"
         },
-        "description": "Фрилансер full-stack разработчик (Python/JS) в Санкт-Петербурге. Создаю сайты под ключ и MVP для бизнеса.",
-        "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'main:index' %}",
-        "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/photo.jpg' %}",
+        "description": "Создаю сайты под ключ и MVP для бизнеса в Санкт-Петербурге.",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "image": "{% static 'images/about_photo.png' %}",
         "sameAs": [
             "https://github.com/fesik-evgenya",
             "https://t.me/Fesik_Evgeniya"
         ]
     }
 </script>
-
-<!-- Модальное окно cookies -->
-{% include "includes/modal_cookies.html" %}
-
-<!-- Компонент: Cookie Consent Banner -->
-<div class="cookie-consent-banner" id="cookieConsentBanner" style="display: none;">
-    <div class="cookie-content">
-        <div class="cookie-text">
-            <i class="fas fa-cookie-bite"></i>
-            <div>
-                <h4>Мы используем cookie</h4>
-                <p>Это помогает улучшить работу сайта. Продолжая использовать сайт, вы соглашаетесь с использованием cookie.</p>
-            </div>
-        </div>
-        <div class="cookie-actions">
-            <a href="{% url 'main:privacy' %}" class="cookie-link">Подробнее</a>
-            <button class="btn btn--primary" id="acceptCookiesBannerBtn">Принять</button>
-        </div>
-    </div>
-</div>
-
-<!-- Глобальный скрипт управления -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Управление cookie согласием
-        const cookieBanner = document.getElementById('cookieConsentBanner');
-        const acceptBtn = document.getElementById('acceptCookiesBannerBtn');
-        const cookiesModal = document.getElementById('cookiesModal');
-
-        if (!localStorage.getItem('cookiesAccepted')) {
-            setTimeout(() => {
-                cookieBanner.style.display = 'block';
-            }, 2000);
-        }
-
-        acceptBtn.addEventListener('click', function() {
-            localStorage.setItem('cookiesAccepted', 'true');
-            cookieBanner.style.display = 'none';
-        });
-
-        // Управление модальным окном cookies
-        if (cookiesModal) {
-            const modalAcceptBtn = document.getElementById('acceptCookiesBtn');
-            const modalCloseBtn = cookiesModal.querySelector('.modal-close');
-
-            modalAcceptBtn.addEventListener('click', function() {
-                localStorage.setItem('cookiesAccepted', 'true');
-                cookiesModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            });
-
-            modalCloseBtn.addEventListener('click', function() {
-                cookiesModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            });
-
-            cookiesModal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        }
-
-        // Инициализация мобильного меню
-        const menuToggle = document.getElementById('menuToggle');
-        const navLinks = document.getElementById('navLinks');
-
-        if (menuToggle && navLinks) {
-            menuToggle.addEventListener('click', function() {
-                navLinks.classList.toggle('show');
-                menuToggle.classList.toggle('active');
-            });
-        }
-    });
-</script>
-
 </body>
 </html>

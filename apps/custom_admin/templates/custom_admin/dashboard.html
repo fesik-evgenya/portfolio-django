@@ -1,10 +1,236 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'custom_admin/base_admin.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block admin_title %}Дашборд{% endblock %}
+
+{% block admin_styles %}
+<link rel="stylesheet" href="{% static 'custom_admin/css/pages/dashboard.css' %}">
+{% endblock %}
+
+{% block admin_content %}
+<div class="dashboard-container">
+    <!-- Статистические карточки -->
+    <div class="stats-grid">
+        <div class="stat-card stat-card-primary">
+            <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value" id="ordersCount">{{ orders_count|default:"0" }}</h3>
+                <p class="stat-label">Новые заказы</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+12% за месяц</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-card-success">
+            <div class="stat-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value" id="messagesCount">{{ messages_count|default:"0" }}</h3>
+                <p class="stat-label">Новые сообщения</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+8% за неделю</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-card-warning">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value" id="revenueValue">{{ total_revenue|default:"0"|floatformat:"0" }} ₽</h3>
+                <p class="stat-label">Общий доход</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+24% за месяц</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-card-info">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value" id="visitorsCount">{{ visitors_count|default:"128" }}</h3>
+                <p class="stat-label">Посетители</p>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>-5% за неделю</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Графики и аналитика -->
+    <div class="analytics-grid">
+        <!-- График доходов -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Динамика доходов</h3>
+                <select class="chart-period-select" id="revenuePeriod">
+                    <option value="week">За неделю</option>
+                    <option value="month" selected>За месяц</option>
+                    <option value="year">За год</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- График заказов -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Статистика заказов</h3>
+                <select class="chart-period-select" id="ordersPeriod">
+                    <option value="week">За неделю</option>
+                    <option value="month" selected>За месяц</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="ordersChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблицы и списки -->
+    <div class="tables-grid">
+        <!-- Последние заказы -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3>Последние заказы</h3>
+                <a href="{% url 'custom_admin:solution_orders' %}" class="btn-link">Все заказы</a>
+            </div>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Клиент</th>
+                        <th>Решение</th>
+                        <th>Сумма</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                    </tr>
+                    </thead>
+                    <tbody id="recentOrders">
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.customer_name }}</td>
+                        <td>{{ order.solution.name }}</td>
+                        <td>{{ order.total_amount }} ₽</td>
+                        <td>
+                                <span class="status-badge status-{{ order.status }}">
+                                    {{ order.get_status_display }}
+                                </span>
+                        </td>
+                        <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Нет заказов</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Последние сообщения -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3>Последние сообщения</h3>
+                <a href="{% url 'custom_admin:contact_messages' %}" class="btn-link">Все сообщения</a>
+            </div>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>Email</th>
+                        <th>Тема</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                    </tr>
+                    </thead>
+                    <tbody id="recentMessages">
+                    {% for message in recent_messages %}
+                    <tr>
+                        <td>{{ message.name }}</td>
+                        <td>{{ message.email }}</td>
+                        <td>{{ message.subject|default:"Без темы"|truncatechars:30 }}</td>
+                        <td>
+                                <span class="status-badge status-{{ message.status }}">
+                                    {{ message.get_status_display }}
+                                </span>
+                        </td>
+                        <td>{{ message.created_at|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Нет сообщений</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Виджеты активности -->
+    <div class="widgets-grid">
+        <div class="widget-card">
+            <div class="widget-header">
+                <h3>Активность системы</h3>
+                <div class="widget-actions">
+                    <button class="btn-icon refresh-activity"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+            <div class="widget-body">
+                <ul class="activity-list" id="systemActivity">
+                    <!-- Активность будет загружена через JS -->
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-card">
+            <div class="widget-header">
+                <h3>Популярные решения</h3>
+            </div>
+            <div class="widget-body">
+                <div class="popular-items">
+                    {% for solution in popular_solutions %}
+                    <div class="popular-item">
+                        <div class="popular-item-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="popular-item-info">
+                            <h4>{{ solution.name }}</h4>
+                            <p>{{ solution.orders.count }} заказов</p>
+                        </div>
+                        <div class="popular-item-price">
+                            {{ solution.price }} ₽
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-center">Нет данных</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_scripts %}
+<script src="{% static 'custom_admin/js/pages/dashboard.js' %}"></script>
+<script src="{% static 'custom_admin/js/components/sidebar.js' %}"></script>
+{% endblock %}

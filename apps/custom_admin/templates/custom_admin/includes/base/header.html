@@ -1,0 +1,60 @@
+<header class="admin-header">
+    <div class="header-left">
+        <div class="user-info">
+            <div class="user-avatar">
+                {% if request.user.avatar %}
+                <img src="{{ request.user.avatar.url }}" alt="{{ request.user.username }}">
+                {% else %}
+                <i class="fas fa-user-circle"></i>
+                {% endif %}
+            </div>
+            <div class="user-details">
+                <h3 class="user-name">{{ request.user.get_full_name|default:request.user.username }}</h3>
+                <span class="user-role">
+                    {% if request.user.is_super_admin %}Супер-админ{% else %}Администратор{% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="header-actions">
+            <!-- Уведомления -->
+            <div class="notification-dropdown">
+                <button class="btn-icon" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    {% with notification_count=request.unread_notifications|default:0 %}
+                    {% if notification_count > 0 %}
+                    <span class="notification-badge">{{ notification_count }}</span>
+                    {% endif %}
+                    {% endwith %}
+                </button>
+                <div class="dropdown-content notification-content" id="notificationDropdown">
+                    <div class="dropdown-header">
+                        <h4>Уведомления</h4>
+                        <a href="#" class="mark-all-read">Отметить все как прочитанные</a>
+                    </div>
+                    <div class="notification-list">
+                        <!-- Уведомления будут загружены через AJAX -->
+                    </div>
+                    <div class="dropdown-footer">
+                        <a href="{% url 'custom_admin:all_notifications' %}">Все уведомления</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Быстрые действия -->
+            <div class="quick-actions">
+                <button class="btn btn-primary" id="quickAddBtn">
+                    <i class="fas fa-plus"></i>
+                    Быстрое действие
+                </button>
+                <div class="dropdown-content quick-actions-content">
+                    <a href="{% url 'custom_admin:solution_create' %}"><i class="fas fa-box"></i> Добавить решение</a>
+                    <a href="{% url 'custom_admin:portfolio_create' %}"><i class="fas fa-briefcase"></i> Добавить проект</a>
+                    <a href="{% url 'custom_admin:about_create' %}"><i class="fas fa-user"></i> Добавить раздел "Обо мне"</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

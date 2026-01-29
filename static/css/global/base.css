@@ -1,0 +1,125 @@
+/* ===== BASE STYLES ===== */
+
+body {
+    background-color: var(--dark-purple);
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ===== CORE COMPONENTS ===== */
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 16px 32px;
+    font-family: var(--font-heading), sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid var(--accent-purple);
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn--primary {
+    background-color: var(--accent-purple);
+    color: var(--dark-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn--primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(166, 74, 201, 0.6);
+    background-color: transparent;
+    color: var(--accent-purple);
+}
+
+.btn--outline {
+    background-color: transparent;
+    color: var(--accent-purple);
+}
+
+.btn--outline:hover {
+    background-color: var(--accent-purple);
+    color: var(--dark-purple);
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(166, 74, 201, 0.6);
+}
+
+.btn-typo {
+    color: var(--light-gray);
+}
+
+.btn--large {
+    padding: 18px 40px;
+    font-size: 1.1rem;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 40px 0;
+    }
+
+    .services {
+        padding: 30px 0;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 40px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .page-title {
+        font-size: 1.6rem;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Hover optimization */
+@media (hover: hover) and (pointer: fine) {
+    .btn:hover {
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+}
+
+@media (pointer: coarse) {
+    .btn {
+        transition: transform 0.15s ease,
+        background-color 0.15s ease;
+    }
+
+    .btn:active {
+        transform: translateY(1px) scale(0.98);
+    }
+}

@@ -1,15 +1,41 @@
 {% load static %}
-<section class="solutions-hero">
+<section class="hero-section">
     <div class="container">
-        <h1 class="page-title">Готовые решения для вашего бизнеса</h1>
-        <p class="hero__text">Выберите пакетный сайт или дополнительный модуль. Все решения адаптируются под ваш бренд и запускаются за 14 дней.</p>
+        <h1 class="page-title">{{ page_title|default:"Готовые решения" }}</h1>
+        <p class="page-subtitle">{{ meta_description|default:"Выберите готовое решение для вашего бизнеса" }}</p>
 
-        {% include "search_form.html" with
-        action_url=request.path
-        placeholder="Поиск решений..."
-        name="search"
-        query=request.GET.search
-        filters=filter_options
-        %}
+        <!-- Поиск -->
+        <div class="search-container">
+            <form method="get" action="{% url 'solutions:solution_list' %}" class="search-form" id="searchForm">
+                <div class="search-input-group">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text"
+                           name="q"
+                           id="searchInput"
+                           class="search-input"
+                           placeholder="Поиск решений..."
+                           value="{{ request.GET.q|default:'' }}"
+                           autocomplete="off">
+                    <button type="button" class="search-clear" id="clearSearch" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <button type="submit" class="btn btn--primary search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+
+            <!-- Результаты живого поиска -->
+            <div class="live-search-results" id="liveSearchResults"></div>
+        </div>
+
+        <!-- Быстрые фильтры -->
+        <div class="quick-filters">
+            <button type="button" class="quick-filter active" data-filter="all">Все</button>
+            <button type="button" class="quick-filter" data-filter="package">Пакеты</button>
+            <button type="button" class="quick-filter" data-filter="module">Модули</button>
+            <button type="button" class="quick-filter" data-filter="popular">Популярные</button>
+            <button type="button" class="quick-filter" data-filter="new">Новинки</button>
+        </div>
     </div>
 </section>

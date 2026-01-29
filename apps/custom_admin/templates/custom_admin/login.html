@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в панель управления | Portfolio</title>
+
+    <!-- Запрет индексации -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="googlebot" content="noindex, nofollow, noarchive">
+
+    <!-- Статические файлы -->
+    <link rel="stylesheet" href="{% static 'custom_admin/css/pages/login.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .login-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">
+                <i class="fas fa-cog"></i>
+                <h1>Админ-панель</h1>
+            </div>
+            <p>Войдите в систему управления</p>
+        </div>
+
+        <form method="POST" class="login-form" id="loginForm" autocomplete="off">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                Неверное имя пользователя или пароль.
+            </div>
+            {% endif %}
+
+            {% if next %}
+            {% if user.is_authenticated %}
+            <div class="alert alert-warning">
+                У вашей учетной записи нет доступа к этой странице.
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_username">
+                    <i class="fas fa-user"></i>
+                    Имя пользователя
+                </label>
+                <input type="text"
+                       name="username"
+                       id="id_username"
+                       class="form-control"
+                       required
+                       autocomplete="username"
+                       autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">
+                    <i class="fas fa-lock"></i>
+                    Пароль
+                </label>
+                <input type="password"
+                       name="password"
+                       id="id_password"
+                       class="form-control"
+                       required
+                       autocomplete="current-password">
+                <button type="button" class="password-toggle" id="passwordToggle">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+
+            <div class="form-group form-check">
+                <input type="checkbox" name="remember" id="id_remember" class="form-check-input">
+                <label for="id_remember" class="form-check-label">
+                    Запомнить меня
+                </label>
+            </div>
+
+            <input type="hidden" name="next" value="{{ next|default:'/admin/' }}">
+
+            <button type="submit" class="btn btn-primary btn-block login-btn">
+                <i class="fas fa-sign-in-alt"></i>
+                Войти
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <p>© {% now "Y" %} Portfolio Admin Panel</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordField = document.getElementById('id_password');
+
+        if (passwordToggle) {
+            passwordToggle.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        }
+
+        // Очистка полей при загрузке
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function() {
+                // Сохраняем состояние "запомнить меня"
+                const rememberMe = document.getElementById('id_remember').checked;
+                if (rememberMe) {
+                    localStorage.setItem('admin_remember_me', 'true');
+                } else {
+                    localStorage.removeItem('admin_remember_me');
+                }
+            });
+
+            // При загрузке проверяем, нужно ли заполнять поля
+            const isRemembered = localStorage.getItem('admin_remember_me') === 'true';
+            if (!isRemembered) {
+                document.getElementById('id_username').value = '';
+                document.getElementById('id_password').value = '';
+                document.getElementById('id_remember').checked = false;
+            }
+        }
+    });
+</script>
+</body>
+</html>

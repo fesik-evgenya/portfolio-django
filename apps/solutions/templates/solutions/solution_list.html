@@ -1,57 +1,140 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block seo_extra %}
-<meta name="robots" content="index, follow">
-<meta name="description" content="Готовые решения для бизнеса: сайты под ключ за 14 дней. Выберите подходящий пакет или модуль для вашего проекта.">
+{% block title %}{{ page_title|default:"Готовые решения" }}{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="{{ meta_description|default:'Готовые решения для вашего бизнеса' }}">
+<meta name="keywords" content="{{ meta_keywords|default:'' }}">
+<!-- Микроразметка для страницы списка решений -->
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "{{ page_title|default:'Готовые решения' }}",
+        "description": "{{ meta_description|default:'Готовые решения для вашего бизнеса' }}",
+        "itemListElement": [
+            {% for solution in solutions %}
+            {
+                "@type": "Product",
+                "position": {{ forloop.counter }},
+            "name": "{{ solution.name }}",
+            "description": "{{ solution.description|truncatechars:200 }}",
+            {% if solution.main_image %}
+            "image": "{{ solution.main_image.image.url }}",
+            {% else %}
+            "image": "{% static 'images/placeholder.jpg' %}",
+            {% endif %}
+            "offers": {
+                "@type": "Offer",
+                "price": "{{ solution.price }}",
+                "priceCurrency": "RUB"
+            }
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    }
+</script>
 {% endblock %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/solutions.css' %}">
-{% endblock %}
-
-{% block breadcrumbs %}
-{% include "breadcrumbs.html" with current_page="Магазин решений" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'solutions/css/pages/solution_list.css' %}">
+<link rel="stylesheet" href="{% static 'solutions/css/components/hero_with_search.css' %}">
+<link rel="stylesheet" href="{% static 'solutions/css/components/filters.css' %}">
+<link rel="stylesheet" href="{% static 'solutions/css/components/solution_card.css' %}">
 {% endblock %}
 
 {% block content %}
-<!-- Герой-секция с поиском -->
+<!-- Hero секция с поиском -->
 {% include "solutions/components/hero_with_search.html" %}
 
-<section class="solutions-grid-section">
-    <div class="container">
-        <div class="solutions-grid" id="solutionsGrid">
-            {% if solutions %}
-            {% for solution in solutions %}
-            <!-- Карточка решения -->
-            {% include "solutions/components/solution_card.html" %}
-            {% endfor %}
-            {% else %}
-            <!-- Пустое состояние -->
-            {% include "empty_state.html" with
-            icon="fas fa-box-open"
-            title="Решения пока не добавлены"
-            description="Скоро здесь появятся готовые решения для вашего бизнеса"
-            %}
+<!-- Фильтры -->
+{% include "solutions/components/filters.html" %}
+
+<main class="solutions-page">
+    <section class="solutions-section">
+        <div class="container">
+            <!-- Пакетные решения -->
+            {% if packages %}
+            <div class="solutions-category">
+                <h2 class="section-title">Пакетные решения</h2>
+                <p class="section-subtitle">Готовые решения для быстрого запуска вашего бизнеса</p>
+
+                <div class="solutions-grid grid grid--columns">
+                    {% for package in packages %}
+                    {% include "solutions/components/solution_card.html" with solution=package %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Дополнительные модули -->
+            {% if modules %}
+            <div class="solutions-category">
+                <h2 class="section-title">Дополнительные модули</h2>
+                <p class="section-subtitle">Функциональные расширения для вашего сайта</p>
+
+                <div class="solutions-grid grid grid--columns">
+                    {% for module in modules %}
+                    {% include "solutions/components/solution_card.html" with solution=module %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Если нет решений -->
+            {% if not packages and not modules %}
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <h3>Решения пока не добавлены</h3>
+                <p>Скоро здесь появятся готовые решения для вашего бизнеса</p>
+            </div>
+            {% endif %}
+
+            <!-- Пагинация -->
+            {% if is_paginated %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                    <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="btn btn--outline">Первая</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="btn btn--outline">←</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="btn btn--outline">→</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="btn btn--outline">Последняя</a>
+                    {% endif %}
+                </span>
+            </div>
             {% endif %}
         </div>
+    </section>
 
-        <!-- Пагинация -->
-        {% if page_obj %}
-        {% include "pagination.html" %}
-        {% endif %}
+    <!-- Модальное окно сравнения -->
+    <div class="modal comparison-modal" id="comparisonModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Сравнение решений</h3>
+                <button type="button" class="modal-close" onclick="closeComparisonModal()">×</button>
+            </div>
+            <div class="modal-body" id="comparisonContent">
+                <!-- Контент сравнения будет добавляться динамически -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--outline" onclick="clearComparison()">Очистить сравнение</button>
+                <button type="button" class="btn btn--primary" onclick="sendComparison()">Отправить на почту</button>
+            </div>
+        </div>
     </div>
-</section>
-
-<!-- Призыв к действию -->
-{% include "solutions/components/cta.html" with
-title="Не нашли подходящее решение?"
-description="Расскажите о вашем проекте, и я разработаю индивидуальное решение специально для вас"
-button_text="Обсудить индивидуальный проект"
-button_url=main:contacts
-%}
+</main>
 {% endblock %}
 
-{% block scripts %}
-<script src="{% static 'js/solutions.js' %}"></script>
+{% block extra_js %}
+<script src="{% static 'solutions/js/pages/solution_list.js' %}"></script>
+<script src="{% static 'solutions/js/components/solution_filter.js' %}"></script>
+<script src="{% static 'solutions/js/components/search_handler.js' %}"></script>
 {% endblock %}

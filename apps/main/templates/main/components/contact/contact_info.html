@@ -1,4 +1,4 @@
-<div class="contacts-card">
+<div class="contacts-card contact-info-card">
     <h2 class="section-title">Способы связи</h2>
     <div class="contact-methods">
         <div class="contact-item">
@@ -7,7 +7,7 @@
                 <h3>Telegram</h3>
                 {% if contact_info and contact_info.telegram %}
                 <a href="{{ contact_info.telegram }}" target="_blank" rel="noopener" class="contact-link">
-                    {{ contact_info.telegram|cut:"https://t.me/" }}
+                    {{ contact_info.telegram|cut:'https://t.me/'|cut:'https://telegram.me/' }}
                 </a>
                 {% else %}
                 <a href="https://t.me/Fesik_Evgeniya" target="_blank" rel="noopener" class="contact-link">
@@ -68,7 +68,7 @@
             <div>
                 <h3>GitHub</h3>
                 <a href="{{ contact_info.github }}" target="_blank" rel="noopener" class="contact-link">
-                    {{ contact_info.github|cut:"https://github.com/" }}
+                    {{ contact_info.github|cut:'https://github.com/' }}
                 </a>
             </div>
         </div>

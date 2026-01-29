@@ -1,0 +1,71 @@
+/* Контактная информация */
+.contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.contact-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.contact-icon {
+    font-size: 1.8rem;
+    color: var(--accent-purple);
+    min-width: 40px;
+    text-align: center;
+}
+
+.contact-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: var(--light-gray);
+}
+
+.contact-link {
+    display: inline-block;
+    color: var(--pink-accent);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+}
+
+.contact-link:hover {
+    color: var(--accent-purple);
+    transform: translateY(-2px);
+}
+
+.contact-note {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.meeting-note {
+    display: flex;
+    gap: 10px;
+    background: rgba(210, 168, 225, 0.1);
+    border-left: 3px solid var(--accent-purple);
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 30px;
+    font-size: 0.95rem;
+}
+
+.meeting-note i {
+    color: var(--accent-purple);
+    font-size: 1.2rem;
+}
+
+@media (max-width: 480px) {
+    .contact-item {
+        gap: 15px;
+    }
+
+    .contact-icon {
+        font-size: 1.5rem;
+    }
+}

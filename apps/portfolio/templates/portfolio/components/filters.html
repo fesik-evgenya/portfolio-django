@@ -1,0 +1,78 @@
+{% load static %}
+
+<div class="portfolio-filters" id="portfolioFilters">
+    <form method="get" class="filters-form">
+        <input type="hidden" name="page" value="1">
+
+        <div class="filters-group">
+            <button type="button"
+                    class="btn btn--outline filter-btn active"
+                    data-filter="all"
+                    data-type="all">
+                Все проекты
+            </button>
+
+            <!-- Фильтры по категориям из модели PortfolioCategory -->
+            {% for category in categories %}
+            <button type="button"
+                    class="btn btn--outline filter-btn"
+                    data-filter="{{ category.slug }}"
+                    data-type="category">
+                {{ category.name }}
+            </button>
+            {% endfor %}
+        </div>
+
+        <div class="filters-group">
+            <!-- Фильтры по пакетам -->
+            <button type="button"
+                    class="btn btn--outline filter-btn"
+                    data-filter="basic"
+                    data-type="package">
+                Базовый
+            </button>
+            <button type="button"
+                    class="btn btn--outline filter-btn"
+                    data-filter="standard"
+                    data-type="package">
+                Стандартный
+            </button>
+            <button type="button"
+                    class="btn btn--outline filter-btn"
+                    data-filter="premium"
+                    data-type="package">
+                Премиум
+            </button>
+            <button type="button"
+                    class="btn btn--outline filter-btn"
+                    data-filter="custom"
+                    data-type="package">
+                Индивидуальный
+            </button>
+        </div>
+
+        <div class="filters-group sort-group">
+            <select name="sort" class="sort-select" id="sortSelect">
+                <option value="-created_at" {% if request.GET.sort == "-created_at" %}selected{% endif %}>
+                Сначала новые
+                </option>
+                <option value="created_at" {% if request.GET.sort == "created_at" %}selected{% endif %}>
+                Сначала старые
+                </option>
+                <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>
+                По названию (А-Я)
+                </option>
+                <option value="-title" {% if request.GET.sort == "-title" %}selected{% endif %}>
+                По названию (Я-А)
+                </option>
+                <option value="-is_featured" {% if request.GET.sort == "-is_featured" %}selected{% endif %}>
+                Сначала популярные
+                </option>
+            </select>
+
+            <button type="submit" class="btn btn--primary apply-filters" style="display: none;">
+                Применить
+            </button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,6 @@
+/* ===== GLOBAL ASYNC STYLES ===== */
+@import url('global/variables.css');
+@import url('global/reset.css');
+@import url('global/typography.css');
+@import url('global/layout.css');
+@import url('global/base.css');

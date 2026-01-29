@@ -1,11 +1,23 @@
-{% load static %}
-<div class="solution-description">
-    <h3>Описание решения</h3>
-    {{ solution.description|linebreaks }}
-
-    {% if solution.detailed_description %}
-    <div class="detailed-description">
-        {{ solution.detailed_description|linebreaks }}
+<section class="solution-description-section">
+    <div class="solution-meta">
+        <div class="meta-item">
+            <span class="meta-label">Категория:</span>
+            <span class="meta-value">
+                {{ solution.category.get_category_type_display }}
+            </span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Тип пакета:</span>
+            <span class="meta-value">
+                {{ solution.get_package_type_display }}
+            </span>
+        </div>
     </div>
-    {% endif %}
-</div>
+
+    <div class="solution-description">
+        <h2>Описание решения</h2>
+        <div class="description-content">
+            {{ solution.detailed_description|linebreaks }}
+        </div>
+    </div>
+</section>

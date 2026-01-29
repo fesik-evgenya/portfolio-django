@@ -1,14 +1,14 @@
-{% load static %}
-{% if solution.requirements %}
-<div class="solution-requirements">
-    <h3>Что нужно для запуска</h3>
-    <ul>
+<section class="solution-requirements-section">
+    <h2>Требования для реализации</h2>
+    <div class="requirements-list">
         {% for requirement in solution.requirements %}
-        <li>
-            <i class="fas fa-info-circle"></i>
-            {{ requirement }}
-        </li>
+        <div class="requirement-item">
+            <span class="requirement-number">{{ forloop.counter }}</span>
+            <div class="requirement-content">
+                <h4>{{ requirement.title }}</h4>
+                <p>{{ requirement.description }}</p>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
-</div>
-{% endif %}
+    </div>
+</section>

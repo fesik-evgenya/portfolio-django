@@ -1,24 +1,83 @@
-{% load static %}
-<div class="solution-hero">
-    <div class="container">
-        <nav class="breadcrumb">
-            <a href="{% url 'solutions:list' %}">Магазин решений</a>
-            <span class="separator">/</span>
-            <span>{{ solution.name }}</span>
-        </nav>
-
-        <h1 class="page-title">{{ solution.name }}</h1>
-
-        <div class="solution-badges">
-            {% if solution.is_new %}
-            <span class="solution-badge badge-new">Новинка</span>
+<section class="solution-hero">
+    <div class="solution-gallery">
+        <div class="gallery-main">
+            {% if solution.images.all %}
+            {% for image in solution.images.all %}
+            <div class="gallery-slide {% if forloop.first %}active{% endif %}">
+                <img src="{{ image.image.url }}"
+                     alt="{{ solution.name }} - изображение {{ forloop.counter }}"
+                     loading="lazy">
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="gallery-slide active">
+                <img src="{% static 'images/placeholder.jpg' %}"
+                     alt="{{ solution.name }}"
+                     loading="lazy">
+            </div>
             {% endif %}
-            {% if solution.is_popular %}
-            <span class="solution-badge badge-popular">Популярное</span>
-            {% endif %}
-            <span class="solution-badge badge-category">
-                {{ solution.category.name }}
-            </span>
+        </div>
+
+        {% if solution.images.all.count > 1 %}
+        <div class="gallery-navigation">
+            <div class="gallery-thumbnails">
+                {% for image in solution.images.all %}
+                <div class="thumbnail {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}">
+                    <img src="{{ image.thumbnail.url|default:image.image.url }}"
+                         alt="Thumbnail {{ forloop.counter }}">
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="gallery-controls">
+                <button class="gallery-prev" aria-label="Предыдущее изображение">‹</button>
+                <div class="gallery-counter">
+                    <span class="current-slide">1</span> / {{ solution.images.all.count }}
+                </div>
+                <button class="gallery-next" aria-label="Следующее изображение">›</button>
+            </div>
+
+            <div class="images-pagination">
+                <button class="pagination-btn pagination-prev" id="paginationPrev" disabled>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <span class="pagination-info" id="paginationInfo">
+                    Изображения 1-{{ solution.images.all.count|default:1 }} из {{ solution.images.all.count }}
+                </span>
+                <button class="pagination-btn pagination-next" id="paginationNext"
+                        {% if solution.images.all.count <= 10 %}disabled{% endif %}>
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="solution-header">
+        <div class="solution-title-section">
+            <h1 class="solution-title">{{ solution.name }}</h1>
+            <div class="solution-badges">
+                {% if solution.is_new %}
+                <span class="solution-badge badge-new">Новинка</span>
+                {% endif %}
+                {% if solution.is_popular %}
+                <span class="solution-badge badge-popular">Популярное</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="solution-price-section">
+            <div class="solution-price">от {{ solution.price }} ₽</div>
+            <div class="solution-delivery">
+                <svg class="delivery-icon" viewBox="0 0 24 24">
+                    <path d="M13 5.08A7 7 0 0 1 18.92 11h3.03c-.47-4.72-4.23-8.48-8.95-8.95v3.03zM18.92 13A7 7 0 0 1 13 18.92v3.03c4.72-.47 8.48-4.23 8.95-8.95h-3.03zM11 18.92A7 7 0 0 1 5.08 13H2.05c.47 4.72 4.23 8.48 8.95 8.95v-3.03zM5.08 11A7 7 0 0 1 11 5.08V2.05c-4.72.47-8.48 4.23-8.95 8.95h3.03z"/>
+                </svg>
+                Запуск за {{ solution.delivery_days }} дней
+            </div>
         </div>
     </div>
-</div>
+</section>

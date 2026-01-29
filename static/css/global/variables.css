@@ -1,0 +1,32 @@
+/* ===== CSS VARIABLES ===== */
+
+:root {
+    /* Цветовая схема */
+    --dark-purple: #1A1A2E;
+    --medium-purple: #1F2A4E;
+    --accent-purple: #d2a8e1;
+    --light-purple: #F5E6CC;
+    --light-gray: #E6E6E6;
+    --pink-accent: #FFB6C1;
+    --soft-accent: #e6d0f0;
+    --overlay-color: rgba(26, 26, 46, 0.95);
+
+    /* Цветовая схема для Флеш-сообщений */
+    --flash-success: #10b981;
+    --flash-error: #ef4444;
+    --flash-warning: #f59e0b;
+    --flash-info: #3b82f6;
+    --flash-text-dark: #1f2937;
+    --flash-text-light: #6b7280;
+    --flash-bg: #ffffff;
+    --flash-border: #e5e7eb;
+
+    /* Шрифты */
+    --font-heading: 'Montserrat';
+    --font-body: 'Inter';
+
+    /* Размеры */
+    --container-width: 1200px;
+    --section-padding: 80px 0;
+    --mobile-padding: 24px;
+}

@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/about.css' %}">
-{% endblock %}
+{% block title %}{{ biography.title|default:"О моем пути в разработке" }} | {{ site_name }}{% endblock %}
 
 {% block seo_extra %}
 <!-- Дополнительная микроразметка для отзывов -->
@@ -19,14 +17,22 @@
       "addressCountry": "RU"
     },
     "description": "Профессиональный full-stack разработчик с опытом создания веб-приложений на Python и JavaScript",
-    "url": "{% url 'main:about' %}",
-    "image": "{% static 'uploads/'|add:biography.image.name if biography and biography.image else 'images/photo.jpg' %}",
+    "url": "{{ request.build_absolute_uri }}",
+    "image": "{% if biography and biography.image %}{{ biography.image.url }}{% else %}{% static 'images/about_photo.png' %}{% endif %}",
     "sameAs": [
       "https://github.com/fesik-evgenya",
       "https://t.me/Fesik_Evgeniya"
     ]
   }
 </script>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'main/css/pages/about.css' %}">
+<link rel="stylesheet" href="{% static 'main/css/components/about/biography.css' %}">
+<link rel="stylesheet" href="{% static 'main/css/components/about/philosophy.css' %}">
+<link rel="stylesheet" href="{% static 'main/css/components/about/education.css' %}">
+<link rel="stylesheet" href="{% static 'main/css/components/about/technologies.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -37,16 +43,18 @@
       {{ biography.title|default:"О моем пути в разработке" }}
     </h1>
 
-    <!-- Biography Section -->
     <div class="about__content">
-      <!-- Компонент: Биография -->
-      {% include "main/components/about_sections/biography.html" %}
+      <!-- Биография -->
+      {% include "main/components/about/biography.html" %}
 
-      <!-- Компонент: Философия работы -->
-      {% include "main/components/about_sections/philosophy.html" %}
+      <!-- Философия работы -->
+      {% include "main/components/about/philosophy.html" %}
 
-      <!-- Компонент: Инструменты и технологии -->
-      {% include "main/components/about_sections/technologies.html" %}
+      <!-- Образование -->
+      {% include "main/components/about/education.html" %}
+
+      <!-- Инструменты и технологии -->
+      {% include "main/components/about/technologies.html" %}
     </div>
 
     <!-- Reviews Section -->
@@ -55,10 +63,14 @@
         <p>Хотите качественный результат для своего проекта?</p>
         <div class="reviews-cta__btns">
           <a href="{% url 'main:contacts' %}" class="btn btn--primary">Обсудить ваш проект</a>
-          <a href="{% url 'portfolio:list' %}" class="btn btn--outline">Вдохновиться примерами</a>
+          <a href="{% url 'portfolio:index' %}" class="btn btn--outline">Вдохновиться примерами</a>
         </div>
       </div>
     </section>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'main/js/pages/about.js' %}"></script>
 {% endblock %}

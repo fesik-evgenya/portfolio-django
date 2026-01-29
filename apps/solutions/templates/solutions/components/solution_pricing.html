@@ -1,8 +1,42 @@
-{% load static %}
-<div class="solution-price">
-    <span class="price">от {{ solution.price }} ₽</span>
-    <span class="delivery-time">
-        <i class="fas fa-bolt"></i>
-        Срок: {{ solution.delivery_days }} дней
-    </span>
-</div>
+<section class="solution-pricing-section">
+    <div class="pricing-card">
+        <div class="pricing-header">
+            <h3>Стоимость решения</h3>
+            <div class="price-display">
+                <span class="price">{{ solution.price }}</span>
+                <span class="currency">₽</span>
+            </div>
+        </div>
+
+        <div class="pricing-features">
+            <ul>
+                {% for feature in solution.features|slice:":5" %}
+                <li>{{ feature }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="pricing-actions">
+            <form action="{% url 'orders:create' %}" method="post" class="order-form">
+                {% csrf_token %}
+                <input type="hidden" name="solution_id" value="{{ solution.id }}">
+                <input type="hidden" name="package_type" value="{{ solution.package_type }}">
+                <input type="hidden" name="total_amount" value="{{ solution.price }}">
+
+                <button type="submit" class="btn btn--primary btn--block">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17l-.59.59-.58.58V4h16v12zM6 12h2v2H6zm0-3h2v2H6zm0-3h2v2H6zm4 6h5v2h-5zm0-3h8v2h-8zm0-3h8v2h-8z"/>
+                    </svg>
+                    Заказать решение
+                </button>
+            </form>
+
+            <a href="{% url 'solutions:list' %}" class="btn btn--outline btn--block">
+                <svg class="btn-icon" viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Все решения
+            </a>
+        </div>
+    </div>
+</section>

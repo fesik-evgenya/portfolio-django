@@ -1,0 +1,11 @@
+{% load static %}
+
+{% for item in portfolio_items %}
+{% include 'portfolio/components/project_card.html' with item=item %}
+{% endfor %}
+
+{% if page_obj.has_next %}
+<div class="load-more-section" data-next-page="{{ page_obj.next_page_number }}">
+    <button class="btn btn--outline load-more-btn">Загрузить ещё проекты</button>
+</div>
+{% endif %}

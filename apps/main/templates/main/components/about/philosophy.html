@@ -1,31 +1,36 @@
-<div class="about__text">
+<div class="about__text philosophy-section">
     <h2>{{ philosophy.title|default:"Философия работы" }}</h2>
 
     <!-- Слоты философии из БД -->
-    {% if philosophy_slots %}
-    <div class="philosophy-grid">
-        {% for slot in philosophy_slots %}
-        <div class="philosophy-card">
+    {% if philosophy and philosophy.philosophy_slots.all %}
+    <div class="philosophy-grid" id="philosophyTabs">
+        {% for slot in philosophy.philosophy_slots.all %}
+        <div class="philosophy-card" data-tab="{{ forloop.counter }}">
+            {% if slot.icon %}
+            <div class="philosophy-icon">
+                <i class="{{ slot.icon }}"></i>
+            </div>
+            {% endif %}
             <h3>{{ slot.title }}</h3>
             <p>{{ slot.content }}</p>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <div class="philosophy-grid">
-        <div class="philosophy-card">
+    <div class="philosophy-grid" id="philosophyTabs">
+        <div class="philosophy-card" data-tab="1">
             <h3>Код ≠ цель. Решаю бизнес-задачи</h3>
             <p>Фокусируюсь на том, как технологии могут помочь вашему бизнесу расти, а не просто на
                 написании кода. Каждая строка кода — это шаг к решению вашей конкретной задачи.</p>
         </div>
 
-        <div class="philosophy-card">
+        <div class="philosophy-card" data-tab="2">
             <h3>Минимум технического жаргона</h3>
             <p>Объясняю сложные веди простыми словами. Вы будете в курсе процесса без лишней терминологии и
                 технических сложностей.</p>
         </div>
 
-        <div class="philosophy-card">
+        <div class="philosophy-card" data-tab="3">
             <h3>Прозрачность этапов и сроки</h3>
             <p>Четкие этапы работы, понятные сроки и регулярная отчетность. Никаких неожиданностей — только
                 предсказуемый результат.</p>
@@ -36,9 +41,11 @@
     <!-- Текст рабочего процесса из БД -->
     <h3>Рабочий процесс</h3>
     {% if philosophy and philosophy.workflow_text %}
-    {{ philosophy.workflow_text|safe }}
+    <div class="workflow-text">
+        {{ philosophy.workflow_text|safe }}
+    </div>
     {% else %}
-    <p>Мой подход сочетает техническую экспертизу и понимание бизнес-процессов, что позволяет создавать
+    <p class="workflow-default">Мой подход сочетает техническую экспертизу и понимание бизнес-процессов, что позволяет создавать
         решения, которые действительно работают на ваши цели.</p>
     {% endif %}
 </div>

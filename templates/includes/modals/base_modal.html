@@ -1,31 +1,20 @@
 {% load static %}
-<div class="modal-overlay" id="{{ modal_id }}" style="display: none;">
-    <div class="modal-content {% if size %}modal-{{ size }}{% endif %}">
-        <div class="modal-header">
-            {% if title %}
-            <h3 class="modal-title">{{ title }}</h3>
+
+<!-- Базовый шаблон модального окна -->
+<div id="{{ modal_id|default:'baseModal' }}" class="modal {% if modal_class %}{{ modal_class }}{% endif %}" aria-hidden="true" role="dialog">
+    <div class="modal__overlay" data-close-modal></div>
+    <div class="modal__container">
+        <div class="modal__header">
+            {% if modal_title %}
+            <h3 class="modal__title">{{ modal_title }}</h3>
             {% endif %}
-            <button type="button" class="modal-close" aria-label="Закрыть">
-                &times;
+            <button class="modal__close" data-close-modal aria-label="Закрыть модальное окно">
+                <i class="fas fa-times"></i>
             </button>
         </div>
-
-        <div class="modal-body">
-            {{ content|safe }}
+        <div class="modal__body">
+            {% block modal_content %}{% endblock %}
         </div>
-
-        {% if actions %}
-        <div class="modal-footer">
-            {% for action in actions %}
-            <button type="button"
-                    class="btn btn--{{ action.class|default:'primary' }} {{ action.id|default:'' }}"
-                    onclick="{{ action.onclick|default:'' }}"
-                    data-action="{{ action.action|default:'' }}">
-                {% if action.icon %}<i class="{{ action.icon }}"></i>{% endif %}
-                {{ action.text }}
-            </button>
-            {% endfor %}
-        </div>
-        {% endif %}
+        {% block modal_footer %}{% endblock %}
     </div>
 </div>

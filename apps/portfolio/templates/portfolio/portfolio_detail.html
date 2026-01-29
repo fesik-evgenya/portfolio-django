@@ -1,83 +1,65 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block seo_extra %}
-<title>{{ project.title }} | Портфолио | Евгения Фесик</title>
-<meta name="description" content="{{ project.description|truncatechars:160 }}">
-<meta property="og:title" content="{{ project.title }}">
-<meta property="og:description" content="{{ project.description|truncatechars:160 }}">
-{% if project.main_image %}
-<meta property="og:image" content="{{ project.main_image.image.url }}">
-{% endif %}
-{% endblock %}
+{% block title %}{{ portfolio_item.title }} - Портфолио{% endblock %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/portfolio_detail.css' %}">
-{% endblock %}
-
-{% block breadcrumbs %}
-{% include "breadcrumbs.html" with breadcrumbs=breadcrumbs %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'portfolio/css/pages/detail.css' %}">
+<link rel="stylesheet" href="{% static 'portfolio/css/components/project_gallery.css' %}">
+<link rel="stylesheet" href="{% static 'portfolio/css/components/project_technologies.css' %}">
+<link rel="stylesheet" href="{% static 'portfolio/css/components/project_testimonial.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="container project-detail">
-  {% if project %}
-  <!-- Хлебные крошки -->
-  <nav class="project-breadcrumb">
-    <a href="{% url 'portfolio:list' %}">Портфолио</a>
-    <span class="separator">/</span>
-    <span>{{ project.title }}</span>
-  </nav>
-
+  {% if portfolio_item %}
   <!-- Галерея изображений -->
   {% include "portfolio/components/project_gallery.html" %}
 
-  <!-- Основная информация -->
+  <!-- Основная информация о проекте -->
   <div class="project-content">
-    <h1 class="project-title">{{ project.title }}</h1>
-
-    {% if project.geo %}
-    <p class="project-geo"><i class="fas fa-map-marker-alt"></i> {{ project.geo }}</p>
+    <h1>{{ portfolio_item.title }}</h1>
+    {% if portfolio_item.geo %}
+    <p class="project-geo">{{ portfolio_item.geo }}</p>
     {% endif %}
 
     <div class="project-meta">
       <div class="meta-item">
         <span class="meta-label">Категория:</span>
-        <span class="meta-value">{{ project.category.name }}</span>
+        <span class="meta-value">{{ portfolio_item.category.name }}</span>
       </div>
       <div class="meta-item">
         <span class="meta-label">Пакет:</span>
-        <span class="meta-value">{{ project.get_package_display }}</span>
+        <span class="meta-value">{{ portfolio_item.get_package_display }}</span>
       </div>
       <div class="meta-item">
         <span class="meta-label">Срок разработки:</span>
-        <span class="meta-value">{{ project.duration }}</span>
+        <span class="meta-value">{{ portfolio_item.duration }}</span>
       </div>
       <div class="meta-item">
         <span class="meta-label">Клиент:</span>
-        <span class="meta-value">{{ project.client }}</span>
+        <span class="meta-value">{{ portfolio_item.client }}</span>
       </div>
     </div>
 
-    <!-- Описание -->
     <div class="project-description">
-      <h2>О проекте</h2>
-      {{ project.description|linebreaks }}
+      <h2>Описание проекта</h2>
+      <p>{{ portfolio_item.description }}</p>
     </div>
 
     <!-- Технологии -->
-    {% if project.technologies %}
     {% include "portfolio/components/project_technologies.html" %}
-    {% endif %}
 
-    <!-- Особенности -->
-    {% if project.features %}
+    <!-- Функционал -->
+    {% if portfolio_item.features %}
     <div class="project-features">
-      <h2>Функционал:</h2>
-      <ul class="features-list">
-        {% for feature in project.features %}
+      <h2>Реализованный функционал:</h2>
+      <ul>
+        {% for feature in portfolio_item.features %}
         <li>
-          <i class="fas fa-check feature-icon"></i>
+          <svg class="feature-icon" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+          </svg>
           <span>{{ feature }}</span>
         </li>
         {% endfor %}
@@ -86,82 +68,49 @@
     {% endif %}
 
     <!-- Отзыв клиента -->
-    {% if project.testimonial %}
+    {% if portfolio_item.testimonial %}
     {% include "portfolio/components/project_testimonial.html" %}
     {% endif %}
 
-    <!-- Ссылки -->
-    {% if project.live_url or project.github_url %}
-    <div class="project-links">
-      <h2>Ссылки на проект</h2>
-      <div class="links-grid">
-        {% if project.live_url %}
-        <a href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer" class="link-card">
-          <i class="fas fa-globe link-icon"></i>
-          <div class="link-content">
-            <h3>Посмотреть сайт</h3>
-            <p>{{ project.live_url|truncatechars:30 }}</p>
-          </div>
-          <i class="fas fa-external-link-alt link-arrow"></i>
-        </a>
-        {% endif %}
-        {% if project.github_url %}
-        <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="link-card">
-          <i class="fab fa-github link-icon"></i>
-          <div class="link-content">
-            <h3>GitHub репозиторий</h3>
-            <p>{{ project.github_url|truncatechars:30 }}</p>
-          </div>
-          <i class="fas fa-external-link-alt link-arrow"></i>
-        </a>
-        {% endif %}
-      </div>
-    </div>
-    {% endif %}
-
-    <!-- Действия -->
+    <!-- Кнопки действий -->
     <div class="project-actions">
-      <a href="{% url 'main:contacts' %}?project={{ project.title|urlencode }}"
-         class="btn btn--primary btn--large">
-        <i class="fas fa-paper-plane"></i> Заказать похожий проект
+      {% if portfolio_item.live_url %}
+      <a href="{{ portfolio_item.live_url }}" target="_blank" rel="noopener noreferrer" class="btn btn--primary">
+        <svg class="btn-icon" viewBox="0 0 24 24">
+          <path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5c-1.11 0-2 .89-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/>
+        </svg>
+        Посмотреть сайт
       </a>
-      <a href="{% url 'portfolio:list' %}" class="btn btn--outline">
-        <i class="fas fa-arrow-left"></i> Вернуться к портфолио
-      </a>
-    </div>
+      {% endif %}
 
-    <!-- Похожие проекты -->
-    {% if similar_projects %}
-    <div class="similar-projects">
-      <h2>Похожие проекты</h2>
-      <div class="similar-grid">
-        {% for similar in similar_projects %}
-        <div class="similar-card">
-          {% if similar.main_image %}
-          <img src="{{ similar.main_image.image.url }}" alt="{{ similar.title }}" class="similar-image">
-          {% endif %}
-          <div class="similar-content">
-            <h3>{{ similar.title }}</h3>
-            <p>{{ similar.description|truncatechars:80 }}</p>
-            <a href="{% url 'portfolio:detail' similar.slug %}" class="btn btn--outline btn--sm">
-              Подробнее
-            </a>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
+      {% if portfolio_item.github_url %}
+      <a href="{{ portfolio_item.github_url }}" target="_blank" rel="noopener noreferrer" class="btn btn--outline">
+        <svg class="btn-icon" viewBox="0 0 24 24">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub репозиторий
+      </a>
+      {% endif %}
+
+      <a href="{% url 'portfolio:portfolio_list' %}" class="btn btn--outline">
+        <svg class="btn-icon" viewBox="0 0 24 24">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+        Вернуться к портфолио
+      </a>
     </div>
-    {% endif %}
   </div>
   {% else %}
   <!-- Если проект не найден -->
   <div class="empty-state">
     <div class="empty-state__icon">
-      <i class="fas fa-exclamation-circle fa-3x"></i>
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
     </div>
     <h3>Проект не найден</h3>
     <p>Запрошенный проект не существует или был удален</p>
-    <a href="{% url 'portfolio:list' %}" class="btn btn--primary">
+    <a href="{% url 'portfolio:portfolio_list' %}" class="btn btn--primary">
       Вернуться к портфолио
     </a>
   </div>
@@ -169,7 +118,11 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script src="{% static 'js/gallery.js' %}"></script>
-<script src="{% static 'js/portfolio-detail.js' %}"></script>
+{% block extra_js %}
+<script>
+  const PORTFOLIO_ITEM_ID = "{{ portfolio_item.id|default:'' }}";
+</script>
+<script src="{% static 'portfolio/js/components/project_gallery.js' %}"></script>
+<script src="{% static 'portfolio/js/components/technology_display.js' %}"></script>
+<script src="{% static 'portfolio/js/pages/portfolio_detail.js' %}"></script>
 {% endblock %}

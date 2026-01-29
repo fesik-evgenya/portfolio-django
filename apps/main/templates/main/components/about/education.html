@@ -1,26 +1,69 @@
-<div class="about__list-section">
+<div class="about__text education-section">
     <h3>Образование и квалификация</h3>
 
-    {% if education_items %}
-    <ul class="about__list">
-        {% for item in education_items %}
-        <li>{{ item.text|safe }}</li>
+    {% if biography and biography.education_items.all %}
+    <ul class="about__list education-list" id="educationAccordion">
+        {% for item in biography.education_items.all %}
+        <li class="education-item" data-accordion-item="{{ forloop.counter }}">
+            <div class="education-header">
+                <span class="education-year">
+                    {% if item.year %}{{ item.year }}{% else %}{{ forloop.counter }}{% endif %}
+                </span>
+                <strong>{{ item.text|safe }}</strong>
+                <span class="accordion-toggle">+</span>
+            </div>
+            {% if item.details %}
+            <div class="education-details">
+                {{ item.details|safe }}
+            </div>
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
     {% else %}
-    <ul class="about__list">
-        <li><strong>СПБ Колледж Радиоэлектронного Приборостроения</strong> (2005) - "Программное обеспечение
-            вычислительной техники и автоматизированных систем"
+    <ul class="about__list education-list" id="educationAccordion">
+        <li class="education-item" data-accordion-item="1">
+            <div class="education-header">
+                <span class="education-year">2005</span>
+                <strong>СПБ Колледж Радиоэлектронного Приборостроения</strong> - "Программное обеспечение
+                вычислительной техники и автоматизированных систем"
+                <span class="accordion-toggle">+</span>
+            </div>
         </li>
-        <li><strong>СПб Государственный Политехнический Университет</strong> (2008) - Экономики и
-            менеджмента / Менеджмент организаций
+        <li class="education-item" data-accordion-item="2">
+            <div class="education-header">
+                <span class="education-year">2008</span>
+                <strong>СПб Государственный Политехнический Университет</strong> - Экономики и
+                менеджмента / Менеджмент организаций
+                <span class="accordion-toggle">+</span>
+            </div>
         </li>
-        <li><strong>Аналитик данных</strong> (2024) - "С нуля до разработки прикладных решений для бизнеса",
-            Томский Государственный Университет (256 ак.ч.)
+        <li class="education-item" data-accordion-item="3">
+            <div class="education-header">
+                <span class="education-year">2024</span>
+                <strong>Аналитик данных</strong> - "С нуля до разработки прикладных решений для бизнеса",
+                Томский Государственный Университет (256 ак.ч.)
+                <span class="accordion-toggle">+</span>
+            </div>
         </li>
-        <li><strong>Повышение квалификации</strong> (2025) - "Программирование и создание IT-продуктов на
-            языке Python", ИПАП, Санкт-Петербург (200 ак.ч.)
+        <li class="education-item" data-accordion-item="4">
+            <div class="education-header">
+                <span class="education-year">2025</span>
+                <strong>Повышение квалификации</strong> - "Программирование и создание IT-продуктов на
+                языке Python", ИПАП, Санкт-Петербург (200 ак.ч.)
+                <span class="accordion-toggle">+</span>
+            </div>
         </li>
     </ul>
+    {% endif %}
+
+    <!-- Заключение образования из БД -->
+    {% if biography and biography.education_summary %}
+    <div class="education-summary">
+        {{ biography.education_summary|safe }}
+    </div>
+    {% else %}
+    <p class="education-summary">Постоянно совершенствую свои навыки через курсы и практику, чтобы предлагать клиентам в
+        Санкт-Петербурге самые современные решения.</p>
     {% endif %}
 </div>

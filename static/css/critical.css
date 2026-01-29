@@ -1,0 +1,87 @@
+/* ===== CRITICAL CSS (First Paint) ===== */
+:root {
+    --dark-purple: #1A1A2E;
+    --light-gray: #E6E6E6;
+    --accent-purple: #d2a8e1;
+    --container-width: 1200px;
+    --mobile-padding: 24px;
+}
+
+/* Reset minimal */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+/* Above-the-fold styles */
+body {
+    margin: 0;
+    background-color: var(--dark-purple);
+    color: var(--light-gray);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+}
+
+.page-wrapper {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--mobile-padding);
+}
+
+/* Header critical */
+.header {
+    padding: 24px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(26, 26, 46, 0.05);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #1F2A4E;
+}
+
+.header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo__icon {
+    font-size: 1.8rem;
+    color: var(--accent-purple);
+    margin-right: 8px;
+}
+
+.logo__text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--light-gray);
+}
+
+/* Fallback styling */
+.menu-toggle { display: none; }
+.nav { display: flex; list-style: none; }
+
+/* Loading states */
+.loading {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.loaded {
+    opacity: 1;
+}

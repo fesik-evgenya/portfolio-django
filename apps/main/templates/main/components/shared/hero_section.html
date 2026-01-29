@@ -1,20 +1,23 @@
-{% load static %}
-<section class="hero">
+<!-- Hero секция - переиспользуемый компонент -->
+<div class="hero">
     <div class="container">
         <div class="hero__content">
             <!-- Основной H1 страницы -->
-            <h1 class="hero__title">Ваш готовый сайт за 2 недели!</h1>
-            <p class="hero__text">Создаю современные сайты и MVP для бизнеса — быстро, качественно, с фиксированной стоимостью</p>
+            <h1 class="hero__title">{% block hero_title %}{{ hero_title|default:"Ваш готовый сайт за 2 недели!" }}{% endblock %}</h1>
+            <p class="hero__text">{% block hero_text %}{{ hero_text|default:"Создаю современные сайты и MVP для бизнеса — быстро, качественно, с фиксированной стоимостью" }}{% endblock %}</p>
             <div class="hero__cta">
-                <p class="hero__cta-text">Превращаю ваши идеи в рабочие сайты</p>
+                <p class="hero__cta-text">{% block hero_cta_text %}{{ hero_cta_text|default:"Превращаю ваши идеи в рабочие сайты" }}{% endblock %}</p>
                 <div class="hero__buttons">
-                    <a href="{% url 'solutions:list' %}" class="btn btn--primary">Выбрать шаблон</a>
-                    <a href="{% url 'portfolio:list' %}" class="btn btn--outline">Вдохновиться примерами</a>
+                    {% block hero_buttons %}
+                    <a href="{% url 'solutions' %}" class="btn btn--primary">Выбрать шаблон</a>
+                    <a href="{% url 'portfolio' %}" class="btn btn--outline">Вдохновиться примерами</a>
+                    {% endblock %}
                 </div>
             </div>
 
             <!-- Блок УТП -->
             <div class="hero__usp">
+                {% block hero_usp_items %}
                 <div class="usp-item">
                     <i class="fas fa-rocket usp-icon"></i>
                     <span>Стартапы и малый бизнес СПб</span>
@@ -31,7 +34,8 @@
                     <i class="fas fa-handshake usp-icon"></i>
                     <span>Личные встречи в Санкт-Петербурге</span>
                 </div>
+                {% endblock %}
             </div>
         </div>
     </div>
-</section>
+</div>

@@ -1,34 +1,67 @@
-{% load static %}
-{% if package_comparison %}
-<section class="package-comparison">
-    <div class="container">
-        <h2 class="section-title">Сравнение пакетов</h2>
-        <div class="comparison-table">
-            <table>
-                <thead>
-                <tr>
-                    <th>Функция</th>
-                    {% for package in package_comparison %}
-                    <th>{{ package.name }}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Цена</td>
-                    {% for package in package_comparison %}
-                    <td>{{ package.price }} ₽</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>Срок разработки</td>
-                    {% for package in package_comparison %}
-                    <td>{{ package.delivery_days }} дней</td>
-                    {% endfor %}
-                </tr>
-                </tbody>
-            </table>
+<section class="package-comparison-section">
+    <h2>Сравнение пакетов</h2>
+
+    <div class="comparison-tabs">
+        <button class="tab-btn active" data-tab="basic">Базовый</button>
+        <button class="tab-btn" data-tab="standard">Стандартный</button>
+        <button class="tab-btn" data-tab="premium">Премиум</button>
+    </div>
+
+    <div class="comparison-content">
+        <div class="tab-content active" id="tab-basic">
+            <div class="package-card package-basic">
+                <h3>Базовый пакет</h3>
+                <div class="package-price">от 15 000 ₽</div>
+                <ul class="package-features">
+                    <li>Адаптивный дизайн</li>
+                    <li>До 5 страниц</li>
+                    <li>Базовая SEO оптимизация</li>
+                    <li>Контактная форма</li>
+                    <li>Техническая поддержка 1 месяц</li>
+                </ul>
+                <button class="btn btn--outline package-order-btn" data-package="basic">
+                    Выбрать пакет
+                </button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-standard">
+            <div class="package-card package-standard">
+                <h3>Стандартный пакет</h3>
+                <div class="package-price">от 35 000 ₽</div>
+                <ul class="package-features">
+                    <li>Всё из Базового</li>
+                    <li>Индивидуальный дизайн</li>
+                    <li>До 10 страниц</li>
+                    <li>Расширенная SEO оптимизация</li>
+                    <li>Админ-панель</li>
+                    <li>Интеграция с соц. сетями</li>
+                    <li>Техническая поддержка 3 месяца</li>
+                </ul>
+                <button class="btn btn--primary package-order-btn" data-package="standard">
+                    Выбрать пакет
+                </button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-premium">
+            <div class="package-card package-premium">
+                <h3>Премиум пакет</h3>
+                <div class="package-price">от 75 000 ₽</div>
+                <ul class="package-features">
+                    <li>Всё из Стандартного</li>
+                    <li>Уникальный дизайн</li>
+                    <li>Неограниченное количество страниц</li>
+                    <li>Полная SEO оптимизация</li>
+                    <li>Интеграция с платежными системами</li>
+                    <li>Личный кабинет пользователя</li>
+                    <li>Мобильное приложение (опционально)</li>
+                    <li>Техническая поддержка 6 месяцев</li>
+                </ul>
+                <button class="btn btn--accent package-order-btn" data-package="premium">
+                    Выбрать пакет
+                </button>
+            </div>
         </div>
     </div>
 </section>
-{% endif %}
