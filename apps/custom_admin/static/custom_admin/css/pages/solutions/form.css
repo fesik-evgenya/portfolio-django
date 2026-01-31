@@ -1,0 +1,178 @@
+/* Dropzone стили */
+.file-dropzone {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.file-dropzone:hover {
+    border-color: #007bff;
+    background-color: #e7f3ff;
+}
+
+.file-dropzone.drag-over {
+    border-color: #28a745;
+    background-color: #d4edda;
+}
+
+.file-dropzone i {
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.file-dropzone p {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Превью изображений */
+.image-previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.preview-item {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.preview-item.selected {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.preview-image {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.preview-info {
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+}
+
+.preview-filename {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preview-size {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.preview-radio {
+    padding: 0.5rem;
+    background-color: white;
+    border-top: 1px solid #dee2e6;
+}
+
+.preview-radio input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+/* Существующие изображения */
+.existing-image .image-card {
+    border: 2px solid transparent;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.existing-image .image-card.border-primary {
+    border-color: #007bff;
+    background-color: #e7f3ff;
+}
+
+.existing-image img {
+    max-height: 120px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+.image-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+/* FAQ элементы */
+.faq-item {
+    border-left: 3px solid #007bff;
+}
+
+.faq-item .card-body {
+    padding: 1rem;
+}
+
+/* Статус баджи */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Секции формы */
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #495057;
+}
+
+/* Чекбоксы и радиокнопки */
+.form-check-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+/* Ценовые поля */
+.discount-fields {
+    padding: 1rem;
+    background-color: #fff3cd;
+    border-radius: 6px;
+    margin-top: 1rem;
+    border: 1px solid #ffeaa7;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .file-dropzone {
+        padding: 1.5rem;
+    }
+
+    .image-previews {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .preview-image {
+        height: 80px;
+    }
+}

@@ -1,80 +1,168 @@
 {% extends "custom_admin/base_admin.html" %}
 {% load static %}
 
-{% block title %}Управление решениями | Админ-панель{% endblock %}
+{% block title %}Управление решениями{% endblock %}
 
-{% block content %}
+{% block admin_content %}
 <div class="admin-header">
-    <h1>Управление решениями</h1>
-    <div class="header-actions">
-        <a href="{% url 'custom_admin:solution_create' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Добавить решение
-        </a>
-        <a href="{% url 'custom_admin:solution_orders' %}" class="btn btn-secondary">
-            <i class="fas fa-shopping-cart"></i> Заказы ({{ orders_count }})
-        </a>
-    </div>
+    <h1 class="page-title">Управление решениями</h1>
+    <a href="{% url 'custom_admin:solution_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Добавить решение
+    </a>
 </div>
 
-<!-- Фильтры -->
-{% include "solutions/admin/includes/solution_filters.html" %}
-
-<!-- Сетка решений -->
-<div class="solutions-grid" id="solutionsGrid">
-    {% if solutions %}
-    {% for solution in solutions %}
-    {% include "solutions/admin/includes/solution_card.html" %}
-    {% endfor %}
-    {% else %}
-    <div class="empty-state">
-        <i class="fas fa-box-open"></i>
-        <h3>Решения не найдены</h3>
-        <p>{% if request.GET.search %}По вашему запросу ничего не найдено{% else %}Добавьте первое решение в магазин{% endif %}</p>
-        {% if not request.GET.search %}
-        <a href="{% url 'custom_admin:solution_create' %}" class="btn btn-primary">Добавить решение</a>
-        {% endif %}
+<div class="admin-filters">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="solutionSearch" placeholder="Поиск по решениям...">
     </div>
-    {% endif %}
+    <select id="categoryFilter" class="form-control">
+        <option value="">Все категории</option>
+        <option value="package">Пакетные решения</option>
+        <option value="module">Дополнительные модули</option>
+    </select>
+    <select id="statusFilter" class="form-control">
+        <option value="">Все статусы</option>
+        <option value="active">Активные</option>
+        <option value="inactive">Неактивные</option>
+    </select>
 </div>
 
-<!-- Пагинация -->
-{% if is_paginated %}
-<nav class="pagination">
-    <ul class="pagination-list">
-        {% if page_obj.has_previous %}
-        <li class="pagination-item">
-            <a class="pagination-link" href="?page={{ page_obj.previous_page_number }}{{ query_string }}" aria-label="Предыдущая">
-                <i class="fas fa-chevron-left"></i>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Изображение</th>
+            <th>Название</th>
+            <th>Категория</th>
+            <th>Тип пакета</th>
+            <th>Цена</th>
+            <th>Срок</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody id="solutionsGrid">
+        {% for solution in solutions %}
+        <tr class="solution-row"
+            data-id="{{ solution.id }}"
+            data-category="{{ solution.category.category_type }}"
+            data-status="{% if solution.is_active %}active{% else %}inactive{% endif %}"
+            data-title="{{ solution.name|lower }}">
+            <td>{{ solution.id }}</td>
+            <td>
+                {% if solution.main_image %}
+                <img src="{{ solution.main_image.image.url }}" alt="{{ solution.name }}" class="thumbnail-sm">
+                {% else %}
+                <span class="text-muted">Нет</span>
+                {% endif %}
+            </td>
+            <td>
+                <strong>{{ solution.name }}</strong>
+                <div class="badges">
+                    {% if solution.is_new %}<span class="badge badge-success">Новинка</span>{% endif %}
+                    {% if solution.is_popular %}<span class="badge badge-warning">Популярное</span>{% endif %}
+                </div>
+            </td>
+            <td>{{ solution.category.get_category_type_display }}</td>
+            <td>{{ solution.get_package_type_display|default:"-" }}</td>
+            <td>{{ solution.price }} ₽</td>
+            <td>{{ solution.delivery_days }} дней</td>
+            <td>
+                    <span class="status-badge status-{% if solution.is_active %}active{% else %}inactive{% endif %}">
+                        {% if solution.is_active %}Активно{% else %}Неактивно{% endif %}
+                    </span>
+            </td>
+            <td class="actions">
+                <a href="{% url 'custom_admin:solution_edit' solution.id %}" class="btn btn-sm btn-info" title="Редактировать">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{% url 'custom_admin:solution_detail' solution.id %}" class="btn btn-sm btn-secondary" title="Просмотр">
+                    <i class="fas fa-eye"></i>
+                </a>
+                <form method="POST" action="{% url 'custom_admin:solution_toggle' solution.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-{% if solution.is_active %}warning{% else %}success{% endif %}"
+                            title="{% if solution.is_active %}Деактивировать{% else %}Активировать{% endif %}">
+                        <i class="fas fa-{% if solution.is_active %}ban{% else %}check{% endif %}"></i>
+                    </button>
+                </form>
+                <button type="button" class="btn btn-sm btn-danger delete-solution"
+                        data-id="{{ solution.id }}"
+                        data-name="{{ solution.name }}"
+                        title="Удалить">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9" class="text-center py-4">
+                <div class="empty-state">
+                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                    <h4>Решения не найдены</h4>
+                    <p>Добавьте первое решение в магазин</p>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if solutions.paginator.num_pages > 1 %}
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if solutions.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ solutions.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
         {% endif %}
 
-        {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-        <li class="pagination-item active">
-            <span class="pagination-link">{{ num }}</span>
+        {% for num in solutions.paginator.page_range %}
+        <li class="page-item {% if solutions.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
         </li>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-        <li class="pagination-item">
-            <a class="pagination-link" href="?page={{ num }}{{ query_string }}">{{ num }}</a>
-        </li>
-        {% endif %}
         {% endfor %}
 
-        {% if page_obj.has_next %}
-        <li class="pagination-item">
-            <a class="pagination-link" href="?page={{ page_obj.next_page_number }}{{ query_string }}" aria-label="Следующая">
-                <i class="fas fa-chevron-right"></i>
+        {% if solutions.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ solutions.next_page_number }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
         {% endif %}
     </ul>
-
-    <div class="pagination-info">
-        Показано {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ paginator.count }}
-    </div>
 </nav>
 {% endif %}
 
-<script src="{% static 'js/admin/solutions.js' %}"></script>
+<!-- Модальное окно подтверждения удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите удалить решение <strong id="solutionName"></strong>?</p>
+                <p class="text-danger">Это действие нельзя отменить!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <form id="deleteForm" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'custom_admin/js/pages/solutions/list.js' %}"></script>
 {% endblock %}

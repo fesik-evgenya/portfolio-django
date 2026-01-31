@@ -1,0 +1,254 @@
+/* Стили для страницы пользовательского соглашения */
+.terms-of-service {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 120px 20px 80px;
+}
+
+.terms-of-service .page-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--accent-purple);
+    font-size: 2.5rem;
+    position: relative;
+}
+
+.terms-of-service .page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: var(--accent-purple);
+}
+
+/* Секции соглашения */
+.terms-section {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.terms-section:hover {
+    border-color: var(--accent-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.terms-section h2 {
+    color: var(--accent-purple);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    position: relative;
+    padding-left: 1rem;
+    border-left: 3px solid var(--accent-purple);
+}
+
+.terms-section p {
+    color: var(--light-gray);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+/* Списки */
+.terms-section ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 1.5rem 0;
+}
+
+.terms-section li {
+    color: var(--light-gray);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    position: relative;
+}
+
+.terms-section li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    width: 8px;
+    height: 8px;
+    background: var(--accent-purple);
+    border-radius: 50%;
+}
+
+.terms-section li strong {
+    color: var(--accent-purple);
+    font-weight: 600;
+}
+
+/* Вложенные списки */
+.terms-section ul ul {
+    margin: 0.5rem 0 0.5rem 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid rgba(210, 168, 225, 0.3);
+}
+
+.terms-section ul ul li {
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.terms-section ul ul li::before {
+    width: 6px;
+    height: 6px;
+    background: var(--light-gray);
+    opacity: 0.7;
+}
+
+/* Блок обновления */
+.terms-update {
+    background: linear-gradient(135deg, rgba(210, 168, 225, 0.1), rgba(255, 255, 255, 0.05));
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: center;
+    border: 1px solid var(--accent-purple);
+}
+
+.terms-update p {
+    color: var(--light-gray);
+    margin: 0.5rem 0;
+    font-size: 1rem;
+}
+
+.terms-update strong {
+    color: var(--accent-purple);
+}
+
+/* Анимация появления секций */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.terms-section {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.terms-section:nth-child(2) { animation-delay: 0.1s; }
+.terms-section:nth-child(3) { animation-delay: 0.2s; }
+.terms-section:nth-child(4) { animation-delay: 0.3s; }
+.terms-section:nth-child(5) { animation-delay: 0.4s; }
+.terms-section:nth-child(6) { animation-delay: 0.5s; }
+.terms-section:nth-child(7) { animation-delay: 0.6s; }
+.terms-section:nth-child(8) { animation-delay: 0.7s; }
+.terms-section:nth-child(9) { animation-delay: 0.8s; }
+.terms-section:nth-child(10) { animation-delay: 0.9s; }
+.terms-section:nth-child(11) { animation-delay: 1s; }
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .terms-of-service {
+        padding: 100px 15px 60px;
+    }
+
+    .terms-of-service .page-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .terms-section {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .terms-section h2 {
+        font-size: 1.3rem;
+        padding-left: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .terms-section li {
+        padding-left: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .terms-update {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .terms-of-service {
+        padding: 80px 10px 40px;
+    }
+
+    .terms-of-service .page-title {
+        font-size: 1.75rem;
+    }
+
+    .terms-section {
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .terms-section h2 {
+        font-size: 1.2rem;
+        padding-left: 0.5rem;
+    }
+
+    .terms-section p {
+        text-align: left;
+        font-size: 0.95rem;
+    }
+
+    .terms-section li {
+        padding-left: 1.25rem;
+        font-size: 0.95rem;
+    }
+
+    .terms-update {
+        padding: 1rem;
+    }
+
+    .terms-update p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Поддержка reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .terms-section {
+        animation: none;
+        transition: none;
+    }
+
+    .terms-section:hover {
+        transform: none;
+    }
+}
+
+/* Улучшенная читаемость для больших экранов */
+@media (min-width: 1200px) {
+    .terms-of-service {
+        max-width: 1000px;
+    }
+
+    .terms-section p {
+        font-size: 1.05rem;
+        line-height: 1.8;
+    }
+
+    .terms-section li {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+}

@@ -1,80 +1,127 @@
 {% extends "custom_admin/base_admin.html" %}
 {% load static %}
 
-{% block title %}Управление портфолио | Админ-панель{% endblock %}
-
 {% block content %}
-<div class="admin-header">
-    <h1>Управление портфолио</h1>
-    <div class="header-actions">
-        <a href="{% url 'custom_admin:portfolio_create' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Добавить проект
-        </a>
-        <a href="{% url 'portfolio:list' %}" target="_blank" class="btn btn-secondary">
-            <i class="fas fa-external-link-alt"></i> На сайте
-        </a>
+<div class="container-fluid py-4">
+    <!-- Заголовок с кнопкой добавления -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Управление портфолио</h1>
+        <button onclick="window.location.href='{% url 'custom_admin:portfolio_create' %}'"
+                class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Добавить проект
+        </button>
     </div>
-</div>
 
-<!-- Фильтры -->
-{% include "portfolio/admin/includes/portfolio_filters.html" %}
-
-<!-- Сетка проектов -->
-<div class="portfolio-grid" id="portfolioGrid">
-    {% if portfolio_items %}
-    {% for item in portfolio_items %}
-    {% include "portfolio/admin/includes/portfolio_card.html" %}
-    {% endfor %}
-    {% else %}
-    <div class="empty-state">
-        <i class="fas fa-folder-open"></i>
-        <h3>Проекты не найдены</h3>
-        <p>{% if request.GET.search %}По вашему запросу ничего не найдено{% else %}Добавьте первый проект в портфолио{% endif %}</p>
-        {% if not request.GET.search %}
-        <a href="{% url 'custom_admin:portfolio_create' %}" class="btn btn-primary">Добавить проект</a>
-        {% endif %}
+    <!-- Фильтры и поиск -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control"
+                               placeholder="Поиск по проектам..."
+                               id="portfolioSearch">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">Все категории</option>
+                        <option value="startap">Стартап-Лаунч</option>
+                        <option value="profi">Профи-Портфолио</option>
+                        <option value="magazin">Магазин-Мини</option>
+                        <option value="kofeynya">Кофейня-Бистро</option>
+                        <option value="uslugi">Услуги-Мастер</option>
+                        <option value="salon">Салон-Клиника</option>
+                        <option value="agentstvo">Агентство-Студия</option>
+                        <option value="other">Индивидуальный проект</option>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Сетка проектов -->
+    <div class="row" id="portfolioGrid">
+        {% for item in portfolio_items %}
+        <div class="col-xl-3 col-lg-4 col-md-6 mb-4 portfolio-card"
+             data-category="{{ item.category.slug }}"
+             data-title="{{ item.title|lower }}">
+            <div class="card h-100">
+                <div class="position-relative portfolio-image">
+                    <img src="{% if item.main_image %}{{ item.main_image.image.url }}{% else %}{% static 'custom_admin/images/placeholder.jpg' %}{% endif %}"
+                         class="card-img-top"
+                         alt="{{ item.title }}"
+                         style="height: 200px; object-fit: cover;">
+                    <div class="portfolio-actions position-absolute top-0 end-0 p-2">
+                        <a href="{% url 'custom_admin:portfolio_edit' item.id %}"
+                           class="btn btn-sm btn-light btn-icon me-1">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button class="btn btn-sm btn-danger btn-icon"
+                                onclick="deleteProject(this, '{% url 'custom_admin:portfolio_delete' item.id %}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title mb-2">{{ item.title|truncatechars:40 }}</h5>
+                    <p class="text-muted small mb-2">{{ item.category.name }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">
+                            {{ item.get_package_display }}
+                        </span>
+                        <small class="text-muted">{{ item.created_at|date:"d.m.Y" }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <h3>Проекты не найдены</h3>
+                    <p class="text-muted">Добавьте первый проект в портфолио</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Пагинация -->
+    {% if is_paginated %}
+    <nav aria-label="Пагинация портфолио">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Следующая">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
     {% endif %}
 </div>
+{% endblock %}
 
-<!-- Пагинация -->
-{% if is_paginated %}
-<nav class="pagination">
-    <ul class="pagination-list">
-        {% if page_obj.has_previous %}
-        <li class="pagination-item">
-            <a class="pagination-link" href="?page={{ page_obj.previous_page_number }}{{ query_string }}" aria-label="Предыдущая">
-                <i class="fas fa-chevron-left"></i>
-            </a>
-        </li>
-        {% endif %}
-
-        {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-        <li class="pagination-item active">
-            <span class="pagination-link">{{ num }}</span>
-        </li>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-        <li class="pagination-item">
-            <a class="pagination-link" href="?page={{ num }}{{ query_string }}">{{ num }}</a>
-        </li>
-        {% endif %}
-        {% endfor %}
-
-        {% if page_obj.has_next %}
-        <li class="pagination-item">
-            <a class="pagination-link" href="?page={{ page_obj.next_page_number }}{{ query_string }}" aria-label="Следующая">
-                <i class="fas fa-chevron-right"></i>
-            </a>
-        </li>
-        {% endif %}
-    </ul>
-
-    <div class="pagination-info">
-        Показано {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ paginator.count }}
-    </div>
-</nav>
-{% endif %}
-
-<script src="{% static 'js/admin/portfolio.js' %}"></script>
+{% block extra_js %}
+<script src="{% static 'custom_admin/js/pages/portfolio/list.js' %}"></script>
 {% endblock %}

@@ -1,4 +1,3 @@
-# apps/main/views.py
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
 from django.db.models import Prefetch, Q
@@ -10,13 +9,17 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
+from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
 import json
 import re
 
 from .models import (
     AboutContent, PortfolioItem, Solution, ContactInfo,
     EducationItem, WorkPhilosophySlot, TechnologyTool, ContactMessage,
-    SiteSettings
+    SiteSettings, PortfolioCategory, SolutionCategory, AboutMeta,
+    PortfolioImage, SolutionImage, SolutionOrder, SolutionFAQ,
+    AdminUser
 )
 
 
@@ -182,19 +185,47 @@ class TermsView(TemplateView):
         return context
 
 
-class SitemapView(TemplateView):
+class SitemapHtmlView(TemplateView):
     template_name = 'main/sitemap.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        projects = PortfolioItem.objects.filter(is_active=True)
-        solutions = Solution.objects.filter(is_active=True)
-        about_pages = AboutContent.objects.filter(is_active=True)
+
+        # Получаем активные категории портфолио
+        portfolio_categories = PortfolioCategory.objects.filter(
+            is_active=True
+        ).prefetch_related(
+            Prefetch(
+                'portfolio_items',
+                queryset=PortfolioItem.objects.filter(is_active=True)
+            )
+        ).order_by('order')[:5]
+
+        # Получаем активные проекты портфолио
+        portfolio_items = PortfolioItem.objects.filter(
+            is_active=True
+        ).order_by('order')[:10]
+
+        # Получаем активные категории решений
+        solution_categories = SolutionCategory.objects.filter(
+            is_active=True
+        ).prefetch_related(
+            Prefetch(
+                'solutions',
+                queryset=Solution.objects.filter(is_active=True)
+            )
+        ).order_by('order')[:5]
+
+        # Получаем активные решения
+        solutions = Solution.objects.filter(
+            is_active=True
+        ).order_by('order')[:10]
 
         context.update({
-            'projects': projects,
+            'portfolio_categories': portfolio_categories,
+            'portfolio_items': portfolio_items,
+            'solution_categories': solution_categories,
             'solutions': solutions,
-            'about_pages': about_pages,
         })
         return context
 
@@ -460,38 +491,172 @@ class SolutionsListView(TemplateView):
         return context
 
 
+class SolutionDetailView(TemplateView):
+    template_name = 'main/solutions/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        slug = kwargs.get('slug')
+
+        solution = get_object_or_404(
+            Solution.objects.prefetch_related(
+                'images',
+                'faq_items',
+                'category'
+            ),
+            slug=slug,
+            is_active=True
+        )
+
+        # Получаем похожие решения
+        similar_solutions = Solution.objects.filter(
+            Q(category=solution.category) | Q(package_type=solution.package_type),
+            is_active=True
+        ).exclude(id=solution.id).order_by('?')[:3]
+
+        context.update({
+            'solution': solution,
+            'similar_solutions': similar_solutions,
+        })
+        return context
+
+
 # Обработчики ошибок
-def handler404(request, exception):
-    context = {
-        'error_code': 404,
-        'error_message': 'Страница не найдена',
-        'error_details': 'Запрашиваемая страница не существует или была перемещена.',
-    }
-    return render(request, 'main/404.html', context, status=404)
+def handler404(request, exception=None):
+    """Обработка 404 ошибки"""
+    return render(request, 'main/404.html', status=404)
 
 
 def handler500(request):
-    context = {
-        'error_code': 500,
-        'error_message': 'Внутренняя ошибка сервера',
-        'error_details': 'Произошла непредвиденная ошибка. Мы уже работаем над её исправлением.',
-    }
-    return render(request, 'main/500.html', context, status=500)
+    """Обработка 500 ошибки"""
+    return render(request, 'main/500.html', status=500)
 
 
-def handler403(request, exception):
-    context = {
-        'error_code': 403,
-        'error_message': 'Доступ запрещен',
-        'error_details': 'У вас нет прав для доступа к этой странице.',
-    }
-    return render(request, 'main/403.html', context, status=403)
+def handler403(request, exception=None):
+    """Обработка 403 ошибки"""
+    return render(request, 'main/403.html', status=403)
 
 
 def handler400(request, exception):
+    """Обработка 400 ошибки"""
     context = {
         'error_code': 400,
         'error_message': 'Некорректный запрос',
         'error_details': 'Ваш запрос содержит ошибку или некорректные данные.',
     }
     return render(request, 'main/400.html', context, status=400)
+
+
+# Sitemap XML классы
+class StaticViewSitemap(Sitemap):
+    priority = 1.0
+    changefreq = 'weekly'
+
+    def items(self):
+        return [
+            'main:index',
+            'main:about',
+            'main:contact',
+            'main:privacy',
+            'main:terms',
+            'main:sitemap_html',
+        ]
+
+    def location(self, item):
+        return reverse(item)
+
+
+class PortfolioCategorySitemap(Sitemap):
+    changefreq = 'monthly'
+    priority = 0.8
+
+    def items(self):
+        return PortfolioCategory.objects.filter(is_active=True)
+
+    def lastmod(self, obj):
+        return obj.created_at
+
+    def location(self, obj):
+        return reverse('main:portfolio_list')  # Измените на конкретный URL если нужно
+
+
+class PortfolioItemSitemap(Sitemap):
+    changefreq = 'monthly'
+    priority = 0.9
+
+    def items(self):
+        return PortfolioItem.objects.filter(is_active=True)
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+    def location(self, obj):
+        return reverse('main:portfolio_detail', args=[obj.slug])
+
+
+class SolutionCategorySitemap(Sitemap):
+    changefreq = 'monthly'
+    priority = 0.8
+
+    def items(self):
+        return SolutionCategory.objects.filter(is_active=True)
+
+    def lastmod(self, obj):
+        return obj.created_at
+
+    def location(self, obj):
+        return reverse('main:solutions_list')  # Измените на конкретный URL если нужно
+
+
+class SolutionSitemap(Sitemap):
+    changefreq = 'monthly'
+    priority = 0.9
+
+    def items(self):
+        return Solution.objects.filter(is_active=True)
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+    def location(self, obj):
+        return reverse('main:solution_detail', args=[obj.slug])
+
+
+class AboutContentSitemap(Sitemap):
+    changefreq = 'monthly'
+    priority = 0.7
+
+    def items(self):
+        return AboutContent.objects.filter(is_active=True)
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+    def location(self, obj):
+        return reverse('main:about') + f'#{obj.section}'
+
+
+class ContactInfoSitemap(Sitemap):
+    changefreq = 'yearly'
+    priority = 0.5
+
+    def items(self):
+        return ContactInfo.objects.filter(is_active=True)
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+    def location(self, obj):
+        return reverse('main:contact')
+
+
+# Общий sitemap для использования в urls.py
+sitemaps = {
+    'static': StaticViewSitemap,
+    'about': AboutContentSitemap,
+    'portfolio_categories': PortfolioCategorySitemap,
+    'portfolio_items': PortfolioItemSitemap,
+    'solution_categories': SolutionCategorySitemap,
+    'solutions': SolutionSitemap,
+    'contact': ContactInfoSitemap,
+}

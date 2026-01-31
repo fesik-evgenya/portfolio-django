@@ -1,0 +1,191 @@
+{% extends "custom_admin/base_admin.html" %}
+{% load static crispy_forms_tags %}
+
+{% block title %}Добавление решения{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <h1 class="page-title">Добавление решения</h1>
+    <a href="{% url 'custom_admin:solutions_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Назад к списку
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data" id="solutionForm" novalidate>
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Основная информация -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Основная информация</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.name|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.slug|as_crispy_field }}
+                                    <small class="form-text text-muted">URL-идентификатор решения</small>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.category|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.package_type|as_crispy_field }}
+                                </div>
+                            </div>
+
+                            {{ form.description|as_crispy_field }}
+                            {{ form.detailed_description|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <!-- Цены и сроки -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Цены и сроки</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.price|as_crispy_field }}
+                                    <div class="discount-fields" style="display: none;">
+                                        {{ form.discount_price|as_crispy_field }}
+                                        {{ form.discount_expires|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.delivery_days|as_crispy_field }}
+                                </div>
+                            </div>
+
+                            <div class="form-check">
+                                {{ form.has_discount }}
+                                <label class="form-check-label" for="{{ form.has_discount.id_for_label }}">
+                                    Включить скидку
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Особенности и требования -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Особенности и требования</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Особенности (каждая с новой строки)</label>
+                                <textarea name="features_text" class="form-control" rows="5"
+                                          placeholder="Каждая особенность с новой строки"></textarea>
+                                {{ form.features.as_hidden }}
+                            </div>
+                            <div class="form-group mt-3">
+                                <label>Требования (каждое с новой строки)</label>
+                                <textarea name="requirements_text" class="form-control" rows="5"
+                                          placeholder="Каждое требование с новой строки"></textarea>
+                                {{ form.requirements.as_hidden }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Настройки -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Настройки</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check mb-3">
+                                {{ form.is_new }}
+                                <label class="form-check-label" for="{{ form.is_new.id_for_label }}">
+                                    Отметить как новинку
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                {{ form.is_popular }}
+                                <label class="form-check-label" for="{{ form.is_popular.id_for_label }}">
+                                    Отметить как популярное
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                {{ form.is_active }}
+                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                    Активное решение
+                                </label>
+                            </div>
+                            {{ form.order|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <!-- Изображения -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Изображения</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="file-dropzone" id="imageDropzone">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                <p class="mt-2">Перетащите изображения или нажмите для выбора</p>
+                                <small class="text-muted">До 10 изображений, до 2MB каждое</small>
+                                <input type="file" name="images" id="imageInput" multiple
+                                       accept="image/jpeg,image/png,image/webp,image/gif"
+                                       style="display: none;">
+                            </div>
+
+                            <div id="imagePreviews" class="mt-3"></div>
+                            <input type="hidden" name="preview_image_index" id="previewImageIndex" value="0">
+
+                            <div class="mt-3">
+                                <small class="text-muted d-block">Рекомендуемые размеры:</small>
+                                <small class="text-muted">• Превью: 600×400px</small><br>
+                                <small class="text-muted">• Основные: 1200×800px</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEO -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">SEO настройки</h3>
+                        </div>
+                        <div class="card-body">
+                            {{ form.meta_title|as_crispy_field }}
+                            {{ form.meta_description|as_crispy_field }}
+                            {{ form.meta_keywords|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> Сохранить решение
+                </button>
+                <a href="{% url 'custom_admin:solutions_list' %}" class="btn btn-secondary btn-lg">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Компонент управления пакетами -->
+{% include "custom_admin/solutions/components/package_manager.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'custom_admin/js/components/package_manager.js' %}"></script>
+<script src="{% static 'custom_admin/js/pages/solutions/form.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'custom_admin/css/pages/solutions/form.css' %}">
+{% endblock %}

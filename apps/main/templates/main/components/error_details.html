@@ -1,0 +1,51 @@
+{% load static %}
+
+<div class="error__content">
+    <h1 class="error__title">{% block error_code %}404{% endblock %}</h1>
+    <h2 class="error__subtitle">{% block error_title %}Страница не найдена{% endblock %}</h2>
+
+    <p class="error__text">
+        {% block error_description %}
+        Извините, запрашиваемая страница не существует. Возможно, она была перемещена или удалена.<br>
+        Я помогу вам найти нужную информацию или создать новый цифровой продукт для вашего бизнеса.
+        {% endblock %}
+    </p>
+
+    {% block error_actions %}
+    <div class="error__actions">
+        <a href="{% url 'main:index' %}" class="btn btn--primary">
+            <i class="fas fa-home"></i>
+            На главную
+        </a>
+
+        <a href="{% url 'solutions:solution_list' %}" class="btn btn--outline">
+            <i class="fas fa-store"></i>
+            Магазин решений
+        </a>
+
+        <a href="{% url 'portfolio:portfolio_list' %}" class="btn btn--outline">
+            <i class="fas fa-briefcase"></i>
+            Портфолио
+        </a>
+    </div>
+    {% endblock %}
+
+    {% block error_info %}{% endblock %}
+
+    {% block error_links %}
+    <div class="error__links">
+        <a href="{% url 'main:about' %}" class="error__link">
+            <i class="fas fa-user"></i>
+            Обо мне
+        </a>
+        <a href="{% url 'main:contact' %}" class="error__link">
+            <i class="fas fa-envelope"></i>
+            Контакты
+        </a>
+        <a href="{% url 'main:sitemap_html' %}" class="error__link">
+            <i class="fas fa-sitemap"></i>
+            Карта сайта
+        </a>
+    </div>
+    {% endblock %}
+</div>

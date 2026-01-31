@@ -1,80 +1,147 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block seo_extra %}
-<meta name="robots" content="noindex, follow">
-<meta name="description" content="Карта сайта Евгения Фесик - полный список страниц и разделов для удобной навигации.">
+{% block styles %}
+<link rel="stylesheet" href="{% static 'main/css/pages/sitemap.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container sitemap-page">
-    <h1 class="page-title">Карта сайта</h1>
+<section class="sitemap">
+    <div class="container">
+        <h1 class="page-title">Карта сайта</h1>
+        <p class="page-subtitle">Полный перечень всех страниц и разделов сайта</p>
 
-    <div class="sitemap-content">
-        <section class="sitemap-section">
-            <h2>Основные страницы</h2>
+        <!-- Основные страницы -->
+        <div class="sitemap-section">
+            <h2 class="section-title">
+                <i class="fas fa-home section-icon"></i>
+                Основные страницы
+            </h2>
             <ul class="sitemap-list">
-                <li><a href="{% url 'main:index' %}">Главная страница</a></li>
-                <li><a href="{% url 'main:about' %}">Обо мне</a></li>
-                <li><a href="{% url 'main:contacts' %}">Контакты</a></li>
+                <li class="sitemap-item">
+                    <a href="{% url 'main:index' %}" class="sitemap-link">
+                        <span class="link-text">Главная страница</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+                <li class="sitemap-item">
+                    <a href="{% url 'main:about' %}" class="sitemap-link">
+                        <span class="link-text">Обо мне</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+                <li class="sitemap-item">
+                    <a href="{% url 'main:contact' %}" class="sitemap-link">
+                        <span class="link-text">Контакты</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
             </ul>
-        </section>
+        </div>
 
-        <section class="sitemap-section">
-            <h2>Услуги и решения</h2>
+        <!-- Портфолио -->
+        {% if portfolio_categories %}
+        <div class="sitemap-section">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase section-icon"></i>
+                Портфолио
+            </h2>
             <ul class="sitemap-list">
-                <li><a href="{% url 'solutions:list' %}">Магазин решений</a></li>
-                <li><a href="{% url 'portfolio:list' %}">Портфолио</a></li>
-                {% for solution in solutions %}
-                <li><a href="{% url 'solutions:detail' solution.slug %}">{{ solution.name }}</a></li>
-                {% endfor %}
-            </ul>
-        </section>
-
-        <section class="sitemap-section">
-            <h2>Проекты портфолио</h2>
-            <ul class="sitemap-list">
-                {% for item in portfolio_items %}
-                <li><a href="{% url 'portfolio:detail' item.slug %}">{{ item.title }} ({{ item.category }})</a></li>
-                {% endfor %}
-            </ul>
-        </section>
-
-        <section class="sitemap-section">
-            <h2>Правовая информация</h2>
-            <ul class="sitemap-list">
-                <li><a href="{% url 'main:privacy' %}">Политика конфиденциальности</a></li>
-                <li><a href="{% url 'main:terms' %}">Пользовательское соглашение</a></li>
-            </ul>
-        </section>
-
-        <section class="sitemap-section">
-            <h2>Категории решений</h2>
-            <ul class="sitemap-list">
-                {% for category in solution_categories %}
-                <li><a href="{% url 'solutions:category' category.slug %}">{{ category.name }}</a></li>
-                {% endfor %}
-            </ul>
-        </section>
-
-        <section class="sitemap-section">
-            <h2>Категории портфолио</h2>
-            <ul class="sitemap-list">
+                <li class="sitemap-item">
+                    <a href="{% url 'portfolio:portfolio_list' %}" class="sitemap-link">
+                        <span class="link-text">Все проекты</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
                 {% for category in portfolio_categories %}
-                <li><a href="{% url 'portfolio:category' category.slug %}">{{ category.name }}</a></li>
+                <li class="sitemap-item">
+                    <a href="{% url 'portfolio:category_detail' slug=category.slug %}" class="sitemap-link">
+                        <span class="link-text">{{ category.name }}</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+                {% endfor %}
+                {% for item in portfolio_items %}
+                <li class="sitemap-item">
+                    <a href="{% url 'portfolio:portfolio_detail' slug=item.slug %}" class="sitemap-link">
+                        <span class="link-text">{{ item.title }}</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
                 {% endfor %}
             </ul>
-        </section>
-    </div>
+        </div>
+        {% endif %}
 
-    <div class="sitemap-info">
-        <p><strong>Всего страниц:</strong> {{ total_pages }}</p>
-        <p><strong>Последнее обновление:</strong> {% now "d.m.Y H:i" %}</p>
-    </div>
+        <!-- Готовые решения -->
+        {% if solution_categories %}
+        <div class="sitemap-section">
+            <h2 class="section-title">
+                <i class="fas fa-store section-icon"></i>
+                Готовые решения
+            </h2>
+            <ul class="sitemap-list">
+                <li class="sitemap-item">
+                    <a href="{% url 'solutions:solution_list' %}" class="sitemap-link">
+                        <span class="link-text">Все решения</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+                {% for category in solution_categories %}
+                <li class="sitemap-item">
+                    <a href="{% url 'solutions:category_detail' slug=category.slug %}" class="sitemap-link">
+                        <span class="link-text">{{ category.name }}</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+                {% endfor %}
+                {% for solution in solutions %}
+                <li class="sitemap-item">
+                    <a href="{% url 'solutions:solution_detail' slug=solution.slug %}" class="sitemap-link">
+                        <span class="link-text">{{ solution.name }}</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
-    <div class="sitemap-footer">
-        <p>Карта сайта обновляется автоматически при добавлении новых страниц.</p>
-        <a href="{% url 'main:index' %}" class="btn btn--primary">На главную</a>
+        <!-- Информационные страницы -->
+        <div class="sitemap-section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle section-icon"></i>
+                Информация
+            </h2>
+            <ul class="sitemap-list">
+                <li class="sitemap-item">
+                    <a href="{% url 'main:privacy' %}" class="sitemap-link">
+                        <span class="link-text">Политика конфиденциальности</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+                <li class="sitemap-item">
+                    <a href="{% url 'main:terms' %}" class="sitemap-link">
+                        <span class="link-text">Пользовательское соглашение</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+                <li class="sitemap-item">
+                    <a href="{% url 'main:sitemap_html' %}" class="sitemap-link">
+                        <span class="link-text">Карта сайта</span>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sitemap-info">
+            <div class="info-card">
+                <i class="fas fa-sitemap info-icon"></i>
+                <h3>Структура сайта</h3>
+                <p>Карта сайта упрощает навигацию для пользователей.</p>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 {% endblock %}

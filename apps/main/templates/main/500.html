@@ -1,10 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block meta_title %}500 - Ошибка сервера | Full-stack разработчик{% endblock %}
+{% block meta_description %}Произошла внутренняя ошибка сервера. Пожалуйста, попробуйте позже или свяжитесь со мной для решения проблемы.{% endblock %}
+
+{% block extra_head %}
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="googlebot" content="noindex, nofollow, noarchive">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'main/css/pages/error_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="error">
+    <div class="error__container container">
+        <div class="error__content">
+            <h1 class="error__title">500</h1>
+            <h2 class="error__subtitle">Ошибка сервера</h2>
+
+            <p class="error__text">
+                Произошла внутренняя ошибка сервера. Мы уже работаем над устранением проблемы.<br>
+                Пожалуйста, попробуйте вернуться позже или свяжитесь со мной для решения вашего вопроса.
+            </p>
+
+            <div class="error__actions">
+                <a href="{% url 'main:index' %}" class="btn btn--primary">
+                    <i class="fas fa-home"></i>
+                    На главную
+                </a>
+
+                <a href="{% url 'main:contact' %}" class="btn btn--outline">
+                    <i class="fas fa-envelope"></i>
+                    Связаться со мной
+                </a>
+
+                <a href="javascript:location.reload();" class="btn btn--outline">
+                    <i class="fas fa-redo"></i>
+                    Обновить страницу
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

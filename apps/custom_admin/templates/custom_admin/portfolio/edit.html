@@ -1,144 +1,177 @@
 {% extends "custom_admin/base_admin.html" %}
 {% load static %}
-
-{% block title %}Редактирование: {{ portfolio_item.title }} | Админ-панель{% endblock %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<header class="admin-form-header">
-    <h1>Редактирование проекта: {{ portfolio_item.title }}</h1>
-    <div class="header-actions">
-        <a href="{% url 'custom_admin:portfolio_detail' portfolio_item.id %}" class="btn btn-secondary">
-            <i class="fas fa-eye"></i> Просмотр
-        </a>
-        <a href="{% url 'custom_admin:portfolio_list' %}" class="btn btn-outline">
-            <i class="fas fa-arrow-left"></i> Назад
+<div class="container-fluid py-4">
+    <!-- Заголовок -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Редактирование проекта: {{ portfolio_item.title }}</h1>
+        <a href="{% url 'custom_admin:portfolio_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Назад к портфолио
         </a>
     </div>
-</header>
 
-<section class="admin-form-section">
-    <form method="POST" enctype="multipart/form-data" id="portfolioForm">
-        <!-- Включаем компонент полей формы -->
-        {% include "portfolio/admin/includes/portfolio_form_fields.html" %}
+    <!-- Форма редактирования -->
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data" id="portfolioForm">
+                {% csrf_token %}
 
-        <!-- Статистика -->
-        <div class="form-section">
-            <h3 class="form-group-label-light">Статистика проекта</h3>
-            <div class="info-grid">
-                <div class="info-item">
-                    <strong>Дата создания:</strong>
-                    <span>{{ portfolio_item.created_at|date:"d.m.Y H:i" }}</span>
+                <!-- Скрытые поля для JavaScript -->
+                <input type="hidden" id="portfolioId" value="{{ portfolio_item.id }}">
+                <input type="hidden" id="deleteImageUrl"
+                       value="{% url 'custom_admin:portfolio_delete_image' portfolio_item.id %}">
+                <input type="hidden" id="setPreviewUrl"
+                       value="{% url 'custom_admin:portfolio_set_preview' portfolio_item.id %}">
+                <input type="hidden" name="preview_image_index" id="previewImageIndex" value="">
+
+                <!-- Основная информация -->
+                <div class="mb-5">
+                    <h4 class="mb-4">Основная информация</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form.title|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.slug|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.category|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.package|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.duration|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.geo|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.client|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.live_url|as_crispy_field }}
+                        </div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <strong>Дата обновления:</strong>
-                    <span>{{ portfolio_item.updated_at|date:"d.m.Y H:i" }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Slug:</strong>
-                    <code>{{ portfolio_item.slug }}</code>
-                </div>
-                <div class="info-item">
-                    <strong>Изображений:</strong>
-                    <span>{{ portfolio_item.images.count }}</span>
-                </div>
-            </div>
-        </div>
 
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Сохранить изменения
-            </button>
-            <a href="{% url 'custom_admin:portfolio_detail' portfolio_item.id %}" class="btn btn-secondary">Отмена</a>
+                <!-- Изображения -->
+                <div class="mb-5">
+                    <h4 class="mb-4">Изображения проекта</h4>
 
-            {% if perms.portfolio.delete_portfolioitem %}
-            <button type="button" class="btn btn-danger" id="deletePortfolioBtn"
-                    data-url="{% url 'custom_admin:portfolio_delete' portfolio_item.id %}"
-                    onclick="confirmDelete(this)">
-                <i class="fas fa-trash"></i> Удалить проект
-            </button>
-            {% endif %}
-        </div>
-    </form>
-</section>
+                    <!-- Новые изображения -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Загрузить новые изображения</h5>
+                            <small class="text-muted">Максимум 10 файлов, не более 2MB каждый</small>
+                        </div>
+                        <div class="card-body">
+                            {% include 'custom_admin/includes/forms/image_upload.html' with field=form.images %}
+                        </div>
+                    </div>
 
-<!-- Модальное окно управления изображениями -->
-<div class="modal fade" id="imageManagerModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Управление изображениями для {{ portfolio_item.title }}</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                {% include "portfolio/admin/includes/portfolio_image_manager.html" %}
-            </div>
+                    <!-- Существующие изображения -->
+                    {% if portfolio_item.images.all %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Текущие изображения</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3" id="existing-images-grid">
+                                {% for image in portfolio_item.images.all %}
+                                <div class="col-md-3" data-image-id="{{ image.id }}">
+                                    <div class="image-item position-relative border rounded p-2">
+                                        <img src="{{ image.image.url }}"
+                                             alt="Изображение проекта"
+                                             class="img-fluid rounded mb-2"
+                                             style="height: 150px; object-fit: cover;">
+
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input existing-preview-radio"
+                                                   type="radio"
+                                                   name="existing_preview"
+                                                   value="{{ image.id }}"
+                                                   id="preview_{{ image.id }}"
+                                                   {% if image.is_main %}checked{% endif %}>
+                                            <label class="form-check-label" for="preview_{{ image.id }}">
+                                                Сделать превью
+                                            </label>
+                                        </div>
+
+                                        <button type="button"
+                                                class="btn btn-sm btn-danger w-100 delete-existing-image"
+                                                data-image-id="{{ image.id }}">
+                                            <i class="fas fa-trash me-1"></i>Удалить
+                                        </button>
+
+                                        {% if image.is_main %}
+                                        <div class="position-absolute top-0 start-0 m-2">
+                                            <span class="badge bg-success">Превью</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Особенности -->
+                <div class="mb-5">
+                    <h4 class="mb-4">Особенности проекта</h4>
+                    <div class="form-group">
+                        {{ form.features|as_crispy_field }}
+                        <small class="form-text text-muted">
+                            Каждая особенность с новой строки
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Описание -->
+                <div class="mb-5">
+                    <h4 class="mb-4">Описание проекта</h4>
+                    {% include 'custom_admin/includes/forms/rich_text.html' with field=form.description %}
+                </div>
+
+                <!-- Отзыв клиента -->
+                <div class="mb-5">
+                    <h4 class="mb-4">Отзыв клиента</h4>
+                    <div class="form-group">
+                        {{ form.testimonial|as_crispy_field }}
+                    </div>
+                </div>
+
+                <!-- Технологии -->
+                <div class="mb-5">
+                    <h4 class="mb-4">Технологии</h4>
+                    <div class="form-group">
+                        {{ form.technologies|as_crispy_field }}
+                        <small class="form-text text-muted">
+                            Перечислите технологии через запятую
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Кнопки -->
+                <div class="d-flex justify-content-end gap-2 mt-5">
+                    <a href="{% url 'custom_admin:portfolio_list' %}" class="btn btn-secondary">
+                        Отмена
+                    </a>
+                    <button type="submit" class="btn btn-primary" id="saveButton">
+                        <i class="fas fa-save me-2"></i>Сохранить изменения
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<script src="{% static 'js/admin/portfolio-edit.js' %}"></script>
-<script>
-    // Подтверждение удаления
-    function confirmDelete(button) {
-        if (confirm('Вы уверены, что хотите удалить этот проект? Все связанные изображения также будут удалены.')) {
-            fetch(button.dataset.url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    window.location.href = "{% url 'custom_admin:portfolio_list' %}";
-                } else {
-                    alert('Ошибка при удалении проекта');
-                }
-            });
-        }
-    }
-
-    // Управление изображениями
-    document.querySelectorAll('.delete-existing-image').forEach(button => {
-        button.addEventListener('click', function() {
-            const imageId = this.dataset.imageId;
-            if (confirm('Удалить это изображение?')) {
-                fetch("{% url 'custom_admin:portfolio_image_delete' portfolio_item.id %}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({image_id: imageId})
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            this.closest('.image-item').remove();
-                        } else {
-                            alert('Ошибка: ' + data.error);
-                        }
-                    });
-            }
-        });
-    });
-
-    // Установка изображения как основного
-    document.querySelectorAll('.set-main-image').forEach(button => {
-        button.addEventListener('click', function() {
-            const imageId = this.dataset.imageId;
-            fetch("{% url 'custom_admin:portfolio_image_set_main' portfolio_item.id %}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({image_id: imageId})
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    }
-                });
-        });
-    });
-</script>
+{% block extra_js %}
+<script src="{% static 'custom_admin/js/components/image_upload.js' %}"></script>
+<script src="{% static 'custom_admin/js/pages/portfolio/form.js' %}"></script>
 {% endblock %}

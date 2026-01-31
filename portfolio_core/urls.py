@@ -29,3 +29,4 @@ if settings.DEBUG:
 handler404 = 'apps.main.views.handler404'
 handler500 = 'apps.main.views.handler500'
 handler403 = 'apps.main.views.handler403'
+handler400 = 'apps.main.views.handler400'

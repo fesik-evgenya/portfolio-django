@@ -1,0 +1,182 @@
+/* Фильтры расширенные */
+.admin-filters .row {
+    margin-bottom: 1rem;
+}
+
+.admin-filters .form-control {
+    margin-bottom: 0.5rem;
+}
+
+/* Бейджи статусов */
+.badge-status {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-pending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.badge-processing {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.badge-completed {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.badge-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Карточки статистики */
+.stat-card {
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+    opacity: 0.8;
+}
+
+.stat-content h3 {
+    margin-bottom: 0.25rem;
+    font-size: 1.75rem;
+}
+
+.stat-content p {
+    margin-bottom: 0;
+    opacity: 0.9;
+}
+
+/* Таймлайн истории */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.8rem;
+    top: 0.3rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #007bff;
+    border: 2px solid white;
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.timeline-content {
+    background-color: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border-left: 3px solid #007bff;
+}
+
+/* Быстрые действия */
+.quick-actions .btn {
+    margin-bottom: 0.5rem;
+}
+
+.quick-actions .btn:last-child {
+    margin-bottom: 0;
+}
+
+/* Выпадающие меню статусов */
+.dropdown-menu .quick-status {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dropdown-menu .quick-status:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Адаптивность таблицы */
+@media (max-width: 992px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+
+    .timeline {
+        padding-left: 1.5rem;
+    }
+
+    .timeline-item::before {
+        left: -1.3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-filters .row > div {
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .table th, .table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .badge-status {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+}

@@ -1,10 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!-- portfolio-django/apps/main/templates/main/403.html -->
+{% extends "base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block meta_title %}403 - Доступ запрещен{% endblock %}
+{% block meta_description %}У вас нет прав для доступа к этой странице. Пожалуйста, войдите в систему или вернитесь на главную.{% endblock %}
+
+{% block extra_head %}
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="googlebot" content="noindex, nofollow, noarchive">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'main/css/pages/error_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="error">
+    <div class="error__container container">
+        <div class="error__content">
+            <h1 class="error__title">403</h1>
+            <h2 class="error__subtitle">Доступ запрещен</h2>
+
+            <p class="error__text">
+                У вас недостаточно прав для просмотра этой страницы.<br>
+                Если вы считаете, что это ошибка, пожалуйста, свяжитесь со мной или попробуйте выполнить следующие действия:
+            </p>
+
+            <div class="error__actions">
+                <a href="{% url 'main:index' %}" class="btn btn--primary">
+                    <i class="fas fa-home"></i>
+                    На главную
+                </a>
+
+                {% if user.is_authenticated %}
+                <a href="{% url 'admin:index' %}" class="btn btn--outline">
+                    <i class="fas fa-user-shield"></i>
+                    Панель управления
+                </a>
+                {% else %}
+                <a href="{% url 'admin:login' %}?next={{ request.path }}" class="btn btn--outline">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Войти в систему
+                </a>
+                {% endif %}
+
+                <a href="javascript:history.back()" class="btn btn--outline">
+                    <i class="fas fa-arrow-left"></i>
+                    Вернуться назад
+                </a>
+            </div>
+
+            <div class="error__info">
+                <h3 class="error__info-title">
+                    <i class="fas fa-info-circle"></i>
+                    Возможные причины:
+                </h3>
+                <ul class="error__info-list">
+                    <li>Вы пытаетесь получить доступ к разделу, требующему авторизации</li>
+                    <li>Ваша сессия истекла, и необходимо войти заново</li>
+                    <li>Вы пытаетесь получить доступ к админ-панели без соответствующих прав</li>
+                    <li>Доступ к этой странице ограничен по техническим причинам</li>
+                </ul>
+            </div>
+
+            <div class="error__links">
+                <a href="{% url 'main:about' %}" class="error__link">
+                    <i class="fas fa-user"></i>
+                    Обо мне
+                </a>
+                <a href="{% url 'main:contact' %}" class="error__link">
+                    <i class="fas fa-envelope"></i>
+                    Контакты
+                </a>
+                <a href="{% url 'main:sitemap_html' %}" class="error__link">
+                    <i class="fas fa-sitemap"></i>
+                    Карта сайта
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

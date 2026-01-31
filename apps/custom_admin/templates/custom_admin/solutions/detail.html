@@ -1,209 +1,298 @@
 {% extends "custom_admin/base_admin.html" %}
 {% load static %}
 
-{% block title %}{{ solution.name }} | Админ-панель{% endblock %}
+{% block title %}Заказ решения: {{ order.solution.name }}{% endblock %}
 
-{% block content %}
-<header class="admin-detail-header">
-    <div class="header-main">
-        <h1>{{ solution.name }}</h1>
-        <div class="header-actions">
-            <a href="{% url 'custom_admin:solution_edit' solution.id %}" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Редактировать
-            </a>
-            <a href="{% url 'solutions:detail' solution.slug %}" target="_blank" class="btn btn-secondary">
-                <i class="fas fa-eye"></i> Просмотр на сайте
-            </a>
-            <a href="{% url 'custom_admin:solution_list' %}" class="btn btn-outline">
-                <i class="fas fa-arrow-left"></i> Назад
-            </a>
-        </div>
+{% block admin_content %}
+<div class="admin-header">
+    <h1 class="page-title">Детали заказа #{{ order.uuid|truncatechars:8 }}</h1>
+    <div class="btn-group">
+        <a href="{% url 'custom_admin:solution_orders' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Назад к заказам
+        </a>
+        <a href="{% url 'custom_admin:solution_edit' order.solution.id %}" class="btn btn-info">
+            <i class="fas fa-edit"></i> Редактировать решение
+        </a>
     </div>
+</div>
 
-    <div class="header-meta">
-        <div class="badges">
-            {% if solution.is_new %}<span class="badge badge-new">Новинка</span>{% endif %}
-            {% if solution.is_popular %}<span class="badge badge-popular">Популярное</span>{% endif %}
-            {% if not solution.is_active %}<span class="badge badge-inactive">Неактивно</span>{% endif %}
-            <span class="badge badge-category">{{ solution.category.name }}</span>
-        </div>
-
-        <div class="stats">
-            <span class="stat"><i class="fas fa-money-bill-wave"></i> {{ solution.price }} ₽</span>
-            <span class="stat"><i class="fas fa-clock"></i> {{ solution.delivery_days }} дн.</span>
-            <span class="stat"><i class="fas fa-shopping-cart"></i> {{ solution.orders.count }} заказов</span>
-        </div>
-    </div>
-</header>
-
-<div class="admin-detail-content">
-    <div class="detail-grid">
-        <!-- Изображения -->
-        <div class="detail-section">
-            <h3>Изображения решения</h3>
-            <div class="image-gallery">
-                {% if solution.main_image %}
-                <div class="main-image">
-                    <img src="{{ solution.main_image.image.url }}" alt="{{ solution.name }}">
-                    <div class="image-badge">Основное</div>
-                </div>
-                {% endif %}
-
-                {% if solution.display_images.count > 1 %}
-                <div class="gallery-thumbnails">
-                    {% for image in solution.display_images %}
-                    {% if not image.is_main %}
-                    <div class="thumbnail">
-                        <img src="{{ image.image.url }}" alt="{{ solution.name }}">
+<div class="row">
+    <div class="col-md-8">
+        <!-- Информация о заказе -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title">Информация о заказе</h3>
+                <span class="badge badge-status badge-{{ order.status }}">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Решение</h5>
+                        <p><strong>{{ order.solution.name }}</strong></p>
+                        <p>Категория: {{ order.solution.category.name }}</p>
+                        <p>Тип: {{ order.solution.get_package_type_display }}</p>
                     </div>
+                    <div class="col-md-6">
+                        <h5>Стоимость и срок</h5>
+                        <p>Цена: <strong>{{ order.total_amount }} ₽</strong></p>
+                        <p>Изначальная цена: {{ order.solution.price }} ₽</p>
+                        <p>Срок разработки: {{ order.solution.delivery_days }} дней</p>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h5>Клиент</h5>
+                        <p><strong>{{ order.customer_name }}</strong></p>
+                        <p>Email: <a href="mailto:{{ order.customer_email }}">{{ order.customer_email }}</a></p>
+                        {% if order.customer_phone %}
+                        <p>Телефон: {{ order.customer_phone }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Даты</h5>
+                        <p>Создан: {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                        <p>Обновлен: {{ order.updated_at|date:"d.m.Y H:i" }}</p>
+                    </div>
+                </div>
+
+                {% if order.customer_message %}
+                <div class="mt-3">
+                    <h5>Сообщение клиента</h5>
+                    <div class="alert alert-info">
+                        {{ order.customer_message|linebreaks }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- История изменений статуса -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">История статусов</h3>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    {% for history in status_history %}
+                    <div class="timeline-item">
+                        <div class="timeline-date">{{ history.created_at|date:"d.m.Y H:i" }}</div>
+                        <div class="timeline-content">
+                            <strong>{{ history.get_status_display }}</strong>
+                            {% if history.admin_notes %}
+                            <p class="mb-0">{{ history.admin_notes }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">История изменений отсутствует</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Управление заказом -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">Управление заказом</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{% url 'custom_admin:order_update_status' order.id %}">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="status">Изменить статус</label>
+                        <select name="status" id="status" class="form-control">
+                            {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin_notes">Примечания администратора</label>
+                        <textarea name="admin_notes" id="admin_notes"
+                                  class="form-control" rows="3">{{ order.notes }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notify_customer">
+                            <input type="checkbox" name="notify_customer" id="notify_customer" checked>
+                            Уведомить клиента об изменении статуса
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-save"></i> Обновить статус
+                    </button>
+                </form>
+
+                <hr class="my-4">
+
+                <div class="quick-actions">
+                    <a href="mailto:{{ order.customer_email }}?subject=Заказ%20{{ order.uuid }}"
+                       class="btn btn-outline-primary btn-block mb-2">
+                        <i class="fas fa-envelope"></i> Написать клиенту
+                    </a>
+
+                    <button type="button" class="btn btn-outline-success btn-block mb-2"
+                            data-toggle="modal" data-target="#invoiceModal">
+                        <i class="fas fa-file-invoice"></i> Создать счет
+                    </button>
+
+                    {% if order.status != 'cancelled' %}
+                    <button type="button" class="btn btn-outline-danger btn-block"
+                            data-toggle="modal" data-target="#cancelModal">
+                        <i class="fas fa-times-circle"></i> Отменить заказ
+                    </button>
                     {% endif %}
-                    {% endfor %}
                 </div>
+            </div>
+        </div>
+
+        <!-- Детали решения -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Детали решения</h3>
+            </div>
+            <div class="card-body">
+                {% if order.solution.main_image %}
+                <img src="{{ order.solution.main_image.image.url }}"
+                     alt="{{ order.solution.name }}"
+                     class="img-fluid mb-3">
                 {% endif %}
-            </div>
-        </div>
 
-        <!-- Основная информация -->
-        <div class="detail-section">
-            <h3>Основная информация</h3>
-            <div class="info-grid">
-                <div class="info-item">
-                    <strong>Название:</strong>
-                    <span>{{ solution.name }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Slug:</strong>
-                    <span>{{ solution.slug }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Категория:</strong>
-                    <span>{{ solution.category.name }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Тип пакета:</strong>
-                    <span>{{ solution.get_package_type_display|default:"Не указано" }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Цена:</strong>
-                    <span>{{ solution.price }} ₽</span>
-                </div>
-                <div class="info-item">
-                    <strong>Срок разработки:</strong>
-                    <span>{{ solution.delivery_days }} дней</span>
-                </div>
-                <div class="info-item">
-                    <strong>Создано:</strong>
-                    <span>{{ solution.created_at|date:"d.m.Y H:i" }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Обновлено:</strong>
-                    <span>{{ solution.updated_at|date:"d.m.Y H:i" }}</span>
-                </div>
-            </div>
-        </div>
+                <h6>Описание</h6>
+                <p class="small">{{ order.solution.description|truncatewords:30 }}</p>
 
-        <!-- Описание -->
-        <div class="detail-section">
-            <h3>Описание</h3>
-            <div class="description-content">
-                {{ solution.description|linebreaks }}
-
-                {% if solution.detailed_description %}
-                <h4>Детальное описание:</h4>
-                {{ solution.detailed_description|linebreaks }}
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Особенности -->
-        {% if solution.features %}
-        <div class="detail-section">
-            <h3>Особенности</h3>
-            <ul class="features-list">
-                {% for feature in solution.features %}
-                <li><i class="fas fa-check"></i> {{ feature }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-
-        <!-- Требования -->
-        {% if solution.requirements %}
-        <div class="detail-section">
-            <h3>Требования для запуска</h3>
-            <ul class="requirements-list">
-                {% for requirement in solution.requirements %}
-                <li><i class="fas fa-info-circle"></i> {{ requirement }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-
-        <!-- SEO информация -->
-        <div class="detail-section">
-            <h3>SEO информация</h3>
-            <div class="seo-info">
-                <div class="info-item">
-                    <strong>Meta Title:</strong>
-                    <span>{{ solution.meta_title|default:"Не указано" }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Meta Description:</strong>
-                    <span>{{ solution.meta_description|default:"Не указано"|truncatechars:150 }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Keywords:</strong>
-                    <span>{{ solution.meta_keywords|default:"Не указано"|truncatechars:100 }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Статистика заказов -->
-        <div class="detail-section">
-            <h3>Статистика заказов</h3>
-            <div class="orders-stats">
-                <div class="stat-card">
-                    <div class="stat-value">{{ solution.orders.count }}</div>
-                    <div class="stat-label">Всего заказов</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">{{ pending_orders }}</div>
-                    <div class="stat-label">Ожидают обработки</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">{{ completed_orders }}</div>
-                    <div class="stat-label">Завершены</div>
-                </div>
-            </div>
-
-            {% if solution.orders.exists %}
-            <div class="recent-orders">
-                <h4>Последние заказы:</h4>
-                <table class="orders-table">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Клиент</th>
-                        <th>Статус</th>
-                        <th>Дата</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for order in recent_orders %}
-                    <tr>
-                        <td><a href="{% url 'custom_admin:solution_order_detail' order.id %}">#{{ order.id }}</a></td>
-                        <td>{{ order.customer_name }}</td>
-                        <td><span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span></td>
-                        <td>{{ order.created_at|date:"d.m.Y" }}</td>
-                    </tr>
+                {% if order.solution.features %}
+                <h6 class="mt-3">Основные особенности</h6>
+                <ul class="small">
+                    {% for feature in order.solution.features|slice:":3" %}
+                    <li>{{ feature }}</li>
                     {% endfor %}
-                    </tbody>
-                </table>
+                </ul>
+                {% endif %}
+
+                <a href="{% url 'custom_admin:solution_edit' order.solution.id %}"
+                   class="btn btn-sm btn-outline-info btn-block mt-3">
+                    <i class="fas fa-external-link-alt"></i> Перейти к решению
+                </a>
             </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
-<script src="{% static 'js/admin/solution-detail.js' %}"></script>
+<!-- Модальные окна -->
+<div class="modal fade" id="invoiceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Создание счета</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'custom_admin:create_invoice' order.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="invoice_amount">Сумма счета</label>
+                        <input type="number" name="amount" id="invoice_amount"
+                               class="form-control" value="{{ order.total_amount }}"
+                               step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="invoice_due_date">Срок оплаты</label>
+                        <input type="date" name="due_date" id="invoice_due_date"
+                               class="form-control"
+                               value="{{ due_date|date:'Y-m-d' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Создать счет</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Отмена заказа</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите отменить этот заказ?</p>
+                <form method="POST" action="{% url 'custom_admin:order_cancel' order.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="cancel_reason">Причина отмены</label>
+                        <textarea name="reason" id="cancel_reason"
+                                  class="form-control" rows="3"
+                                  placeholder="Укажите причину отмены..." required></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="refund" id="refund" class="form-check-input" checked>
+                        <label class="form-check-label" for="refund">
+                            Возврат средств клиенту
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-danger mt-3">Подтвердить отмену</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge-status {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+    .badge-pending { background-color: #ffc107; color: #212529; }
+    .badge-processing { background-color: #17a2b8; color: white; }
+    .badge-completed { background-color: #28a745; color: white; }
+    .badge-cancelled { background-color: #dc3545; color: white; }
+
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -1.8rem;
+        top: 0.3rem;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #007bff;
+        border: 2px solid white;
+    }
+    .timeline-date {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+</style>
 {% endblock %}

@@ -1,0 +1,188 @@
+{% extends "custom_admin/solutions/create.html" %}
+{% load static %}
+
+{% block title %}Редактирование решения: {{ solution.name }}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <h1 class="page-title">Редактирование решения: {{ solution.name }}</h1>
+    <div class="btn-group">
+        <a href="{% url 'custom_admin:solutions_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Назад к списку
+        </a>
+        <a href="{% url 'custom_admin:solution_detail' solution.id %}" class="btn btn-info">
+            <i class="fas fa-eye"></i> Просмотр
+        </a>
+    </div>
+</div>
+
+<!-- Управление изображениями -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">Управление изображениями</h3>
+    </div>
+    <div class="card-body">
+        <div class="row" id="existingImages">
+            {% for image in solution.images.all %}
+            <div class="col-md-3 mb-3 existing-image" data-id="{{ image.id }}">
+                <div class="image-card {% if image.is_main %}border-primary{% endif %}">
+                    <img src="{{ image.image.url }}" class="img-fluid" alt="{{ image.alt_text|default:solution.name }}">
+                    <div class="image-actions mt-2">
+                        <div class="form-check">
+                            <input type="radio" name="main_image" value="{{ image.id }}"
+                                   class="form-check-input set-main-image"
+                                   {% if image.is_main %}checked{% endif %}>
+                            <label class="form-check-label">Главное</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input image-active"
+                                   {% if image.is_active %}checked{% endif %}>
+                            <label class="form-check-label">Активно</label>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-danger delete-image"
+                                data-id="{{ image.id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Загрузка новых изображений -->
+        <div class="mt-4">
+            <h5>Добавить изображения</h5>
+            <div class="file-dropzone" id="additionalImages">
+                <i class="fas fa-plus-circle fa-2x text-muted"></i>
+                <p>Добавить дополнительные изображения</p>
+                <input type="file" name="additional_images" multiple
+                       accept="image/jpeg,image/png,image/webp,image/gif"
+                       class="d-none">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Управление FAQ -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title">Часто задаваемые вопросы</h3>
+        <button type="button" class="btn btn-sm btn-primary" id="addFaqBtn">
+            <i class="fas fa-plus"></i> Добавить FAQ
+        </button>
+    </div>
+    <div class="card-body">
+        <div id="faqItems">
+            {% for faq in solution.faq_items.all %}
+            <div class="faq-item card mb-2" data-id="{{ faq.id }}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" name="faq_question_{{ faq.id }}"
+                                   class="form-control mb-2"
+                                   value="{{ faq.question }}"
+                                   placeholder="Вопрос">
+                        </div>
+                        <div class="col-md-5">
+                            <input type="number" name="faq_order_{{ faq.id }}"
+                                   class="form-control"
+                                   value="{{ faq.order }}"
+                                   placeholder="Порядок">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger delete-faq"
+                                    data-id="{{ faq.id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea name="faq_answer_{{ faq.id }}"
+                              class="form-control mt-2"
+                              rows="3"
+                              placeholder="Ответ">{{ faq.answer }}</textarea>
+                    <div class="form-check mt-2">
+                        <input type="checkbox" name="faq_active_{{ faq.id }}"
+                               class="form-check-input"
+                               {% if faq.is_active %}checked{% endif %}>
+                        <label class="form-check-label">Активно</label>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Шаблон для нового FAQ -->
+        <template id="faqTemplate">
+            <div class="faq-item card mb-2" data-id="new">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" name="faq_question_new[]"
+                                   class="form-control mb-2"
+                                   placeholder="Вопрос" required>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="number" name="faq_order_new[]"
+                                   class="form-control"
+                                   value="0"
+                                   placeholder="Порядок">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger remove-faq">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea name="faq_answer_new[]"
+                              class="form-control mt-2"
+                              rows="3"
+                              placeholder="Ответ" required></textarea>
+                    <div class="form-check mt-2">
+                        <input type="checkbox" name="faq_active_new[]"
+                               class="form-check-input" checked>
+                        <label class="form-check-label">Активно</label>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
+<!-- Статистика заказов -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">Статистика заказов</h3>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h4>{{ solution.orders.count }}</h4>
+                    <p class="text-muted">Всего заказов</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h4>{{ solution.orders.filter.status='completed'|length }}</h4>
+                    <p class="text-muted">Завершено</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h4>{{ solution.orders.filter(status='processing'|length }}</h4>
+                    <p class="text-muted">В обработке</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h4>{{ total_revenue|default:0 }} ₽</h4>
+                    <p class="text-muted">Общий доход</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Остальная часть формы наследуется из create.html -->
+{{ block.super }}
+{% endblock %}

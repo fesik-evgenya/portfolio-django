@@ -1,0 +1,56 @@
+/* Стили для сетки портфолио */
+.portfolio-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.portfolio-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.portfolio-image img {
+    transition: transform 0.3s ease;
+}
+
+.portfolio-image:hover img {
+    transform: scale(1.05);
+}
+
+.portfolio-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.portfolio-image:hover .portfolio-actions {
+    opacity: 1;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Пустое состояние */
+.empty-state {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .portfolio-actions {
+        opacity: 1;
+    }
+}

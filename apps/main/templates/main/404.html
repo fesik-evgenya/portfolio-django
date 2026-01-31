@@ -1,30 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block seo_extra %}
+{% block meta_title %}404 - Страница не найдена | Full-stack разработчик{% endblock %}
+{% block meta_description %}Запрашиваемая страница не найдена. Вернитесь на главную или ознакомьтесь с моими услугами по разработке сайтов под ключ.{% endblock %}
+
+{% block extra_head %}
 <!-- Запрет индексации для страницы 404 -->
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="googlebot" content="noindex, nofollow, noarchive">
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/404.css' %}">
+<link rel="stylesheet" href="{% static 'main/css/pages/error_pages.css' %}">
 {% endblock %}
 
 {% block content %}
 <section class="error">
     <div class="error__container container">
-        <div class="error__content">
-            <h1 class="error__title">404</h1>
-            <h2 class="error__subtitle">Страница не найдена</h2>
-            <p class="error__text">
-                Извините, запрашиваемая страница не существует. Возможно, она была перемещена или удалена.<br>
-                Я помогу вам найти нужную информацию или создать новый цифровой продукт для вашего бизнеса.
-            </p>
-
-            <!-- Компонент: Действия и ссылки при ошибке -->
-            {% include "main/components/error_details.html" %}
-        </div>
+        {% include "main/components/error_details.html" %}
     </div>
 </section>
 {% endblock %}
